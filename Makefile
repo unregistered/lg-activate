@@ -12,11 +12,19 @@ COMPILE = avr-g++ -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE)
 # symbolic targets:
 all:
 	@echo "Which part of the project are you building? See Makefile for options. e.g. make basestation"
+	@echo "To add a project, create a controller header file and controller c file and add options below"
+	@echo "    See controller_example.h and controller_example.c"
 
-# Options
-basestation: COMPILE += -DMAKE_BASESTATION
+# Projects
+example: COMPILE += -DCONTROLLER_FILE='"controller_example.c"'
+example: main.hex
+
+basestation: COMPILE += -DCONTROLLER_FILE='"controller_basestation.c"'
 basestation: main.hex
 	
+serialtestserver: COMPILE += -DCONTROLLER_FILE='"controller_serialtestserver.c"'
+serialtestserver: main.hex
+
 .c.o:
 	$(COMPILE) -c $< -o $@
 

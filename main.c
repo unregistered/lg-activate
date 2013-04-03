@@ -3,14 +3,13 @@
  * Copyright: All Rights Reserved.
  */
 
-// Include the program we're building
-#ifdef MAKE_BASESTATION
-#include "controller_basestation.c"
-#endif
+// Include the program we're building.
+#include CONTROLLER_FILE
 
 int main(void)
 {
     Controller c = Controller();
+    c.setup();
 	
     for(;;){
         c.loop();
