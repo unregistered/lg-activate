@@ -1,7 +1,7 @@
 DEVICE     = atmega168
 CLOCK      = 9830400
 PROGRAMMER = -c avrispmkii -P usb
-OBJECTS    = main.o lgserial.o
+OBJECTS    = main.o lgserial.o util.o
 FUSES      = -U hfuse:w:0xdf:m -U lfuse:w:0xe0:m
 
 # Tune the lines below only if you know what you are doing:
@@ -10,8 +10,13 @@ AVRDUDE = avrdude $(PROGRAMMER) -p $(DEVICE)
 COMPILE = avr-g++ -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE)
 
 # symbolic targets:
-all:	main.hex
+all:
+	@echo "Which part of the project are you building? See Makefile for options. e.g. make basestation"
 
+# Options
+basestation: COMPILE += -DMAKE_BASESTATION
+basestation: main.hex
+	
 .c.o:
 	$(COMPILE) -c $< -o $@
 
@@ -43,6 +48,7 @@ clean:
 
 # file targets:
 main.elf: $(OBJECTS)
+	@echo CXXFLAGS=${COMPILE}
 	$(COMPILE) -o main.elf $(OBJECTS)
 
 main.hex: main.elf
