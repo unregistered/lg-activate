@@ -25,6 +25,9 @@ basestation: main.hex
 serialtestserver: COMPILE += -DCONTROLLER_FILE='"controller_serialtestserver.c"'
 serialtestserver: main.hex
 
+usbserial: COMPILE += -DCONTROLLER_FILE='"controller_usbserial.c"'
+usbserial: main.hex
+
 .c.o:
 	$(COMPILE) -c $< -o $@
 
