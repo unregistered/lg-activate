@@ -1,5 +1,74 @@
 #include "lg_ssd.h"
  
+
+ 
+ void update_ssd0(int ssd_val){
+  if (ssd_val == 0){
+		Display0_SSD0();
+	}
+	else if (ssd_val == 1){
+		Display1_SSD0();
+	}
+	else if (ssd_val == 2){
+		Display2_SSD0();
+	}
+	else if (ssd_val == 3){
+		Display3_SSD0();
+	}
+	else if (ssd_val == 4){
+		Display4_SSD0();	
+	}
+	else if (ssd_val == 5){
+		Display5_SSD0();
+	}
+	else if (ssd_val == 6){
+		Display6_SSD0();
+	}
+	else if (ssd_val == 7){
+		Display7_SSD0();
+	}
+	else if (ssd_val == 8){
+		Display8_SSD0();
+	}
+	else {  //ssd_val == 9
+		Display9_SSD0();
+	}
+  
+  
+ void update_ssd1(int ssd_val){
+  if (ssd_val == 0){
+		Display0_SSD1();
+	}
+	else if (ssd_val == 1){
+		Display1_SSD1();
+	}
+	else if (ssd_val == 2){
+		Display2_SSD1();
+	}
+	else if (ssd_val == 3){
+		Display3_SSD1();
+	}
+	else if (ssd_val == 4){
+		Display4_SSD1();	
+	}
+	else if (ssd_val == 5){
+		Display5_SSD1();
+	}
+	else if (ssd_val == 6){
+		Display6_SSD1();
+	}
+	else if (ssd_val == 7){
+		Display7_SSD1();
+	}
+	else if (ssd_val == 8){
+		Display8_SSD1();
+	}
+	else {  //ssd_val == 9
+		Display9_SSD1();
+	}
+   
+ }
+ 
  //////function to write 0 to ssd0:
 void Display0_SSD0(){
 	//CLK0 is PD3...

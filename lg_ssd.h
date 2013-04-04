@@ -20,3 +20,5 @@ void Display8_SSD0();
 void Display8_SSD1();
 void Display9_SSD0();
 void Display9_SSD1();
+void update_ssd0(int ssd_val);
+void update_ssd1(int ssd_val);

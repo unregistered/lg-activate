@@ -12,4 +12,7 @@ public:
     
 private:
     /* data */
+    int mode;
+    int ssd0;
+    int ssd1;
 };
