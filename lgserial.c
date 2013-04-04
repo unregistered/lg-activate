@@ -30,7 +30,7 @@ void LGSerial::print(char* str)
 
 char LGSerial::get()
 {
-	while ( !( UCSR0A & (1 << RXC0 )) );
+	while ( !LGSerial::available() ) { ; }
 	return UDR0 ;
 }
 
@@ -41,4 +41,9 @@ int LGSerial::get(char* buf, int len)
     }
     
     return len;
+}
+
+bool LGSerial::available()
+{
+    return UCSR0A & (1 << RXC0 );
 }

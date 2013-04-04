@@ -17,6 +17,9 @@ public:
   static char get(); // Wait for data and return a byte
   static int get(char* buf, int len);
   
+  // Test if data is available
+  static bool available();
+  
 // private:
 //   LGSerial (arguments);
 //   virtual ~LGSerial ();

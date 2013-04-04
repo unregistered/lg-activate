@@ -1,3 +1,4 @@
+#include <avr/io.h>
 
 void Display0_SSD0();
 void Display0_SSD1();

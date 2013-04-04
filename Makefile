@@ -1,7 +1,7 @@
 DEVICE     = atmega168
 CLOCK      = 9830400
 PROGRAMMER = -c avrispmkii -P usb
-OBJECTS    = main.o lgserial.o util.o
+OBJECTS    = main.o lgserial.o util.o lg_ssd.o
 FUSES      = -U hfuse:w:0xdf:m -U lfuse:w:0xe0:m
 
 # Tune the lines below only if you know what you are doing:
@@ -17,16 +17,19 @@ all:
 
 # Projects
 example: COMPILE += -DCONTROLLER_FILE='"controller_example.c"'
-example: main.hex
+example: clean main.hex
 
 basestation: COMPILE += -DCONTROLLER_FILE='"controller_basestation.c"'
-basestation: main.hex
+basestation: clean main.hex
 	
 serialtestserver: COMPILE += -DCONTROLLER_FILE='"controller_serialtestserver.c"'
-serialtestserver: main.hex
+serialtestserver: clean main.hex
 
 usbserial: COMPILE += -DCONTROLLER_FILE='"controller_usbserial.c"'
-usbserial: main.hex
+usbserial: clean main.hex
+
+ssd: COMPILE += -DCONTROLLER_FILE='"controller_ssd.c"'
+ssd: clean main.hex
 
 .c.o:
 	$(COMPILE) -c $< -o $@
