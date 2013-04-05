@@ -1,4 +1,5 @@
 #include "controller_ssd.h"
+#include "lg_ssd.h"
 
 // Variable initialization can be done here
 Controller::Controller()
