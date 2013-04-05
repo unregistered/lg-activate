@@ -1,6 +1,22 @@
 #include "lg_ssd.h"
  
-
+ void update_LED(int mode){
+ 	if (mode == 0){		//OFF
+    PORTB |= 1 << PB0; // Set LEDR to 1 
+    PORTB &= ~(1 << PB1); //LEDG to 0
+    PORTB &= ~(1 << PB2); //LEDB to 0
+   }
+   else if (mode == 1){	//ON
+    PORTB &= ~(1 << PB0); 
+    PORTB |= 1 << PB1;
+    PORTB &= ~(1 << PB2);
+   }
+   else { //mode = 2	//AUTO
+    PORTB &= ~(1 << PB0); 
+    PORTB &= ~(1 << PB1);
+    PORTB |= 1 << PB2;
+   }  
+ }//end update_LED
  
  void update_ssd0(int ssd_val){
   if (ssd_val == 0){

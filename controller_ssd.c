@@ -44,23 +44,8 @@ void Controller::setup()
 	update_ssd1(ssd1);
   int mode = 0;//off
 
- 
-	if (mode == 0){		//OFF
-	  PORTB |= 1 << PB0; // Set LEDR to 0 
-    PORTB &= ~(1 << PB1); //LEDG to 0
-    PORTB &= ~(1 << PB2); //LEDB to 0
-	}
-	else if (mode == 1){	//ON
-		PORTB &= ~(1 << PB0); // Set LEDR to 0 
-    PORTB |= 1 << PB1; //LEDG to 0
-    PORTB &= ~(1 << PB2); //LEDB to 0
-	}
-	else { //mode = 2	//AUTO
-		PORTB &= ~(1 << PB0); // Set LEDR to 0 
-    PORTB &= ~(1 << PB1); //LEDG to 0
-    PORTB |= 1 << PB2; //LEDB to 0
-	}
-	
+  update_LED(mode);
+
   
 }//end setup
 
@@ -72,114 +57,81 @@ void Controller::loop()
     //if the ssd or mode is different from before, 
       //update it
 
-    // ssd0 = 0;
-  //   ssd1 = 1;
-  // 
-  //   update_ssd0(ssd0);
-  //   update_ssd1(ssd1);
-  // 
-  //   sleep(1000);
-  // 
-  // 
-  //   ssd0 = 2;
-  //   ssd1 = 3;
-  // 
-  //   update_ssd0(ssd0);
-  //   update_ssd1(ssd1);
-  // 
-  //   sleep(1000);
-  // 
-  //   ssd0 = 4;
-  //   ssd1 = 5;
-  // 
-  //   update_ssd0(ssd0);
-  //   update_ssd1(ssd1);
-  // 
-  //   sleep(1000);
-  // 
-  //   ssd0 = 6;
-  //   ssd1 = 7;
-  // 
-  //   update_ssd0(ssd0);
-  //   update_ssd1(ssd1);
-  // 
-  //   sleep(1000);
+  ssd0 = 0;
+  ssd1 = 1;
+   
+  update_ssd0(ssd0);
+  update_ssd1(ssd1); 
+  sleep(1000);
+   
+  ssd0 = 1;
+  ssd1 = 2;
+   
+  update_ssd0(ssd0);
+  update_ssd1(ssd1);   
+  sleep(1000);
+  
+  ssd0 = 2;
+  ssd1 = 3;
+   
+  update_ssd0(ssd0);
+  update_ssd1(ssd1); 
+  sleep(1000);
+   
+  ssd0 = 3;
+  ssd1 = 4;
+   
+  update_ssd0(ssd0);
+  update_ssd1(ssd1);   
+  sleep(1000);
+  
+  update_ssd0(0);
+  update_ssd1(1);
+    sleep(1000);
+  update_ssd0(1);
+  update_ssd1(2);
+    sleep(1000);
+  update_ssd0(2);
+  update_ssd1(3);
+    sleep(1000);
+  update_ssd0(3);
+  update_ssd1(4);
+    sleep(1000);
+  update_ssd0(4);
+  update_ssd1(5);
+    sleep(1000);
+  update_ssd0(5);
+  update_ssd1(6);
+    sleep(1000);
+  update_ssd0(6);
+  update_ssd1(7);
+    sleep(1000);
+  update_ssd0(7);
+  update_ssd1(8);
+    sleep(1000);
+  update_ssd0(8);
+  update_ssd1(9);
+    sleep(1000);
+  update_ssd0(9);
+  update_ssd1(0);
+    sleep(1000);
+  
+  update_ssd0(8);
+  update_ssd1(8);
+    sleep(1000);
+  
+       
 
-
-    if (mode == 0){		//OFF
-      PORTB |= 1 << PB0; // Set LEDR to 0 
-    PORTB &= ~(1 << PB1); //LEDG to 0
-    PORTB &= ~(1 << PB2); //LEDB to 0
-    }
-    else if (mode == 1){	//ON
-    	PORTB &= ~(1 << PB0); // Set LEDR to 0 
-    PORTB |= 1 << PB1; //LEDG to 0
-    PORTB &= ~(1 << PB2); //LEDB to 0
-    }
-    else { //mode = 2	//AUTO
-    	PORTB &= ~(1 << PB0); // Set LEDR to 0 
-    PORTB &= ~(1 << PB1); //LEDG to 0
-    PORTB |= 1 << PB2; //LEDB to 0
-    }
-
-        sleep(1000);
-
-    mode = 1;
-    	if (mode == 0){		//OFF
-      PORTB |= 1 << PB0; // Set LEDR to 0 
-    PORTB &= ~(1 << PB1); //LEDG to 0
-    PORTB &= ~(1 << PB2); //LEDB to 0
-    }
-    else if (mode == 1){	//ON
-    	PORTB &= ~(1 << PB0); // Set LEDR to 0 
-    PORTB |= 1 << PB1; //LEDG to 0
-    PORTB &= ~(1 << PB2); //LEDB to 0
-    }
-    else { //mode = 2	//AUTO
-    	PORTB &= ~(1 << PB0); // Set LEDR to 0 
-    PORTB &= ~(1 << PB1); //LEDG to 0
-    PORTB |= 1 << PB2; //LEDB to 0
-    }
-
-        sleep(1000);
-
-    mode = 2;
-    	if (mode == 0){		//OFF
-      PORTB |= 1 << PB0; // Set LEDR to 0 
-    PORTB &= ~(1 << PB1); //LEDG to 0
-    PORTB &= ~(1 << PB2); //LEDB to 0
-    }
-    else if (mode == 1){	//ON
-    	PORTB &= ~(1 << PB0); // Set LEDR to 0 
-    PORTB |= 1 << PB1; //LEDG to 0
-    PORTB &= ~(1 << PB2); //LEDB to 0
-    }
-    else { //mode = 2	//AUTO
-    	PORTB &= ~(1 << PB0); // Set LEDR to 0 
-    PORTB &= ~(1 << PB1); //LEDG to 0
-    PORTB |= 1 << PB2; //LEDB to 0
-    }
-
-        sleep(1000);
-    
-    mode = 1;
-    	if (mode == 0){		//OFF
-      PORTB |= 1 << PB0; // Set LEDR to 0 
-    PORTB &= ~(1 << PB1); //LEDG to 0
-    PORTB &= ~(1 << PB2); //LEDB to 0
-    }
-    else if (mode == 1){	//ON
-    	PORTB &= ~(1 << PB0); // Set LEDR to 0 
-    PORTB |= 1 << PB1; //LEDG to 0
-    PORTB &= ~(1 << PB2); //LEDB to 0
-    }
-    else { //mode = 2	//AUTO
-    	PORTB &= ~(1 << PB0); // Set LEDR to 0 
-    PORTB &= ~(1 << PB1); //LEDG to 0
-    PORTB |= 1 << PB2; //LEDB to 0
-    }	  
-
-        sleep(1000);
-    
+  mode = 1;
+  update_LED(mode);
+	sleep(1000);
+	
+	mode = 2;
+  update_LED(mode);
+	sleep(1000);
+	
+	mode = 0;
+  update_LED(mode);
+  sleep(1000);
     
 }
