@@ -68,6 +68,8 @@ void Controller::loop()
 	update_ssd0(ssd0);
 	update_ssd1(ssd1);
     
+    sleep(1000);
+    
     
   ssd0 = 5;
   ssd1 = 5;
@@ -75,6 +77,7 @@ void Controller::loop()
 	update_ssd0(ssd0);
 	update_ssd1(ssd1);
     
+    sleep(1000);
     
   ssd0 = 6;
   ssd1 = 6;
@@ -82,11 +85,15 @@ void Controller::loop()
 	update_ssd0(ssd0);
 	update_ssd1(ssd1);
 	
+    sleep(1000);
+    
 	  ssd0 = 7;
   ssd1 = 7;
     
 	update_ssd0(ssd0);
-	update_ssd1(ssd1);    
+	update_ssd1(ssd1);  
+      
+    sleep(1000);
     
     
 }
