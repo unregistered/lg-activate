@@ -33,6 +33,7 @@
 	else {  //ssd_val == 9
 		Display9_SSD0();
 	}
+ }
   
   
  void update_ssd1(int ssd_val){
