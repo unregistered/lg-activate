@@ -9,7 +9,7 @@ Controller::Controller()
 void Controller::setup()
 {
 	// Setup code here
-    LGSerial::init(63);
+    LGSerial::init();
     LGSerial::put("Hello World!");
 }
 

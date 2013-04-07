@@ -1,6 +1,8 @@
 #include <avr/io.h>
 #include <util/delay.h>
-#include "lgnetwork.h"
+#include "lgserial.h"
+#include "lgdb.h"
+#include "util.h"
 
 class Controller
 {
@@ -11,5 +13,4 @@ public:
 
 private:
     /* data */
-    LGNetwork network;
 };

@@ -1,13 +1,14 @@
 DEVICE     = atmega168
+# DEVICE	   = attiny4313
 CLOCK      = 9830400
 PROGRAMMER = -c avrispmkii -P usb
-OBJECTS    = main.o lgserial.o util.o lg_ssd.o
+OBJECTS    = main.o util.o lg_ssd.o lgserial.o lgnetwork.o lgdb.o
 FUSES      = -U hfuse:w:0xdf:m -U lfuse:w:0xe0:m
 
 # Tune the lines below only if you know what you are doing:
 
 AVRDUDE = avrdude $(PROGRAMMER) -p $(DEVICE)
-COMPILE = avr-g++ -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE)
+COMPILE = avr-g++ -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE) -Wno-write-strings
 
 # symbolic targets:
 all:
@@ -21,7 +22,7 @@ example: clean main.hex
 
 basestation: COMPILE += -DCONTROLLER_FILE='"controller_basestation.c"'
 basestation: clean main.hex
-	
+
 serialtestserver: COMPILE += -DCONTROLLER_FILE='"controller_serialtestserver.c"'
 serialtestserver: clean main.hex
 
@@ -30,6 +31,9 @@ usbserial: clean main.hex
 
 ssd: COMPILE += -DCONTROLLER_FILE='"controller_ssd.c"'
 ssd: clean main.hex
+
+db: COMPILE += -DCONTROLLER_FILE='"controller_db.c"'
+db: clean main.hex
 
 .c.o:
 	$(COMPILE) -c $< -o $@

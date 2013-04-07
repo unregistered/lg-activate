@@ -1,25 +1,31 @@
 #include <avr/io.h>
+#include <avr/interrupt.h>
+
+#define BAUDRATE 9600
+#define UBRRVAL ((F_CPU/(BAUDRATE*16UL))-1)
 
 class LGSerial
 {
 public:
   // usart_init - Initialize the USART port
-  static void init(int);
-  
+  static void init();
+
   // Send data to the serial port
   static void put(char*);
   static void put(char);
-  
+
   // Send data with carriage return
   static void print(char*);
-  
+  static void print(int);
+  static void clear_screen();
+
   // Get data from the port
   static char get(); // Wait for data and return a byte
   static int get(char* buf, int len);
-  
+
   // Test if data is available
   static bool available();
-  
+
 // private:
 //   LGSerial (arguments);
 //   virtual ~LGSerial ();
