@@ -2,7 +2,7 @@ DEVICE     = atmega168
 # DEVICE	   = attiny4313
 CLOCK      = 9830400
 PROGRAMMER = -c avrispmkii -P usb
-OBJECTS    = main.o util.o lg_ssd.o lgserial.o lgnetwork.o lgdb.o
+OBJECTS    = main.o lg_ssd.o lgserial.o lgnetwork.o lgdb.o util.o
 FUSES      = -U hfuse:w:0xdf:m -U lfuse:w:0xe0:m
 
 # Tune the lines below only if you know what you are doing:

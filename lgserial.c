@@ -59,7 +59,22 @@ int LGSerial::get(char* buf, int len)
     return len;
 }
 
+int LGSerial::get(char* buf, char stopchar, int maxlen)
+{
+    for(int i=0; i<maxlen; i++) {
+        buf[i] = LGSerial::get();
+        if(buf[i] == 13) return i + 1;
+    }
+
+    return maxlen;
+}
+
 bool LGSerial::available()
 {
     return UCSR0A & (1 << RXC0 );
+}
+
+void LGSerial::clear()
+{
+    while(LGSerial::available()) LGSerial::get();
 }

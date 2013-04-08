@@ -22,9 +22,13 @@ public:
   // Get data from the port
   static char get(); // Wait for data and return a byte
   static int get(char* buf, int len);
+  static int get(char* buf, char stopchar, int maxlen);
 
   // Test if data is available
   static bool available();
+
+  // Clear serial buffer
+  static void clear();
 
 // private:
 //   LGSerial (arguments);
