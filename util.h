@@ -15,8 +15,6 @@ void sleep(int ms);
 
 
 
-
-
 // the prescaler is set so that timer0 ticks every 64 clock cycles, and the
 // the overflow handler is called every 256 ticks.
 #define MICROSECONDS_PER_TIMER0_OVERFLOW (1667)

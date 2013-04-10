@@ -10,10 +10,13 @@ void Controller::setup()
 {
 	LGSerial::init(); // (9830400/(16*9600))-1;
 
-    network.setup_server();
+    network.set_mode(LGNETWORK_DISCOVER);
 }
 
 void Controller::loop()
 {
     // LGSerial::put("Loop");
+    network.loop();
+    sleep(1000);
+    LGSerial::put('a');
 }

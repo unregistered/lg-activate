@@ -31,3 +31,16 @@ void LGDB::write_mode(uint8_t val)
 {
     write<uint8_t>(DB_MODE, val);
 }
+
+#ifdef USE_NETWORK_SERVER
+uint16_t LGDB::read_ap_table_entry(uint8_t entry)
+{
+    char* addr = static_cast<char*>(DB_AP_TABLE_START) + entry;
+    return read<uint16_t>(addr);
+}
+void LGDB::write_ap_table_entry(uint8_t entry, uint16_t val)
+{
+    char* addr = static_cast<char*>(DB_AP_TABLE_START) + entry;
+    write<uint16_t>(addr, val);
+}
+#endif

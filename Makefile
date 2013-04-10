@@ -1,14 +1,13 @@
-DEVICE     = atmega168
-# DEVICE	   = attiny4313
+# DEVICE     = atmega168
+DEVICE	   = attiny4313
 CLOCK      = 9830400
 PROGRAMMER = -c avrispmkii -P usb
-OBJECTS    = main.o lg_ssd.o lgserial.o lgnetwork.o lgdb.o util.o
+OBJECTS    = main.o lgserial.o lgnetwork.o lgdb.o util.o
 FUSES      = -U hfuse:w:0xdf:m -U lfuse:w:0xe0:m
 
 # Tune the lines below only if you know what you are doing:
-
 AVRDUDE = avrdude $(PROGRAMMER) -p $(DEVICE)
-COMPILE = avr-g++ -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE) -Wno-write-strings
+COMPILE = avr-g++ -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE) -Wno-write-strings -D$(DEVICE)
 
 # symbolic targets:
 all:
@@ -17,22 +16,25 @@ all:
 	@echo "    See controller_example.h and controller_example.c"
 
 # Projects
-example: COMPILE += -DCONTROLLER_FILE='"controller_example.c"'
+example: COMPILE += -DCONTROLLER_FILE='"controller_example.c"' -DUSE_NETWORK_SERVER
 example: clean main.hex
 
-basestation: COMPILE += -DCONTROLLER_FILE='"controller_basestation.c"'
+basestation: COMPILE += -DCONTROLLER_FILE='"controller_basestation.c"' -DUSE_NETWORK_CLIENT
 basestation: clean main.hex
 
-serialtestserver: COMPILE += -DCONTROLLER_FILE='"controller_serialtestserver.c"'
+serialtestserver: COMPILE += -DCONTROLLER_FILE='"controller_serialtestserver.c"' -DUSE_NETWORK_SERVER
 serialtestserver: clean main.hex
 
-usbserial: COMPILE += -DCONTROLLER_FILE='"controller_usbserial.c"'
+serialtestclient: COMPILE += -DCONTROLLER_FILE='"controller_serialtestclient.c"' -DUSE_NETWORK_CLIENT
+serialtestclient: clean main.hex
+
+usbserial: COMPILE += -DCONTROLLER_FILE='"controller_usbserial.c"' -DUSE_NETWORK_CLIENT
 usbserial: clean main.hex
 
-ssd: COMPILE += -DCONTROLLER_FILE='"controller_ssd.c"'
+ssd: COMPILE += -DCONTROLLER_FILE='"controller_ssd.c"' -DUSE_NETWORK_CLIENT
 ssd: clean main.hex
 
-db: COMPILE += -DCONTROLLER_FILE='"controller_db.c"'
+db: COMPILE += -DCONTROLLER_FILE='"controller_db.c"' -DUSE_NETWORK_SERVER
 db: clean main.hex
 
 .c.o:

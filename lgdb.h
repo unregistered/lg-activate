@@ -1,8 +1,11 @@
 #include <avr/eeprom.h>
 
-#define DB_MY_ADDR 0
-#define DB_BASESTATION_ADDR (void*)2
-#define DB_MODE (void*)6
+#define DB_MY_ADDR 0 // 2 bytes
+#define DB_BASESTATION_ADDR (void*)2 // 4 bytes
+#define DB_MODE (void*)6 // 1 byte
+
+/* Address Tables for basestation */
+#define DB_AP_TABLE_START (void*)64 // 100 * 2 = 200 bytes
 
 class LGDB
 {
@@ -17,6 +20,11 @@ public:
 
     static uint8_t read_mode();
     static void write_mode(uint8_t);
+
+#ifdef USE_NETWORK_SERVER
+    static uint16_t read_ap_table_entry(uint8_t entry);
+    static void write_ap_table_entry(uint8_t entry, uint16_t val);
+#endif
 
 private:
     template<typename T>
