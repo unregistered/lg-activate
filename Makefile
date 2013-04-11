@@ -1,5 +1,5 @@
-# DEVICE     = atmega168
-DEVICE	   = attiny4313
+DEVICE     = atmega168
+# DEVICE	   = attiny4313
 CLOCK      = 9830400
 PROGRAMMER = -c avrispmkii -P usb
 OBJECTS    = main.o lgserial.o lgnetwork.o lgdb.o util.o

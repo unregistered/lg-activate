@@ -1,3 +1,6 @@
+#ifndef LGSERIAL_H
+#define LGSERIAL_H
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
@@ -35,3 +38,5 @@ public:
 //   LGSerial (arguments);
 //   virtual ~LGSerial ();
 };
+
+#endif

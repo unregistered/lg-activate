@@ -36,7 +36,7 @@ void LGNetwork::set_mode(network_mode_t newMode)
 
 
         #elif USE_NETWORK_CLIENT
-            uint16_t short_address = LGDB::read_address();
+            uint16_t short_addr = LGDB::read_address();
             cmd_set_short_address(short_addr); // It will either be something we want, or -1
 
 
@@ -44,10 +44,14 @@ void LGNetwork::set_mode(network_mode_t newMode)
     } else { // LGNETWORK_DISCOVER
         #ifdef USE_NETWORK_SERVER
             cmd_set_short_address(-1);
+            cmd_set_target_short_address(-1);
+            cmd_set_coordinator(true);
 
             // ATND node discovery
         #elif USE_NETWORK_CLIENT
             cmd_set_short_address(-1);
+            cmd_set_target_short_address(-1);
+            cmd_set_coordinator(false);
         #endif
     }
 
@@ -58,7 +62,17 @@ void LGNetwork::set_mode(network_mode_t newMode)
 
 void LGNetwork::loop()
 {
+    if(currentMode == LGNETWORK_DISCOVER) {
+        #ifdef USE_NETWORK_SERVER
+            cmd_enter();
+            uint64_t client_addr = cmd_get_one_unassociated_device();
+            LGSerial::print("Found client:");
+            LGSerial::print(client_addr);
+            cmd_exit();
+        #endif
+    } else { // LGNETWORK_OPERATE
 
+    }
 }
 // void LGNetwork::setup_server()
 // {
@@ -94,7 +108,10 @@ void LGNetwork::cmd_enter()
 
 void LGNetwork::cmd_exit()
 {
+    LGSerial::put("ATAC\r\n");
+    LGSerial::get(response_buf, 3);
     LGSerial::put("ATCN\r\n");
+    LGSerial::get(response_buf, 3);
 }
 
 void LGNetwork::cmd_restore_factory()
@@ -145,6 +162,44 @@ void LGNetwork::cmd_set_target_long_address(uint64_t addr)
     sprintf(response_buf, "ATDL%04X\r\n", addr); // Set low byte to target
     LGSerial::put(response_buf);
     LGSerial::get(response_buf, 3);
+}
+
+uint64_t LGNetwork::cmd_get_one_unassociated_device()
+{
+    LGSerial::put("ATND\r\n");
+    LGSerial::get(response_buf, '\r', 16);
+    LGSerial::put(response_buf);
+    // LGSerial::get(response_buf, '\r', 16);
+    // LGSerial::put(response_buf);
+    // LGSerial::get(response_buf, '\r', 16);
+    // LGSerial::put(response_buf);
+    // LGSerial::get(response_buf, '\r', 16);
+    // LGSerial::put(response_buf);
+    // LGSerial::get(response_buf, '\r', 16);
+    // LGSerial::put(response_buf);
+    // LGSerial::get(response_buf, '\r', 16);
+    // LGSerial::put(response_buf);
+
+
+    return 0;
+}
+
+void LGNetwork::cmd_set_coordinator(bool isCoordinator)
+{
+    if(isCoordinator) {
+        LGSerial::put("ATCE1\r\n");
+        LGSerial::get(response_buf, 3);
+
+        LGSerial::put("ATA2 01\r\n"); // Coordinator auto-associate
+        LGSerial::get(response_buf, 3);
+    } else {
+        LGSerial::put("ATCE0\r\n");
+        LGSerial::get(response_buf, 3);
+
+        LGSerial::put("ATA1 01\r\n"); // Autoassociate
+        LGSerial::get(response_buf, 3);
+    }
+
 }
 
 void LGNetwork::xbee_setup(uint16_t my_addr, uint64_t destination_addr)

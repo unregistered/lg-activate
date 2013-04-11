@@ -55,6 +55,10 @@ private:
     void cmd_set_target_short_address(uint16_t addr);
     void cmd_set_target_long_address(uint64_t addr);
 
+    void cmd_set_coordinator(bool isCoordinator);
+
+    uint64_t cmd_get_one_unassociated_device();
+
 private:
     char response_buf[16];
 };
