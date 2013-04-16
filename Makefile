@@ -1,5 +1,5 @@
-DEVICE     = atmega168
-# DEVICE	   = attiny4313
+# DEVICE     = atmega168
+DEVICE	   = attiny4313
 CLOCK      = 9830400
 PROGRAMMER = -c avrispmkii -P usb
 OBJECTS    = main.o lgserial.o lgnetwork.o lgdb.o util.o
@@ -25,7 +25,7 @@ basestation: clean main.hex
 serialtestserver: COMPILE += -DCONTROLLER_FILE='"controller_serialtestserver.c"' -DUSE_NETWORK_SERVER
 serialtestserver: clean main.hex
 
-serialtestclient: COMPILE += -DCONTROLLER_FILE='"controller_serialtestclient.c"' -DUSE_NETWORK_CLIENT
+serialtestclient: COMPILE += -DCONTROLLER_FILE='"controller_serialtestclient.c"' -DUSE_NETWORK_CLIENT -DCLIENT_SENSOR
 serialtestclient: clean main.hex
 
 usbserial: COMPILE += -DCONTROLLER_FILE='"controller_usbserial.c"' -DUSE_NETWORK_CLIENT
@@ -36,6 +36,9 @@ ssd: clean main.hex
 
 db: COMPILE += -DCONTROLLER_FILE='"controller_db.c"' -DUSE_NETWORK_SERVER
 db: clean main.hex
+
+hexstr: COMPILE += -DCONTROLLER_FILE='"controller_hexstr.c"' -DUSE_NETWORK_SERVER
+hexstr: clean main.hex
 
 .c.o:
 	$(COMPILE) -c $< -o $@

@@ -44,3 +44,61 @@ unsigned long millis()
 
    return m;
 }
+
+
+uint8_t asciis_to_byte(char *ascii_chars)
+{
+   uint8_t retval = 0;
+
+   int rawval = (int)ascii_chars[0];
+   // 0-9
+   if(rawval >= 48 && rawval <= 57) {
+      retval = rawval - 48;
+   }
+
+   // A-F
+   if(rawval >= 65 && rawval <= 70) {
+      retval = rawval - 65 + 10;
+   }
+
+   retval = retval << 4; // Shift to MSB
+
+   rawval = (int)ascii_chars[1];
+      // 0-9
+   if(rawval >= 48 && rawval <= 57) {
+      retval += rawval - 48;
+   }
+
+   // A-F
+   if(rawval >= 65 && rawval <= 70) {
+      retval += rawval - 65 + 10;
+   }
+
+   return retval;
+}
+
+void byte_to_asciis(char *buf, uint8_t val)
+{
+   uint8_t msb = val >> 4;
+
+   if(msb >=0 && msb <= 9) {
+      *buf = (msb + 48);
+   }
+
+   if(msb >= 10 && msb <= 15) {
+      *buf = (msb + 65 - 10);
+   }
+
+   // LSB
+   uint8_t lsb = val & 0x0F;
+
+   if(lsb >=0 && lsb <= 9) {
+      *(buf + 1) = (lsb + 48);
+   }
+
+   if(lsb >= 10 && lsb <= 15) {
+      *(buf + 1) = (lsb + 65 - 10);
+   }
+
+
+}

@@ -1,5 +1,6 @@
 #include "lgserial.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include "util.h"
 
 unsigned long LGSerial::last_command;
@@ -67,8 +68,7 @@ void LGSerial::print(char* str)
 void LGSerial::print(int n)
 {
     char str[16];
-    str[0] = 0;
-    itoa(n, str, 10);
+    sprintf(str, "%d", n);
     print(str);
 }
 

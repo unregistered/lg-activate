@@ -9,7 +9,8 @@
 void sleep(int ms);
 
 
-
+uint8_t asciis_to_byte(char *ascii_char);
+void byte_to_asciis(char *buf, uint8_t val);
 
 
 

@@ -17,9 +17,13 @@ void Controller::setup()
 
 void Controller::loop()
 {
+    network.loop();
+    sleep(3000);
     // network.loop();
     // LGSerial::put("Loop");
-    char c = LGSerial::get();
-    LGSerial::put(c);
+    // char c = LGSerial::get();
+    // LGSerial::put(c);
+
+    // network.loop();
     // sleep(1000);
 }
