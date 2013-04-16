@@ -2,12 +2,12 @@
 DEVICE	   = attiny4313
 CLOCK      = 9830400
 PROGRAMMER = -c avrispmkii -P usb
-OBJECTS    = main.o lgserial.o lgnetwork.o lgdb.o util.o
+OBJECTS    = main.o lgdb.o lgserial.o lgnetwork.o util.o lg_ssd.o
 FUSES      = -U hfuse:w:0xdf:m -U lfuse:w:0xe0:m
 
 # Tune the lines below only if you know what you are doing:
 AVRDUDE = avrdude $(PROGRAMMER) -p $(DEVICE)
-COMPILE = avr-g++ -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE) -Wno-write-strings -D$(DEVICE)
+COMPILE = avr-g++ -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE) -Wno-write-strings -D$(DEVICE) -ffunction-sections -Wl,-gc-sections
 
 # symbolic targets:
 all:
