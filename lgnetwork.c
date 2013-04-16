@@ -1,7 +1,6 @@
 #include "lgnetwork.h"
-#include <string.h>
-#include <stdio.h>
 #include "lgdb.h"
+#include <string.h>
 
 #ifdef USE_NETWORK_SERVER
 int8_t LGNetwork::ap_table_cache[100];
@@ -147,6 +146,23 @@ void LGNetwork::loop()
             }
 
         #endif
+
+        #if USE_NETWORK_CLIENT
+
+            if(LGSerial::available()) {
+                // Receive packet
+                dhcp_packet_t p;
+                for(int i=0; i < sizeof(dhcp_packet_t); i++) {
+                    p.bytes[i] = LGSerial::get();
+                }
+
+                // Set my vars
+                LGNetwork::baseUUID = p.packet.base_address;
+                LGNetwork::myShortAddr = p.packet.short_address;
+
+                // Persist to eeprom TODO
+            }
+        #endif
     } else { // LGNETWORK_OPERATE
 
     }
@@ -217,8 +233,9 @@ void LGNetwork::cmd_set_channel(network_mode_t mode)
 
 void LGNetwork::cmd_set_short_address(uint8_t addr)
 {
-    sprintf(response_buf, "ATMY %04X\r\n", addr);
-    LGSerial::put(response_buf);
+    char sendbuf[] = "ATMY 0000\r\n";
+    byte_to_asciis(sendbuf + 7, addr);
+    LGSerial::put(sendbuf);
     LGSerial::get(response_buf, 3);
 }
 
@@ -227,19 +244,23 @@ void LGNetwork::cmd_set_target_short_address(uint8_t addr)
     LGSerial::put("ATDH 0000\r\n"); // Set high byte to 0
     LGSerial::get(response_buf, 3);
 
-    sprintf(response_buf, "ATDL %04X\r\n", addr); // Set low byte to target
-    LGSerial::put(response_buf);
+    char sendbuf[] = "ATDL 0000\r\n";
+    byte_to_asciis(sendbuf + 7, addr);
+    LGSerial::put(sendbuf);
     LGSerial::get(response_buf, 3);
 }
 
 void LGNetwork::cmd_set_target_long_address(uint64_t addr)
 {
-    sprintf(response_buf, "ATDH %04X\r\n", (addr >> 8)); // Set low byte to target
-    LGSerial::put(response_buf);
+    char sendbuf[] = "ATDH 0000\r\n";
+    byte_to_asciis(sendbuf + 7, addr >> 8);
+    LGSerial::put(sendbuf);
     LGSerial::get(response_buf, 3);
 
-    sprintf(response_buf, "ATDL %04X\r\n", addr); // Set low byte to target
-    LGSerial::put(response_buf);
+    sendbuf[2] = 'D';
+    sendbuf[3] = 'L';
+    byte_to_asciis(sendbuf + 7, addr);
+    LGSerial::put(sendbuf);
     LGSerial::get(response_buf, 3);
 }
 

@@ -21,15 +21,21 @@ void Controller::setup()
 void Controller::loop()
 {
     // Main code here
-    sleep(1000);
-    network.loop();
 
     if(LGNetwork::myShortAddr == -1) {
         // We still done't have an address
+        network.loop();
     } else {
         // We were just assigned an address
-        network.set_mode(LGNETWORK_OPERATE);
+        // network.set_mode(LGNETWORK_OPERATE);
+        // Display SSDs
 
+        if(LGSerial::available()) {
+            // We should be given a mode
+            uint8_t mode = LGSerial::get();
+            // Do things with mode
+
+        }
     }
 
     // LGSerial::put('a');

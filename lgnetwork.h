@@ -3,7 +3,6 @@
 
 #include "lgserial.h"
 #include "util.h"
-#include <stdlib.h>
 
 #define LG_ATID "3236"
 #define OPERATING_CHANNEL "0D"
