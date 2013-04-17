@@ -6,43 +6,45 @@ void sleep(int ms)
         _delay_ms(1);
 }
 
-volatile unsigned long timer0_overflow_count = 0;
-volatile unsigned long timer0_millis = 0;
-static unsigned char timer0_fract = 0;
 
+volatile unsigned long timer1_millis;
 
-SIGNAL(TIMER0_OVF_vect)
+unsigned long millis ()
 {
-   // copy these to local variables so they can be stored in registers
-   // (volatile variables must be read from memory on every access)
-   unsigned long m = timer0_millis;
-   unsigned char f = timer0_fract;
+    unsigned long millis_return;
 
-   m += MILLIS_INC;
-   f += FRACT_INC;
-   if (f >= FRACT_MAX) {
-      f -= FRACT_MAX;
-      m += 1;
-   }
+    // Ensure this cannot be disrupted
+    ATOMIC_BLOCK(ATOMIC_FORCEON) {
+        millis_return = timer1_millis;
+    }
 
-   timer0_fract = f;
-   timer0_millis = m;
-   timer0_overflow_count++;
+    return millis_return;
 }
 
-
-unsigned long millis()
+ISR (TIMER1_COMPA_vect)
 {
-   unsigned long m;
-   uint8_t oldSREG = SREG;
+    timer1_millis++;
+}
 
-   // disable interrupts while we read timer0_millis or we might get an
-   // inconsistent value (e.g. in the middle of a write to timer0_millis)
+void init_timer()
+{
    cli();
-   m = timer0_millis;
-   SREG = oldSREG;
+   // CTC mode, Clock/8
+   TCCR1B |= (1 << WGM12) | (1 << CS11);
 
-   return m;
+   // Load the high byte, then the low byte
+   // into the output compare
+   OCR1AH = (CTC_MATCH_OVERFLOW >> 8);
+   OCR1AL = CTC_MATCH_OVERFLOW;
+
+   // Enable the compare match interrupt
+   TIMSK1 |= (1 << OCIE1A);
+
+   // PC0/Analog 0 to Output
+   DDRC |= (1 << PC0);
+
+   // Now enable global interrupts
+   sei();
 }
 
 
@@ -102,3 +104,4 @@ void byte_to_asciis(char *buf, uint8_t val)
 
 
 }
+

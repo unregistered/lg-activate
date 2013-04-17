@@ -5,15 +5,19 @@
 
 // Include the program we're building.
 #include CONTROLLER_FILE
+#include "util.h"
 
 int main(void)
 {
+    init_timer();
+
     Controller c = Controller();
     c.setup();
-	
+
     for(;;){
         c.loop();
     }
 
     return 0;   /* never reached */
 }
+
