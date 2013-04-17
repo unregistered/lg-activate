@@ -29,6 +29,8 @@ ISR (TIMER1_COMPA_vect)
 void init_timer()
 {
    cli();
+
+   #ifdef atmega168
    // CTC mode, Clock/8
    TCCR1B |= (1 << WGM12) | (1 << CS11);
 
@@ -42,6 +44,11 @@ void init_timer()
 
    // PC0/Analog 0 to Output
    DDRC |= (1 << PC0);
+   #endif
+
+   #ifdef attiny4313
+
+   #endif
 
    // Now enable global interrupts
    sei();

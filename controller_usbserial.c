@@ -1,4 +1,5 @@
 #include "controller_example.h"
+#include "util.h"
 
 // Variable initialization can be done here
 Controller::Controller()
@@ -17,8 +18,16 @@ void Controller::setup()
 void Controller::loop()
 {
     // Main code here
-    char c = LGSerial::get();
-    LGSerial::put("You sent: ");
-    LGSerial::put(c);
-    LGSerial::put("\r\n");
+    LGSerial::print(millis());
+    sleep(100);
+    // if(LGSerial::available()) {
+    //     char c = LGSerial::get();
+    //     LGSerial::put("You sent: ");
+    //     LGSerial::put(c);
+    //     LGSerial::put("\r\n");
+
+    // } else {
+    //     LGSerial::put("Nope\r\n");
+    //     sleep(100);
+    // }
 }

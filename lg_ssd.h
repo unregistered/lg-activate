@@ -26,3 +26,4 @@ void update_ssd0(int ssd_val);
 void update_ssd1(int ssd_val);
 void update_LED(int status);
 void update_relay(int status);
+void init_SSDs();

@@ -1,4 +1,30 @@
 #include "lg_ssd.h"
+#include "util.h"
+
+void init_SSDs() {
+	DDRB |= 1 << DDB0;
+	DDRB |= 1 << DDB1;
+	DDRB |= 1 << DDB2;
+	DDRB |= 1 << DDB3;
+	DDRB |= 1 << DDB4;
+	DDRD |= 1 << DDD2;
+	DDRD |= 1 << DDD3;
+	DDRD |= 1 << DDD4;
+	DDRD &= ~(1 << DDD5);		//set PORTD bit 5 for input(?)
+	DDRD |= 1 << DDD6;//for testing reading the  button
+
+	//set io pins to 0 or 1
+	PORTB &= ~(1 << PB0); // Set LEDR to 0
+	PORTB &= ~(1 << PB1); //LEDG to 0
+	PORTB &= ~(1 << PB2); //LEDB to 0
+
+	PORTB &= ~(1 << PB3);//shift reg input 0
+	PORTB &= ~(1 << PB4);//shift reg input 1
+	PORTD |= 1 << PD2;  //PD2 clears shift registers, want set to 1
+	PORTD &= ~(1 << PD3);//clk to 0
+	PORTD &= ~(1 << PD4);//clk to 0
+	PORTD &= ~(1 << PD6);
+}
 
 void update_relay(int status){
 	if (status == 0) {	//relay is off
@@ -6,7 +32,7 @@ void update_relay(int status){
 	}
 	else {	//status == 1
 		PORTD &= ~(1 << PD6);	//turns relay on
-	}	
+	}
 }//end update_relay
 
 
@@ -25,11 +51,11 @@ void update_LED(int mode){
 		PORTB &= ~(1 << PB2);
 	}
 	else { //mode = 2	//SYNCING
-		PORTB &= ~(1 << PB0); 
+		PORTB &= ~(1 << PB0);
 		PORTB &= ~(1 << PB1);
 		PORTB |= 1 << PB2;
-	}  
-	
+	}
+
 }//end update_LED
 
 
@@ -74,18 +100,18 @@ void reset_SSDs(){
 	PORTD &= ~(1 << PD4);
     PORTB |= 1 << PB3;
 	PORTB |= 1 << PB4;
-	PORTD |= 1 << PD3;	
+	PORTD |= 1 << PD3;
 	PORTD |= 1 << PD4;
 }
 
 void spin_SSDs(int times){
 	int i = 0;
-	
+
 	//first turn all segments "off" by sending 1's to all of them
 	reset_SSDs();
-	_delay_ms(500);
-	
-	
+	sleep(500);
+
+
 	for (; i<times; i++){
 		//a
 		reset_SSDs();
@@ -95,8 +121,8 @@ void spin_SSDs(int times){
 		PORTB &= ~(1 << PB4);//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		_delay_ms(100);
-		
+		sleep(100);
+
 		//b
 		reset_SSDs();
 		PORTD &= ~(1 << PD3);
@@ -111,8 +137,8 @@ void spin_SSDs(int times){
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		_delay_ms(100);
-		
+		sleep(100);
+
 		//c
 		reset_SSDs();
 		PORTD &= ~(1 << PD3);
@@ -121,22 +147,22 @@ void spin_SSDs(int times){
 		PORTB &= ~(1 << PB4);//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		
+
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		
+
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		_delay_ms(100);
-		
+		sleep(100);
+
 		//d
 		reset_SSDs();
 		PORTD &= ~(1 << PD3);
@@ -145,29 +171,29 @@ void spin_SSDs(int times){
 		PORTB &= ~(1 << PB4);//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		
+
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		
+
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		
+
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		_delay_ms(100);
-		
+		sleep(100);
+
 		//e
 		reset_SSDs();
 		PORTD &= ~(1 << PD3);
@@ -176,36 +202,36 @@ void spin_SSDs(int times){
 		PORTB &= ~(1 << PB4);//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		
+
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		
+
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		
+
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		
+
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		_delay_ms(100);
-		
+		sleep(100);
+
 		//f
 		reset_SSDs();
 		PORTD &= ~(1 << PD3);
@@ -214,45 +240,45 @@ void spin_SSDs(int times){
 		PORTB &= ~(1 << PB4);//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		
+
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		
+
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		
+
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		
+
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		
+
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		_delay_ms(100);
+		sleep(100);
 	}//endfor
-	
-	
+
+
 }
 
 
@@ -271,7 +297,7 @@ void update_ssd0(int ssd_val){
 		Display3_SSD0();
 	}
 	else if (ssd_val == 4){
-		Display4_SSD0();	
+		Display4_SSD0();
 	}
 	else if (ssd_val == 5){
 		Display5_SSD0();
@@ -305,7 +331,7 @@ void update_ssd1(int ssd_val){
 		Display3_SSD1();
 	}
 	else if (ssd_val == 4){
-		Display4_SSD1();	
+		Display4_SSD1();
 	}
 	else if (ssd_val == 5){
 		Display5_SSD1();
@@ -322,7 +348,7 @@ void update_ssd1(int ssd_val){
 	else {  //ssd_val == 9
 		Display9_SSD1();
 	}
-	
+
 }
 
 //////function to write 0 to ssd0:

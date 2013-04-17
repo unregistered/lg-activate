@@ -23,6 +23,7 @@ void Controller::setup()
 
 void Controller::loop()
 {
+    network.set_mode(LGNETWORK_OPERATE);
     // if(millis() % 1000 == 0) {
 
     // }

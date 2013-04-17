@@ -9,30 +9,8 @@ Controller::Controller()
 // This runs once during program startup
 void Controller::setup()
 {
-	/* insert your hardware initialization here */
-	DDRB |= 1 << DDB0;
-	DDRB |= 1 << DDB1;
-	DDRB |= 1 << DDB2;
-	DDRB |= 1 << DDB3;
-	DDRB |= 1 << DDB4;
-	DDRD |= 1 << DDD2;
-	DDRD |= 1 << DDD3;
-	DDRD |= 1 << DDD4;
-	DDRD &= ~(1 << DDD5);		//set PORTD bit 5 for input(?)
-	DDRD |= 1 << DDD6;//for testing reading the  button
-	
-	//set io pins to 0 or 1
-	PORTB &= ~(1 << PB0); // Set LEDR to 0
-	PORTB &= ~(1 << PB1); //LEDG to 0
-	PORTB &= ~(1 << PB2); //LEDB to 0
-	
-	PORTB &= ~(1 << PB3);//shift reg input 0
-	PORTB &= ~(1 << PB4);//shift reg input 1
-	PORTD |= 1 << PD2;  //PD2 clears shift registers, want set to 1
-	PORTD &= ~(1 << PD3);//clk to 0
-	PORTD &= ~(1 << PD4);//clk to 0
-	PORTD &= ~(1 << PD6);
-	
+	init_SSDs();
+
 	//modify these to read from remote,
 	//if data is not already contained in them
 	int ssd0 = 0;
@@ -43,20 +21,20 @@ void Controller::setup()
 	int read_status = 1;
 	update_ssd0(ssd0);
 	update_ssd1(ssd1);
-  
+
 }//end setup
 
 // This runs continuously in a loop.
 void Controller::loop()
 {
-  	
-	
+
+
 	//read from wireless, see if ssd or mode changes
 	//if the ssd or mode is different from before,
 	//update it
-	
+
 	//	_delay_ms(10000);
-	
+
 	//if button is pressed
 	if ((bit_is_clear(PIND,5))){//PD5, the button pin, is pressed
 		//check to see if still depressed for 5+ seconds:
@@ -65,23 +43,23 @@ void Controller::loop()
 			//button has been selected for 5+ seconds
 			//send reset signal to base station
 			update_LED(2);	//turn led blue
-			
+
 			update_relay(0);
 			spin_SSDs(10);	//spin SSDs
-			
+
 			//after sending sync signal, read ssd values and status from base station
 			//update ssds
 			//update relay
 			//update led to on or off
 			update_LED(1);	//turn led green, for debgging, remove this
 			update_relay(1);
-			
+
 		}
 	}
-	
-	
-/*	
-	//after checking button input, now we can check if receiving wireless		
+
+
+/*
+	//after checking button input, now we can check if receiving wireless
 	if (0 == 1){	//read from wireless
 		//read status
 		//read ssd0
@@ -100,13 +78,13 @@ void Controller::loop()
 			ssd1 = read_ssd1;
 		}
 	}//end if read from wireless
-*/	
-	
+*/
+
 	_delay_ms(100);
-	
-	update_ssd0(1);
-	update_ssd1(1);
-	
-	
-    
+
+	update_ssd0(9);
+	update_ssd1(9);
+
+
+
 }

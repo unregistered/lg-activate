@@ -1,4 +1,6 @@
 #include "controller_serialtestclient.h"
+#include "lg_ssd.h"
+#include "util.h"
 
 // Variable initialization can be done here
 Controller::Controller()
@@ -10,21 +12,30 @@ Controller::Controller()
 void Controller::setup()
 {
 	// Setup code here
+    init_SSDs();
     LGSerial::init();
 
     network.set_mode(LGNETWORK_DISCOVER);
-
-    // network.loop();
 }
 
 // This runs continuously in a loop.
 void Controller::loop()
 {
     // Main code here
+    char buf[5];
+    byte_to_asciis(buf, LGNetwork::myShortAddr);
+    buf[4] = 0;
+    buf[2] = '\r';
+    buf[3] = '\n';
+    LGSerial::print(buf);
 
-    if(LGNetwork::myShortAddr == -1) {
+    if(LGNetwork::myShortAddr == 0xff) {
         // We still done't have an address
+        LGSerial::print("No luck");
         network.loop();
+        sleep(100);
+        update_ssd0(0);
+        update_ssd1(0);
     } else {
         // We were just assigned an address
         // network.set_mode(LGNETWORK_OPERATE);
@@ -32,9 +43,11 @@ void Controller::loop()
 
         if(LGSerial::available()) {
             // We should be given a mode
-            uint8_t mode = LGSerial::get();
+            // uint8_t mode = LGSerial::get();
             // Do things with mode
-
+            sleep(100);
+            update_ssd0(9);
+            update_ssd1(8);
         }
     }
 

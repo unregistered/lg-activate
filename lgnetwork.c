@@ -31,11 +31,16 @@ typedef union {
 LGNetwork::LGNetwork() : currentMode(LGNETWORK_INIT) {
     #ifdef USE_NETWORK_SERVER
     next_client.identifier = 0;
+
+    // Populate table
+    for(int i=0; i < sizeof(LGNetwork::ap_table_cache); i++) {
+        LGNetwork::ap_table_cache[i] = LGDB::read_ap_table_entry(i);
+    }
     #endif
 
     #ifdef USE_NETWORK_CLIENT
-    LGNetwork::myShortAddr = -1;
-    LGNetwork::baseUUID = 0;
+    LGNetwork::myShortAddr = LGDB::read_address();
+    LGNetwork::baseUUID = LGDB::read_basestation_address();
     #endif
 }
 
@@ -67,19 +72,34 @@ void LGNetwork::set_mode(network_mode_t newMode)
 
             // Get my uuid
             // Read the UUID (serial address)
-            // LGSerial::put("ATSH\r\n"); // Starting with the upper bits
-            // unsigned int high_bytes_to_write = LGSerial::get(response_buf, '\r', 16) - 1;
-            // char *p = (LGNetwork::myUUID)
-            // for(int i=0; i < high_bytes_to_write; i++) {
-            //     // Convert to bin
+            char ascii_id[17];
+            for(int i=0; i < sizeof(ascii_id); i++) ascii_id[i] = '0';
+            ascii_id[16] = 0;
 
-            // }
-            // memcpy(myUUID.parts.high + (8 - high_bytes_to_write), response_buf, high_bytes_to_write);
+            LGSerial::put("ATSH\r\n"); // Starting with the upper bits
+            unsigned int high_chars_to_write = LGSerial::get(response_buf, '\r', 16) - 1;
+            memcpy(ascii_id + (8 - high_chars_to_write), response_buf, high_chars_to_write);
 
-            // // Now the lower bits
-            // LGSerial::put("ATSL\r\n");
-            // unsigned int low_bytes_to_write = LGSerial::get(response_buf, '\r', 16) - 1;
-            // memcpy(myUUID.parts.low + (8 - low_bytes_to_write), response_buf, low_bytes_to_write);
+            // Now the lower bits
+            LGSerial::put("ATSL\r\n");
+            unsigned int low_chars_to_write = LGSerial::get(response_buf, '\r', 16) - 1;
+            memcpy(ascii_id + 8 + (8 - low_chars_to_write), response_buf, low_chars_to_write);
+            LGSerial::put("Ascii_id: ");
+            LGSerial::put(ascii_id);
+            LGSerial::put("\r\n");
+
+            while(LGSerial::available()) {
+                LGSerial::get();
+            }
+
+            uint8_t *p = (uint8_t*)&(LGNetwork::myUUID); // Ptr to current byte
+
+            for(int i=0; i < 16; i+=2) {
+                // Convert to bin
+                uint8_t byte = asciis_to_byte(response_buf + i);
+                *(p++) = byte;
+            }
+
 
         #elif USE_NETWORK_CLIENT
             cmd_set_short_address(-1);
@@ -130,64 +150,99 @@ void LGNetwork::loop()
                     cmd_set_target_long_address(next_client.address);
                     cmd_exit();
 
+                    // Packet header
+                    LGSerial::put("DATA-DHCP");
+
                     // Send the packet body
                     for(int i=0; i < sizeof(dhcp_packet_t); i++) {
                         LGSerial::put(p.bytes[i]);
                     }
 
-                    // We clear it since we're done
-                    pending_clear();
+                    char response = 0;
+                    unsigned long start_time = millis();
+                    while(!LGSerial::available()) {
+                        // Wait for a response
+                        if(LGSerial::available()) {
+                            response = LGSerial::get();
+                        }
 
-                    // Now commit it
-                    LGNetwork::ap_table_cache[next_address] = (uint8_t)next_client.identifier;
-                    // Persist to EEPROM
+                        if(millis() > (start_time + 3000)) {
+                            LGSerial::print("Give up, no response.");
+                            break; // Give up
+                        }
+                    }
+
+                    if(response) {
+                        // We clear it since we're done
+                        pending_clear();
+
+                        // Now commit it
+                        LGNetwork::ap_table_cache[next_address] = (uint8_t)next_client.identifier;
+                        // Persist to EEPROM
+                    }
+
                 }
 
             }
 
         #endif
 
+            LGSerial::print("Or here");
+
         #if USE_NETWORK_CLIENT
 
             if(LGSerial::available()) {
-                // Receive packet
-                dhcp_packet_t p;
-                for(int i=0; i < sizeof(dhcp_packet_t); i++) {
-                    p.bytes[i] = LGSerial::get();
+                char byte = LGSerial::get();
+                bool matches = true;
+                if(byte == 'D') {
+                    char header[] = "DATA-DHCP";
+                    for(int i=1; i < sizeof(header); i++) {
+                        char next_byte;
+                        bool succeeded = LGSerial::get_with_timeout(&next_byte, 100);
+                        if(!succeeded) {
+                            matches = false; break;
+                        }
+
+                        if(next_byte != header[i]) {
+                            matches = false; break;
+                        }
+                    }
                 }
 
-                // Set my vars
-                LGNetwork::baseUUID = p.packet.base_address;
-                LGNetwork::myShortAddr = p.packet.short_address;
+                if(matches) {
+                    // Receive packet
+                    dhcp_packet_t p;
+                    for(int i=0; i < sizeof(dhcp_packet_t); i++) {
+                        p.bytes[i] = LGSerial::get();
+                        if(p.bytes[i] == 0 && i == 0) {
+                            return;
+                        }
+                    }
 
-                // Persist to eeprom TODO
+                    // Set my vars
+                    LGNetwork::baseUUID = p.packet.base_address;
+                    LGNetwork::myShortAddr = p.packet.short_address;
+
+                    // Persist to eeprom
+                    LGDB::write_address(LGNetwork::myShortAddr);
+                    LGDB::write_basestation_address(LGNetwork::baseUUID);
+
+                    // Reply to the server
+                    cmd_enter();
+                    cmd_set_target_long_address(LGNetwork::baseUUID);
+                    cmd_set_short_address(LGNetwork::myShortAddr);
+                    cmd_exit();
+                    LGSerial::put('1');
+                }
             }
         #endif
     } else { // LGNETWORK_OPERATE
 
     }
+
 }
-// void LGNetwork::setup_server()
-// {
-//     xbee_setup(0, -1);
 
-//     // Get AP entries
-//     for(int i=0; i < sizeof(ap_table_cache); i++)
-//     {
-//         ap_table_cache[i] = LGDB::read_ap_table_entry(i);
-//     }
-// }
 
-// void LGNetwork::setup_client(uint16_t id)
-// {
-
-// }
-
-// void LGNetwork::setup_new_client()
-// {
-//     // Put ourself in searching mode
-//     xbee_setup(0, -1);
-// }
 
 void LGNetwork::cmd_enter()
 {
@@ -203,8 +258,8 @@ void LGNetwork::cmd_exit()
 {
     LGSerial::put("ATAC\r\n");
     LGSerial::get(response_buf, 3);
-    LGSerial::put("ATWR\r\n");
-    LGSerial::get(response_buf, 3);
+    // LGSerial::put("ATWR\r\n");
+    // LGSerial::get(response_buf, 3);
     LGSerial::put("ATCN\r\n");
     LGSerial::get(response_buf, 3);
 }

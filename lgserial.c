@@ -83,6 +83,18 @@ char LGSerial::get()
 	return UDR0 ;
 }
 
+bool LGSerial::get_with_timeout(char* c, unsigned int timeout_ms)
+{
+    unsigned long start = millis();
+    while(!LGSerial::available()) {
+        // Wait
+        if(millis() > (start + timeout_ms))
+            return false;
+    }
+    *c = LGSerial::get();
+    return true;
+}
+
 int LGSerial::get(char* buf, int len)
 {
     for(int i=0; i<len; i++) {

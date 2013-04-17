@@ -51,6 +51,7 @@ private:
 
     void cmd_get_one_unassociated_device();
 
+
 #ifdef USE_NETWORK_SERVER
     bool pending_is_empty();
     void pending_clear();
