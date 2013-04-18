@@ -187,8 +187,6 @@ void LGNetwork::loop()
 
         #endif
 
-            LGSerial::print("Or here");
-
         #if USE_NETWORK_CLIENT
 
             if(LGSerial::available()) {

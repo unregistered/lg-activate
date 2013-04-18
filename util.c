@@ -41,13 +41,15 @@ void init_timer()
 
    // Enable the compare match interrupt
    TIMSK1 |= (1 << OCIE1A);
-
-   // PC0/Analog 0 to Output
-   DDRC |= (1 << PC0);
    #endif
 
    #ifdef attiny4313
+   TCCR1B |= (1 << WGM12) | (1 << CS11);
 
+   OCR1AH = (CTC_MATCH_OVERFLOW >> 8);
+   OCR1AL = CTC_MATCH_OVERFLOW;
+
+   TIMSK |= (1 << OCIE1A);
    #endif
 
    // Now enable global interrupts
