@@ -40,6 +40,9 @@ db: clean main.hex
 hexstr: COMPILE += -DCONTROLLER_FILE='"controller_hexstr.c"' -DUSE_NETWORK_SERVER
 hexstr: clean main.hex
 
+adapter: COMPILE += -DCONTROLLER_FILE='"controller_adapter.c"' -DUSE_NETWORK_CLIENT -DCLIENT_ACTUATOR
+adapter: clean main.hex
+
 .c.o:
 	$(COMPILE) -c $< -o $@
 

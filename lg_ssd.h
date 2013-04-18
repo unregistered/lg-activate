@@ -21,7 +21,7 @@ void Display8_SSD1();
 void Display9_SSD0();
 void Display9_SSD1();
 void reset_SSDs();
-void spin_SSDs(int times);
+void spin_SSDs();
 void update_ssd0(int ssd_val);
 void update_ssd1(int ssd_val);
 void update_LED(int status);

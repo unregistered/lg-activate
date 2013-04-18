@@ -104,16 +104,12 @@ void reset_SSDs(){
 	PORTD |= 1 << PD4;
 }
 
-void spin_SSDs(int times){
-	int i = 0;
-
+void spin_SSDs(){
 	//first turn all segments "off" by sending 1's to all of them
-	reset_SSDs();
-	sleep(500);
-
-
-	for (; i<times; i++){
-		//a
+	//if millis()%n is x contained in 0-5, display a particular segment
+	unsigned long time = millis()/100;
+	if ( time % 6 == 0 ){
+		//display segment a
 		reset_SSDs();
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
@@ -121,8 +117,8 @@ void spin_SSDs(int times){
 		PORTB &= ~(1 << PB4);//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		sleep(100);
-
+	}
+	else if ( time % 6 == 1 ){
 		//b
 		reset_SSDs();
 		PORTD &= ~(1 << PD3);
@@ -137,8 +133,8 @@ void spin_SSDs(int times){
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		sleep(100);
-
+	}
+	else if ( time % 6 == 2 ){
 		//c
 		reset_SSDs();
 		PORTD &= ~(1 << PD3);
@@ -147,22 +143,22 @@ void spin_SSDs(int times){
 		PORTB &= ~(1 << PB4);//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-
+		
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-
+		
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
-		PORTD |= 1 << PD4;
-		sleep(100);
-
+		PORTD |= 1 << PD4;		
+	}
+	else if (time % 6 == 3 ){
 		//d
 		reset_SSDs();
 		PORTD &= ~(1 << PD3);
@@ -171,29 +167,29 @@ void spin_SSDs(int times){
 		PORTB &= ~(1 << PB4);//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-
+		
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-
+		
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-
+		
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
-		PORTD |= 1 << PD4;
-		sleep(100);
-
+		PORTD |= 1 << PD4;		
+	}
+	else if ( time % 6 == 4 ){
 		//e
 		reset_SSDs();
 		PORTD &= ~(1 << PD3);
@@ -202,37 +198,36 @@ void spin_SSDs(int times){
 		PORTB &= ~(1 << PB4);//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-
+		
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-
+		
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-
+		
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-
+		
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-		sleep(100);
-
-		//f
+	}
+	else {	//(time % 6 == 5)
 		reset_SSDs();
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
@@ -240,45 +235,42 @@ void spin_SSDs(int times){
 		PORTB &= ~(1 << PB4);//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-
+		
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-
+		
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-
+		
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-
+		
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
 		PORTD |= 1 << PD4;
-
+		
 		PORTD &= ~(1 << PD3);
 		PORTD &= ~(1 << PD4);
 		PORTB |= 1 << PB3;//to ssd0
 		PORTB |= 1 << PB4;//to ssd1
 		PORTD |= 1 << PD3;
-		PORTD |= 1 << PD4;
-		sleep(100);
-	}//endfor
-
-
+		PORTD |= 1 << PD4;		
+	}
 }
 
 
