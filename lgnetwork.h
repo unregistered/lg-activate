@@ -38,7 +38,7 @@ public:
     void set_mode(network_mode_t newMode);
     void loop(); // Call this periodically
 
-public:
+private:
     void cmd_enter();
     void cmd_exit();
 

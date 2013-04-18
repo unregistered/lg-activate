@@ -241,15 +241,10 @@ void LGNetwork::loop()
 
 void LGNetwork::cmd_enter()
 {
-    long time_to_wait;
     if(currentMode == LGNETWORK_INIT)
-        time_to_wait = (LGSerial::last_command + 1100) - millis(); // Unititialized xbees expect 1s wait
+        sleep(1100);
     else
-        time_to_wait = (LGSerial::last_command + SAFE_GUARD_TIME) - millis();
-
-
-    if(time_to_wait > 0)
-        sleep(time_to_wait); // We need to wait longer to satisfy the guard time
+        sleep(SAFE_GUARD_TIME);
 
     LGSerial::put("+++");
     LGSerial::get(response_buf, 3); // Expect response 'OK\r'

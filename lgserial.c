@@ -3,12 +3,8 @@
 #include <stdio.h>
 #include "util.h"
 
-unsigned long LGSerial::last_command;
-
 void LGSerial::init()
 {
-    LGSerial::last_command = 0;
-
     int ubrr = 63; // We've determined this, let's not change it
 
     #ifdef atmega168
@@ -48,8 +44,6 @@ void LGSerial::put(char ch)
     while (( UCSRA & (1 << UDRIE)) == 0) ;
     UDR = ch;
     #endif
-
-    LGSerial::last_command = millis();
 }
 
 void LGSerial::put(char* str)
