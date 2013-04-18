@@ -47,10 +47,7 @@ LGNetwork::LGNetwork() : currentMode(LGNETWORK_INIT) {
 void LGNetwork::set_mode(network_mode_t newMode)
 {
     cmd_enter();
-
-    cmd_restore_factory();
-    cmd_set_network_id();
-
+    cmd_setup();
     cmd_set_channel(newMode);
 
     if(newMode == LGNETWORK_OPERATE) {
@@ -166,7 +163,7 @@ void LGNetwork::loop()
                             response = LGSerial::get();
                         }
 
-                        if(millis() > (start_time + 3000)) {
+                        if(millis() > (start_time + 3*SAFE_GUARD_TIME)) {
                             LGSerial::print("Give up, no response.");
                             break; // Give up
                         }
@@ -244,34 +241,33 @@ void LGNetwork::loop()
 
 void LGNetwork::cmd_enter()
 {
-    // long time_to_wait = millis() - (LGSerial::last_command + 1100);
-    // if(time_to_wait > 0)
-    //     sleep(time_to_wait); // We need to wait longer to satisfy the guard time
-    sleep(1100);
+    if(currentMode == LGNETWORK_INIT)
+        sleep(1100);
+    else
+        sleep(SAFE_GUARD_TIME);
+
     LGSerial::put("+++");
     LGSerial::get(response_buf, 3); // Expect response 'OK\r'
 }
 
 void LGNetwork::cmd_exit()
 {
-    LGSerial::put("ATAC\r\n");
+    LGSerial::put("ATAC\r\n"); // Apply changes
     LGSerial::get(response_buf, 3);
-    // LGSerial::put("ATWR\r\n");
+    // LGSerial::put("ATWR\r\n"); // Write to memory
     // LGSerial::get(response_buf, 3);
     LGSerial::put("ATCN\r\n");
     LGSerial::get(response_buf, 3);
 }
 
-void LGNetwork::cmd_restore_factory()
+void LGNetwork::cmd_setup()
 {
     LGSerial::put("ATRE\r\n"); // Restore to factory settings
     LGSerial::get(response_buf, 3); // OK\r
-}
-
-void LGNetwork::cmd_set_network_id()
-{
     LGSerial::put("ATID" LG_ATID "\r\n"); // Set network ID to LG_ATID
     LGSerial::get(response_buf, 3); // OK\r
+    LGSerial::put("ATGT" GUARD_TIME "\r\n"); // Set guard time
+    LGSerial::get(response_buf, 3);
 }
 
 void LGNetwork::cmd_set_channel(network_mode_t mode)

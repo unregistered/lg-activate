@@ -34,7 +34,6 @@ public:
   // Clear serial buffer
   static void clear();
 
-  static unsigned long last_command;
 // private:
 //   LGSerial (arguments);
 //   virtual ~LGSerial ();

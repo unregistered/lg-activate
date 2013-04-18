@@ -8,6 +8,9 @@
 #define OPERATING_CHANNEL "0D"
 #define DISCOVERY_CHANNEL "0F"
 
+#define GUARD_TIME "64" // 1000
+#define SAFE_GUARD_TIME 110
+
 typedef enum {
     LGNETWORK_INIT,
     LGNETWORK_DISCOVER,
@@ -39,8 +42,7 @@ private:
     void cmd_enter();
     void cmd_exit();
 
-    void cmd_restore_factory();
-    void cmd_set_network_id();
+    void cmd_setup();
     void cmd_set_channel(network_mode_t mode);
 
     void cmd_set_short_address(uint8_t);
