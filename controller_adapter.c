@@ -4,7 +4,9 @@
 #include "lgserial.h"
 #include "lgnetwork.h"
 #include "lg_ssd.h"
+#include "lgdb.h"
 static LGNetwork network;
+uint8_t mode;
 
 // Variable initialization can be done here
 Controller::Controller()
@@ -16,18 +18,25 @@ Controller::Controller()
 void Controller::setup()
 {
 	LGSerial::init();
-	return;
-	LGSerial::init();
 	init_SSDs();
 	
 	if ( LGNetwork::myShortAddr == 0xFF ){	//means address is not in memory
 		network.set_mode(LGNETWORK_DISCOVER);
+		mode = 1;
 	}
+	else {
+		mode = LGDB::read_mode();
+	}
+	update_LED(mode);
+	update_relay(mode);	
 }
 
 // This runs continuously in a loop.
 void Controller::loop()
 {
-	//spin_SSDs();
-	LGSerial::print(millis());
+	if (network.currentMode == LGNETWORK_DISCOVER) {
+		spin_SSDs();
+		network.loop();
+	}
+	
 }
