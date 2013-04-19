@@ -9,7 +9,7 @@
 #define DISCOVERY_CHANNEL "0F"
 
 #define GUARD_TIME "64" // 1000
-#define SAFE_GUARD_TIME 110
+#define SAFE_GUARD_TIME 1100
 
 typedef enum {
     LGNETWORK_INIT,

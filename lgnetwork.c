@@ -242,7 +242,7 @@ void LGNetwork::loop()
 void LGNetwork::cmd_enter()
 {
     if(currentMode == LGNETWORK_INIT)
-        sleep(1100);
+        sleep(1100); // The uninitialized module has a 1s wait time
     else
         sleep(SAFE_GUARD_TIME);
 

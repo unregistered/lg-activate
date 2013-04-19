@@ -16,14 +16,15 @@ void Controller::setup()
 
     unsigned long long start_time = millis();
 
-    while(millis() < (start_time + 10000)) { // 10 second associate time
-        network.loop();
-    }
+    // while(millis() < (start_time + 10000)) { // 10 second associate time
+    //     network.loop();
+    // }
 
 }
 
 void Controller::loop()
 {
+    LGSerial::put('D');
     return;
     network.set_mode(LGNETWORK_OPERATE);
     // if(millis() % 1000 == 0) {

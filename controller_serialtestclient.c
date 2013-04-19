@@ -21,35 +21,37 @@ void Controller::setup()
 // This runs continuously in a loop.
 void Controller::loop()
 {
+    network.loop();
+
     // Main code here
-    char buf[5];
-    byte_to_asciis(buf, LGNetwork::myShortAddr);
-    buf[4] = 0;
-    buf[2] = '\r';
-    buf[3] = '\n';
-    LGSerial::print(buf);
+    // char buf[5];
+    // byte_to_asciis(buf, LGNetwork::myShortAddr);
+    // buf[4] = 0;
+    // buf[2] = '\r';
+    // buf[3] = '\n';
+    // LGSerial::print(buf);
 
-    if(LGNetwork::myShortAddr == 0xff) {
-        // We still done't have an address
-        LGSerial::print("No luck");
-        network.loop();
-        sleep(100);
-        update_ssd0(0);
-        update_ssd1(0);
-    } else {
-        // We were just assigned an address
-        // network.set_mode(LGNETWORK_OPERATE);
-        // Display SSDs
+    // if(LGNetwork::myShortAddr == 0xff) {
+    //     // We still done't have an address
+    //     LGSerial::print("No luck");
+    //     network.loop();
+    //     sleep(100);
+    //     update_ssd0(0);
+    //     update_ssd1(0);
+    // } else {
+    //     // We were just assigned an address
+    //     // network.set_mode(LGNETWORK_OPERATE);
+    //     // Display SSDs
 
-        if(LGSerial::available()) {
-            // We should be given a mode
-            // uint8_t mode = LGSerial::get();
-            // Do things with mode
-            sleep(100);
-            update_ssd0(9);
-            update_ssd1(8);
-        }
-    }
+    //     if(LGSerial::available()) {
+    //         // We should be given a mode
+    //         // uint8_t mode = LGSerial::get();
+    //         // Do things with mode
+    //         sleep(100);
+    //         update_ssd0(9);
+    //         update_ssd1(8);
+    //     }
+    // }
 
     // LGSerial::put('a');
     // sleep(1000);
