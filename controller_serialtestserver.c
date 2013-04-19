@@ -11,6 +11,7 @@ Controller::Controller()
 void Controller::setup()
 {
 	LGSerial::init(); // (9830400/(16*9600))-1;
+
     network.set_mode(LGNETWORK_DISCOVER);
 
     unsigned long long start_time = millis();
@@ -23,6 +24,7 @@ void Controller::setup()
 
 void Controller::loop()
 {
+    return;
     network.set_mode(LGNETWORK_OPERATE);
     // if(millis() % 1000 == 0) {
 
