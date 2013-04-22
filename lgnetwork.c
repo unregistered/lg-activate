@@ -130,7 +130,8 @@ void LGNetwork::loop()
 
                 cmd_exit();
             } else {
-                LGSerial::print("Found client.");
+                LGSerial::print("Found client:");
+                LGSerial::put("Address: "); LGSerial::print_hex(next_client.address);
 
                 // We can operate on the pending device, by assigning it an address
                 int8_t next_address = (int8_t)get_next_free_address();
@@ -143,9 +144,9 @@ void LGNetwork::loop()
                     p.packet.short_address = next_address;
 
                     // Point ourselves to our target.
-                    cmd_enter();
-                    cmd_set_target_long_address(next_client.address);
-                    cmd_exit();
+                    // cmd_enter();
+                    // cmd_set_target_long_address(next_client.address);
+                    // cmd_exit();
 
                     // Packet header
                     LGSerial::put("DATA-DHCP");
@@ -187,22 +188,7 @@ void LGNetwork::loop()
         #if USE_NETWORK_CLIENT
 
             if(LGSerial::available()) {
-                char byte = LGSerial::get();
-                bool matches = true;
-                if(byte == 'D') {
-                    char header[] = "DATA-DHCP";
-                    for(int i=1; i < sizeof(header); i++) {
-                        char next_byte;
-                        bool succeeded = LGSerial::get_with_timeout(&next_byte, 100);
-                        if(!succeeded) {
-                            matches = false; break;
-                        }
-
-                        if(next_byte != header[i]) {
-                            matches = false; break;
-                        }
-                    }
-                }
+                bool matches = scan_for_header("DATA-DHCP", 100);
 
                 if(matches) {
                     // Receive packet
@@ -266,8 +252,8 @@ void LGNetwork::cmd_setup()
     LGSerial::get(response_buf, 3); // OK\r
     LGSerial::put("ATID" LG_ATID "\r\n"); // Set network ID to LG_ATID
     LGSerial::get(response_buf, 3); // OK\r
-    LGSerial::put("ATGT" GUARD_TIME "\r\n"); // Set guard time
-    LGSerial::get(response_buf, 3);
+    // LGSerial::put("ATGT" GUARD_TIME "\r\n"); // Set guard time
+    // LGSerial::get(response_buf, 3);
 }
 
 void LGNetwork::cmd_set_channel(network_mode_t mode)
@@ -283,7 +269,14 @@ void LGNetwork::cmd_set_channel(network_mode_t mode)
 void LGNetwork::cmd_set_short_address(uint8_t addr)
 {
     char sendbuf[] = "ATMY 0000\r\n";
-    byte_to_asciis(sendbuf + 7, addr);
+    if(addr == 0xff) {
+        sendbuf[5] = 'F';
+        sendbuf[6] = 'F';
+        sendbuf[7] = 'F';
+        sendbuf[8] = 'F';
+    } else {
+        byte_to_asciis(sendbuf + 7, addr);
+    }
     LGSerial::put(sendbuf);
     LGSerial::get(response_buf, 3);
 }
@@ -294,7 +287,14 @@ void LGNetwork::cmd_set_target_short_address(uint8_t addr)
     LGSerial::get(response_buf, 3);
 
     char sendbuf[] = "ATDL 0000\r\n";
-    byte_to_asciis(sendbuf + 7, addr);
+    if(addr == 0xff) {
+        sendbuf[5] = 'F';
+        sendbuf[6] = 'F';
+        sendbuf[7] = 'F';
+        sendbuf[8] = 'F';
+    } else {
+        byte_to_asciis(sendbuf + 7, addr);
+    }
     LGSerial::put(sendbuf);
     LGSerial::get(response_buf, 3);
 }
@@ -406,6 +406,38 @@ void LGNetwork::cmd_set_coordinator(bool isCoordinator)
 
         LGSerial::put("ATA1 04\r\n"); // Autoassociate
         LGSerial::get(response_buf, 3);
+    }
+
+}
+
+bool LGNetwork::scan_for_header(char* signature, unsigned int timeout)
+{
+    unsigned long start_time = millis();
+
+    char *templ = signature;
+    while(true) {
+        if( (start_time + timeout) > millis() ) {
+            return false;
+        }
+
+        if(*templ == 0) {
+            // Null char
+            LGSerial::put('m');
+            return true;
+        }
+
+        if(LGSerial::available()) {
+            // We can get data
+            char c = LGSerial::get();
+            LGSerial::put(c);
+            if(c == *templ) {
+                LGSerial::put('o');
+                templ++;
+            } else {
+                LGSerial::put('b');
+                templ = signature;
+            }
+        }
     }
 
 }

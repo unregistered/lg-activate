@@ -21,7 +21,10 @@ void Controller::setup()
 // This runs continuously in a loop.
 void Controller::loop()
 {
-    network.loop();
+    // network.loop();
+    // char c = LGSerial::get();
+    // LGSerial::put(c);
+    sleep(1000);
 
     // Main code here
     // char buf[5];

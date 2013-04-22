@@ -13,18 +13,20 @@ void Controller::setup()
 	LGSerial::init(); // (9830400/(16*9600))-1;
 
     network.set_mode(LGNETWORK_DISCOVER);
+    // LGSerial::print("Ready");
 
     unsigned long long start_time = millis();
 
-    // while(millis() < (start_time + 10000)) { // 10 second associate time
-    //     network.loop();
-    // }
+    while(millis() < (start_time + 10000)) { // 10 second associate time
+        network.loop();
+    }
 
 }
 
 void Controller::loop()
 {
-    LGSerial::put('D');
+    LGSerial::put('F');
+    sleep(1000);
     return;
     network.set_mode(LGNETWORK_OPERATE);
     // if(millis() % 1000 == 0) {

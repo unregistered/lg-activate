@@ -53,6 +53,12 @@ private:
 
     void cmd_get_one_unassociated_device();
 
+    /**
+    * Searches for a header in incoming serial data
+    * @return whether the header was found
+    */
+    bool scan_for_header(char* signature, unsigned int timeout);
+
 
 #ifdef USE_NETWORK_SERVER
     bool pending_is_empty();
