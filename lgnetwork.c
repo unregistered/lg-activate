@@ -131,7 +131,6 @@ void LGNetwork::loop()
                 cmd_exit();
             } else {
                 LGSerial::print("Found client:");
-                LGSerial::put("Address: "); LGSerial::print_hex(next_client.address);
 
                 // We can operate on the pending device, by assigning it an address
                 int8_t next_address = (int8_t)get_next_free_address();

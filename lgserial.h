@@ -21,6 +21,7 @@ public:
   static void print(char*);
   static void print(int);
   static void clear_screen();
+  void print_hex(uint64_t);
 
   // Get data from the port
   static char get(); // Wait for data and return a byte

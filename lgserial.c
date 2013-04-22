@@ -66,6 +66,20 @@ void LGSerial::print(int n)
     print(str);
 }
 
+void LGSerial::print_hex(uint64_t num)
+{
+    char str[17];
+    str[16] = 0;
+
+    char *ptr = (char*)&(num);
+
+    for(int i=0; i<sizeof(uint64_t); i++) {
+        byte_to_asciis(str + i*2, *(ptr + i));
+    }
+
+    print(str);
+}
+
 void LGSerial::clear_screen()
 {
     LGSerial::put("\033[A\033[2K\033[A\033[2K");
