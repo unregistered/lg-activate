@@ -74,7 +74,14 @@ void LGSerial::clear_screen()
 char LGSerial::get()
 {
 	while ( !LGSerial::available() ) { ; }
+
+    #ifdef atmega168
 	return UDR0 ;
+    #endif
+
+    #ifdef attiny4313
+    return UDR;
+    #endif
 }
 
 bool LGSerial::get_with_timeout(char* c, unsigned int timeout_ms)
