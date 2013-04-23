@@ -21,10 +21,17 @@ void Controller::setup()
 // This runs continuously in a loop.
 void Controller::loop()
 {
-    // network.loop();
+    while(network.currentMode == LGNETWORK_DISCOVER) {
+        network.loop();
+    }
+
+    // LGSerial::print_hex(LGNetwork::baseUUID);
+    LGSerial::print(StackCount());
+
+    while(true);
+    // while(true) ;
     // char c = LGSerial::get();
     // LGSerial::put(c);
-    sleep(1000);
 
     // Main code here
     // char buf[5];

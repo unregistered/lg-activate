@@ -14,6 +14,11 @@ void Controller::setup()
 
     network.set_mode(LGNETWORK_DISCOVER);
     // LGSerial::print("Ready");
+    // while(true)
+    // {
+    //     LGSerial::put("DATA-DHCPaoeusnth");
+    //     sleep(100);
+    // }
 
     unsigned long long start_time = millis();
 
@@ -25,8 +30,10 @@ void Controller::setup()
 
 void Controller::loop()
 {
-    LGSerial::put('F');
-    sleep(1000);
+    network.loop();
+    // LGSerial::put("DATA-DHCP");
+    // LGSerial::put("aoeuaoeu");
+    // sleep(1000);
     return;
     network.set_mode(LGNETWORK_OPERATE);
     // if(millis() % 1000 == 0) {

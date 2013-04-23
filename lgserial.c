@@ -46,6 +46,20 @@ void LGSerial::put(char ch)
     #endif
 }
 
+void LGSerial::slow_put(char c)
+{
+    LGSerial::put(c);
+    sleep(25);
+}
+
+void LGSerial::slow_put(char* str)
+{
+    for(int i=0; str[i]; i++) {
+        LGSerial::put(str[i]);
+        sleep(25);
+    }
+}
+
 void LGSerial::put(char* str)
 {
     for(int i = 0; str[i]; i++) {
@@ -61,12 +75,25 @@ void LGSerial::print(char* str)
 
 void LGSerial::print(int n)
 {
+    #ifdef atmega168
     char str[16];
     sprintf(str, "%d", n);
     print(str);
+    #endif
+
+    #ifdef attiny4313
+    char* ptr = (char*)&n;
+    char str[2];
+    for(int i=sizeof(n) - 1; i >= 0; i--) {
+        byte_to_asciis(str, *(ptr + i));
+        LGSerial::put(str[0]);
+        LGSerial::put(str[1]);
+    }
+    LGSerial::put("\r\n");
+    #endif
 }
 
-void LGSerial::print_hex(uint64_t num)
+void LGSerial::print_hex(uint64_t &num)
 {
     char str[17];
     str[16] = 0;
@@ -74,7 +101,7 @@ void LGSerial::print_hex(uint64_t num)
     char *ptr = (char*)&(num);
 
     for(int i=0; i<sizeof(uint64_t); i++) {
-        byte_to_asciis(str + i*2, *(ptr + i));
+        byte_to_asciis( (str + i*2), *(ptr + i));
     }
 
     print(str);

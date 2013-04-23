@@ -16,12 +16,14 @@ public:
   // Send data to the serial port
   static void put(char*);
   static void put(char);
+  static void slow_put(char*);
+  static void slow_put(char);
 
   // Send data with carriage return
   static void print(char*);
   static void print(int);
   static void clear_screen();
-  void print_hex(uint64_t);
+  static void print_hex(uint64_t&);
 
   // Get data from the port
   static char get(); // Wait for data and return a byte

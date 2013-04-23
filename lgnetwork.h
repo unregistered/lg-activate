@@ -3,6 +3,7 @@
 
 #include "lgserial.h"
 #include "util.h"
+#include <avr/pgmspace.h>
 
 #define LG_ATID "3236"
 #define OPERATING_CHANNEL "0D"
@@ -14,7 +15,8 @@
 typedef enum {
     LGNETWORK_INIT,
     LGNETWORK_DISCOVER,
-    LGNETWORK_OPERATE
+    LGNETWORK_OPERATE,
+    LGNETWORK_DISCOVER_READY
 } network_mode_t;
 
 class LGNetwork
@@ -38,18 +40,22 @@ public:
     void set_mode(network_mode_t newMode);
     void loop(); // Call this periodically
 
-private:
+public:
     void cmd_enter();
+    void cmd_reset();
     void cmd_exit();
+    void cmd_persist();
 
     void cmd_setup();
     void cmd_set_channel(network_mode_t mode);
 
     void cmd_set_short_address(uint8_t);
     void cmd_set_target_short_address(uint8_t);
-    void cmd_set_target_long_address(uint64_t);
+    void cmd_set_target_long_address(const uint64_t &);
+    void cmd_set_long_address_to_basestation();
 
     void cmd_set_coordinator(bool isCoordinator);
+    void cmd_set_autoassociate(bool, bool);
 
     void cmd_get_one_unassociated_device();
 
@@ -68,7 +74,7 @@ private:
 #endif
 
 private:
-    char response_buf[16];
+    char response_buf[12];
 };
 
 #endif

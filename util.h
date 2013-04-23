@@ -6,14 +6,14 @@
 #include <avr/interrupt.h>
 #include <util/atomic.h>
 
+extern uint16_t StackCount();
+
 // Sleep for a variable amount of time
 void sleep(int ms);
 
 
 uint8_t asciis_to_byte(char *ascii_char);
 void byte_to_asciis(char *buf, uint8_t val);
-
-
 
 #define CTC_MATCH_OVERFLOW ((F_CPU / 1000) / 8)
 unsigned long millis ();
