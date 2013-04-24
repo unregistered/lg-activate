@@ -6,7 +6,13 @@
 #include "lg_ssd.h"
 #include "lgdb.h"
 static LGNetwork network;
-uint8_t mode;
+uint8_t system_mode;
+
+void display_short_address()
+{
+    update_ssd0(LGNetwork::myShortAddr);
+    update_ssd1(LGNetwork::myShortAddr >> 4);
+}
 
 // Variable initialization can be done here
 Controller::Controller()
@@ -19,24 +25,45 @@ void Controller::setup()
 {
 	LGSerial::init();
 	init_SSDs();
-	
+
 	if ( LGNetwork::myShortAddr == 0xFF ){	//means address is not in memory
 		network.set_mode(LGNETWORK_DISCOVER);
-		mode = 1;
+	} else {
+		system_mode = LGDB::read_mode();
 	}
-	else {
-		mode = LGDB::read_mode();
-	}
-	update_LED(mode);
-	update_relay(mode);	
+	update_LED(system_mode);
+	update_relay(system_mode);
 }
 
 // This runs continuously in a loop.
 void Controller::loop()
 {
 	if (network.currentMode == LGNETWORK_DISCOVER) {
-		spin_SSDs();
-		network.loop();
+		update_LED(SYSTEM_AUTO);
+		while(network.currentMode == LGNETWORK_DISCOVER) {
+			network.loop(); // Will transition to DISCOVER_READY when done
+			spin_SSDs();
+
+			if(millis() > 10000) {
+				LGNetwork::myShortAddr = 0x01;
+				network.currentMode = LGNETWORK_DISCOVER_READY;
+			}
+		}
 	}
-	
+
+	if(network.currentMode == LGNETWORK_DISCOVER_READY) {
+		display_short_address();
+		network.set_mode(LGNETWORK_OPERATE);
+	}
+
+	if(network.currentMode == LGNETWORK_OPERATE) {
+		update_LED(system_mode);
+		update_relay(system_mode);
+
+		if( (millis()/2048) % 2 == 0) {
+			system_mode = SYSTEM_OFF;
+		} else if ( (millis()/2048) % 2 == 1) {
+			system_mode = SYSTEM_ON;
+		}
+	}
 }

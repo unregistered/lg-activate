@@ -42,7 +42,7 @@ void Controller::loop()
 		if ((bit_is_clear(PIND,5))){
 			//button has been selected for 5+ seconds
 			//send reset signal to base station
-			update_LED(2);	//turn led blue
+			update_LED(LGLED_STATUS_SYNC);	//turn led blue
 
 			update_relay(0);
 			spin_SSDs(10);	//spin SSDs

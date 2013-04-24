@@ -60,6 +60,16 @@ void LGSerial::slow_put(char* str)
     }
 }
 
+void LGSerial::slow_put_pgm(PGM_P str)
+{
+    char c;
+    while( (c = pgm_read_byte(str++)) != 0) {
+        LGSerial::put(c);
+        sleep(25);
+    }
+}
+
+
 void LGSerial::put(char* str)
 {
     for(int i = 0; str[i]; i++) {
@@ -67,9 +77,26 @@ void LGSerial::put(char* str)
     }
 }
 
+void LGSerial::put_pgm(PGM_P str)
+{
+    char c;
+    while( (c = pgm_read_byte(str++)) != 0) {
+        LGSerial::put(c);
+    }
+}
+
 void LGSerial::print(char* str)
 {
     LGSerial::put(str);
+    LGSerial::put("\r\n");
+}
+
+void LGSerial::print_pgm(PGM_P s)
+{
+    char c;
+    while((c = pgm_read_byte(s++)) != 0) {
+        LGSerial::put(c);
+    }
     LGSerial::put("\r\n");
 }
 

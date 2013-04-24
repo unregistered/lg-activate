@@ -6,6 +6,10 @@
 #include <avr/interrupt.h>
 #include <util/atomic.h>
 
+#define SYSTEM_ON 0
+#define SYSTEM_OFF 1
+#define SYSTEM_AUTO 2
+
 extern uint16_t StackCount();
 
 // Sleep for a variable amount of time

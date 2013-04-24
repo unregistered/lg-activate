@@ -52,10 +52,11 @@ public:
     void cmd_set_short_address(uint8_t);
     void cmd_set_target_short_address(uint8_t);
     void cmd_set_target_long_address(const uint64_t &);
+    #ifdef USE_NETWORK_CLIENT
     void cmd_set_long_address_to_basestation();
+    #endif
 
-    void cmd_set_coordinator(bool isCoordinator);
-    void cmd_set_autoassociate(bool, bool);
+    void cmd_set_coordinator();
 
     void cmd_get_one_unassociated_device();
 

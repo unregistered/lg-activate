@@ -2,6 +2,7 @@
 #include "lg_ssd.h"
 #include "util.h"
 
+
 // Variable initialization can be done here
 Controller::Controller()
 {
@@ -23,10 +24,15 @@ void Controller::loop()
 {
     while(network.currentMode == LGNETWORK_DISCOVER) {
         network.loop();
+        spin_SSDs();
     }
 
-    // LGSerial::print_hex(LGNetwork::baseUUID);
+    // Now we are done
+
+    // network.set_mode(LGNETWORK_OPERATE);
     LGSerial::print(StackCount());
+
+    // LGSerial::print_hex(LGNetwork::baseUUID);
 
     while(true);
     // while(true) ;

@@ -3,6 +3,7 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/pgmspace.h>
 
 #define BAUDRATE 9600
 #define UBRRVAL ((F_CPU/(BAUDRATE*16UL))-1)
@@ -15,12 +16,15 @@ public:
 
   // Send data to the serial port
   static void put(char*);
+  static void put_pgm(PGM_P);
   static void put(char);
   static void slow_put(char*);
+  static void slow_put_pgm(PGM_P);
   static void slow_put(char);
 
   // Send data with carriage return
   static void print(char*);
+  static void print_pgm(PGM_P);
   static void print(int);
   static void clear_screen();
   static void print_hex(uint64_t&);

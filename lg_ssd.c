@@ -53,8 +53,8 @@ void display_vector(uint8_t vtor, void (*fp)(bool data)) {
     }
 }
 
-void update_relay(int status){
-    if (status == 0) {  //relay is off
+void update_relay(uint8_t status){
+    if (status == SYSTEM_OFF) {  //relay is off
         PORTD |= 1 << PD6;  //turns relay off
     }
     else {  //status == 1
@@ -63,16 +63,16 @@ void update_relay(int status){
 }//end update_relay
 
 
-void update_LED(int mode){
+void update_LED(uint8_t mode){
     //red is off
     //green is on
     //blue is sync
-    if (mode == 0){     //OFF
+    if (mode == SYSTEM_OFF){     //OFF
         PORTB |= 1 << PB0; // Set LEDR to 1
         PORTB &= ~(1 << PB1); //LEDG to 0
         PORTB &= ~(1 << PB2); //LEDB to 0
     }
-    else if (mode == 1){    //ON
+    else if (mode == SYSTEM_ON){    //ON
         PORTB &= ~(1 << PB0);
         PORTB |= 1 << PB1;
         PORTB &= ~(1 << PB2);
@@ -154,7 +154,7 @@ void spin_SSDs(){
 
 
 
-void update_ssd0(int ssd_val){
+void update_ssd0(uint8_t ssd_val){
     uint8_t vtor;
 
     switch(ssd_val) {
@@ -206,7 +206,7 @@ void update_ssd0(int ssd_val){
 }
 
 
-void update_ssd1(int ssd_val){
+void update_ssd1(uint8_t ssd_val){
     uint8_t vtor;
 
     switch(ssd_val) {
