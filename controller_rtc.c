@@ -30,11 +30,11 @@ void Controller::setup()
 
 	
 	SetSecond(1);
-	SetMinute(22);
-	SetHour(6);
-	SetAmPm(0);///0 for AM, 1 for PM
-	SetDay(1);
-	SetDate(21);
+	SetMinute(33);
+	SetHour(8);
+	SetAmPm(1);///0 for AM, 1 for PM
+	SetDay(3);
+	SetDate(23);
 	SetMonth(4);
 	SetYear(13);
 	
