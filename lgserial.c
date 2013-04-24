@@ -173,11 +173,24 @@ int LGSerial::get(char* buf, int len)
     return len;
 }
 
-int LGSerial::get(char* buf, char stopchar, int maxlen)
+int LGSerial::get(char* buf, char stopchar, uint8_t maxlen, int timeout)
 {
+    unsigned long start_time;
+    if(timeout > 0)
+        start_time = millis();
+
+
     for(int i=0; i<maxlen; i++) {
-        buf[i] = LGSerial::get();
-        if(buf[i] == 13) return i + 1;
+        if(timeout > 0) {
+            if( (millis() - start_time) > timeout) {
+                return i;
+            }
+        }
+
+        if(LGSerial::available()) {
+            buf[i] = LGSerial::get();
+            if(buf[i] == 13) return i + 1;
+        }
     }
 
     return maxlen;

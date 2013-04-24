@@ -10,8 +10,8 @@ uint8_t system_mode;
 
 void display_short_address()
 {
-    update_ssd0(LGNetwork::myShortAddr);
-    update_ssd1(LGNetwork::myShortAddr >> 4);
+    update_ssd0(LGNetwork::myShortAddr % 10);
+    update_ssd1(LGNetwork::myShortAddr / 10);
 }
 
 // Variable initialization can be done here
@@ -44,8 +44,8 @@ void Controller::loop()
 			network.loop(); // Will transition to DISCOVER_READY when done
 			spin_SSDs();
 
-			if(millis() > 10000) {
-				LGNetwork::myShortAddr = 0x01;
+			if(millis() > 5000) {
+				LGNetwork::myShortAddr = 0x09;
 				network.currentMode = LGNETWORK_DISCOVER_READY;
 			}
 		}

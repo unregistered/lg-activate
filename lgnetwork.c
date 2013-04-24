@@ -221,7 +221,7 @@ void LGNetwork::cmd_exit()
     LGSerial::print_pgm( PSTR("ATAC") ); // Apply changes
     LGSerial::get(response_buf, 3);
     LGSerial::print_pgm( PSTR("ATCN") );
-    LGSerial::get(response_buf, 3);
+    LGSerial::get(response_buf, '\r', 16);
 }
 
 void LGNetwork::cmd_persist()

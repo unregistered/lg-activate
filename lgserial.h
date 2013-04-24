@@ -33,7 +33,7 @@ public:
   static char get(); // Wait for data and return a byte
   static bool get_with_timeout(char *c, unsigned int timeout_ms);
   static int get(char* buf, int len);
-  static int get(char* buf, char stopchar, int maxlen);
+  static int get(char* buf, char stopchar, uint8_t maxlen, int timeout = -1);
 
   // Test if data is available
   static bool available();
