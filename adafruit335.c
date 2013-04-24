@@ -25,12 +25,14 @@
 #include <math.h> 
 
 void color_bars();
-void drawHorizontalLine(uint16_t /*x*/, uint16_t/*y*/, uint16_t /*length*/, uint16_t /*color*/, uint16_t /*bcolor*/); 
-void drawVerticalLine (uint16_t /*x*/, uint16_t /*y*/, uint16_t /*length*/, uint16_t /*color*/); 
-void drawDiagonalLine (uint16_t/*x1*/, uint16_t /*y1*/, uint16_t /*x2*/, uint16_t /*y2*/, uint16_t /*color*/, uint16_t /*bcolor*/); 
+void drawHorizontalLine(uint16_t /*x*/, uint16_t/*y*/, uint16_t /*length*/, uint16_t /*color*/, uint16_t /*thickness*/); 
+void drawVerticalLine (uint16_t /*x*/, uint16_t /*y*/, uint16_t /*length*/, uint16_t /*color*/, uint16_t /*thickness*/); 
+void drawDiagonalLine (uint16_t/*x1*/, uint16_t /*y1*/, uint16_t /*x2*/, uint16_t /*y2*/, uint16_t /*color*/); 
 void drawPixel (uint16_t /*x1*/, uint16_t /*y1*/, uint16_t /*color*/); 
 void fillScreen(uint16_t /*color*/);
 void fillRectangle(uint16_t /*x*/, uint16_t /*y*/, uint16_t /*h*/, uint16_t /*w*/, uint16_t /*color*/ ); 
+void makeRectangle(uint16_t /*x*/, uint16_t /*y*/, uint16_t /*h*/, uint16_t /*w*/, uint16_t /*color*/, uint16_t /*thick*/); 
+
  
 void bw_image();
 void regout(uint16_t, uint16_t);
@@ -75,7 +77,7 @@ uint16_t color565(uint8_t, uint8_t, uint8_t);
 
 // Define names for the registers
 
-#define ILI932X_START_OSC  	0x00
+#define ILI932X_START_OSC		0x00
 #define ILI932X_DRIV_OUT_CTRL		0x01
 #define ILI932X_DRIV_WAV_CTRL		0x02
 #define ILI932X_ENTRY_MOD		0x03
@@ -195,7 +197,7 @@ uint8_t blu[8] = { 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff };
 
 // Define values for a 320x240 1 bit/pixel images
 
-//#include "adafruit335.img"
+#include "adafruit335.img"
 
 
 int main(void) 
@@ -221,54 +223,95 @@ int main(void)
 	
 	while (1) 
 	{
-		fillScreen(TEST);
+		//fillScreen(TEST);
 		//_delay_ms(1000);
-		fillScreen(BLACK);
+		//fillScreen(BLACK);
 		//_delay_ms(1000); 
-		fillScreen(GREEN); 
+		//fillScreen(GREEN); 
 		//_delay_ms(1000);
-		fillScreen(CYAN);
+		//fillScreen(CYAN);
 		//_delay_ms(1000); 
-		fillScreen(YELLOW);
+		//fillScreen(YELLOW);
 		//_delay_ms(1000); 
-		fillScreen(BLUE);
+		//fillScreen(BLUE);
 		//_delay_ms(1000); 
-		fillScreen(RED); 
+		//fillScreen(RED); 
 		
 		
 		
 		//_delay_ms(1000); 
 		
-		color_bars();
+		//color_bars();
 		_delay_ms(1000);
 		
 		//bw_image();
-		//_delay_ms(1000);
-		uint16_t i; 
-		//for (i = 0; i < 200; i++)
-		//{
-			
-		//	drawVerticalLine(0,i,i,MAGENTA); 
-			
-		//}
+		fillScreen(WHITE); 
+		_delay_ms(1000); 
+		
+		
+		//drawVerticalLine(10,10,100, RED, 5); 
+		//drawHorizontalLine(10,10,300, RED, 5);
+		
+		makeRectangle(10,10,65,140, MAGENTA, 3); 
+		makeRectangle(85,10,65,140, MAGENTA, 3); 
+		makeRectangle(160,10,65,140, MAGENTA, 3); 
+		makeRectangle(10,160,65,140, MAGENTA, 3); 
+		makeRectangle(85,160,65,140, MAGENTA, 3); 
+		makeRectangle(160,160,65,140, MAGENTA, 3); 
+		_delay_ms(1000);
+		/*makeRectangle(85,10,65,100, MAGENTA, 5); 
+		makeRectangle(160,10,65,100, MAGENTA, 5);
+		makeRectangle(10,160,65,100, MAGENTA, 5); 
+		makeRectangle(85,160,65,100, MAGENTA, 5); 
+		makeRectangle(160,160,65,100, MAGENTA, 5); */
+		/*
+		uint16_t x,y; 
+		for (x = 10; x < 15; x= x+1)
+		{
+			for (y = 10; y<300; y = y++)
+			{
+				drawPixel(x,y,BLUE); 
+			}
+		}
+		for (x = 210; x < 215; x= x+1)
+		{
+			for (y = 10; y<300; y = y++)
+			{
+				drawPixel(x,y,BLUE); 
+			}
+		}
+		
+		for (x = 10; x < 210; x= x+1)
+		{
+			for (y = 10; y<20; y = y++)
+			{
+				drawPixel(x,y,BLUE); 
+			}
+		}
+		for (x = 10; x < 210; x= x+1)
+		{
+			for (y = 300; y<310; y = y++)
+			{
+				drawPixel(x,y,BLUE); 
+			}
+		}*/
+		
 		//_delay_ms(1000);
 		
-		/*
-		drawVerticalLine(10,10, 100, RED);
-		_delay_ms(1000); 
-		drawVerticalLine(10, 310, 100, RED); 
-		_delay_ms(1000); 
-		for (i = 10; i < 310; i++)
-		{
-			drawVerticalLine(10,i,1, RED); 	
-			drawVerticalLine(110,i,1, RED); 
-		}
+		
+		//drawVerticalLine(10,10, 100, RED);
+		//_delay_ms(1000); 
+		//drawVerticalLine(10, 310, 100, RED); 
+		//_delay_ms(1000); 
+		//drawHorizontalLine(10,10,300, RED); 
+		//_delay_ms(1000); 
+		//drawHorizontalLine(310, 10, 300, RED); 
 		
 		//drawHorizontalLine(10, 10, 300, RED, RED); 
 		_delay_ms(1000); 
 		//drawHorizontalLine(110,10,300,RED, RED);
 		//_delay_ms(1000);
-		*/
+	
 		
 		
 		//fillScreen(TEST); 
@@ -324,7 +367,7 @@ void color_bars()
  */
 void bw_image()
 {
-	/*
+	
     uint16_t n;
     uint8_t i, x, mask;
     const uint8_t *p;
@@ -359,7 +402,7 @@ void bw_image()
     }
 	
     LCD_CE_0;
-	 */
+	 
 }
 
 /*
@@ -481,80 +524,32 @@ uint16_t color565(uint8_t r, uint8_t g, uint8_t b)
     return ((r & 0xf8) << 8) | ((g & 0xfc) << 3) | (b >> 3);
 }
 
-void drawVerticalLine(uint16_t x, uint16_t y, uint16_t len, uint16_t color)
+void drawVerticalLine(uint16_t x, uint16_t y, uint16_t len, uint16_t color, uint16_t thick )
 {
-	regout(0x50, 0);            // Set window to the full 240x320 screen
-    regout(0x51, 239);
-    regout(0x52, 0);
-    regout(0x53, 319);
- 
-	
-    regout(0x20, x);            // Set addresss counter to top left (0,0)
-    regout(0x21, y);
-	
-	uint8_t hi, lo, i; 
-	
-	hi = color >> 8;
-	lo = color;
-	
-	
-    LCD_CE_0;
-	
-    LCD_CD_0;
-    lcdout(0);
-    lcdout(0x22);
-    LCD_CD_1;
-		
-		
-	for (i = x; i < len; i++)
+	uint16_t i, j; 
+	for (i = x; i < x+len+thick; i++)
+	{
+		for (j = y; j < y+thick; j++)
 		{
-			lcdout(hi);
-			lcdout(lo);
+			drawPixel(i,j,color); 
 		}
-		
-   
-    LCD_CE_0;
-	
-	
-}
-
-void drawHorizontalLine (uint16_t x, uint16_t y, uint16_t len, uint16_t color, uint16_t bcolor)
-{
-	
-    regout(0x20, x);            // Set addresss counter to top left (0,0)
-    regout(0x21, y);
-	
-	regout(0x50, x);            // Set window to the full 240x320 screen
-    regout(0x51, x+1);
-    regout(0x52, y);
-    regout(0x53, y+len);
-	
-	
-	uint8_t hi, lo, i; 
-	hi = color>>8; 
-	lo = color; 
-	//uint8_t hib,lob; 
-	//hib = bcolor>>8; 
-	//lob = bcolor; 
-	
-    LCD_CE_0;
-	
-    LCD_CD_0;
-	lcdout(0); 
-	lcdout(0x22); 
-	LCD_CD_1; 
-	//uint16_t count = x; 
-	
-	for (i = y; i< len; i++)
-	{	
-			lcdout(hi); 
-			lcdout(lo);
 	}
 	
-	LCD_CE_0; 
 }
 
-void drawDiagonalLine (uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color, uint16_t bcolor)
+void drawHorizontalLine (uint16_t x, uint16_t y, uint16_t len, uint16_t color, uint16_t thick)
+{
+	uint16_t i, j; 
+    for (i = x; i < x+thick; i++)
+	{
+		for (j = y; j < y+len+thick; j++)
+		{
+			drawPixel(i,j,color); 
+		}
+	}
+}
+
+void drawDiagonalLine (uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color)
 { // apply bresenham's algorithm ! // 
 	
     regout(0x20, 0);            // Set addresss counter to top left (0,0)
@@ -565,8 +560,8 @@ void drawDiagonalLine (uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint1
 	lo = color;
 	uint8_t hib,lob;
 	
-	hib = bcolor>>8; 
-	lob = bcolor; 
+	//hib = bcolor>>8; 
+	//lob = bcolor; 
     LCD_CE_0;
 	
     LCD_CD_0;
@@ -591,8 +586,8 @@ void drawDiagonalLine (uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint1
 				error = error -1; 
 				for (i =0; i<239+y; i++)
 				{
-				lcdout(hib);
-				lcdout(lob); 
+				//lcdout(hib);
+				//lcdout(lob); 
 				
 				}
 				
@@ -605,9 +600,11 @@ void drawDiagonalLine (uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint1
 void drawPixel (uint16_t x, uint16_t y, uint16_t color)
 {
 	
-    regout(0x20, 0);            // Set addresss counter to top left (0,0)
-    regout(0x21, 0);
+	LCD_CE_0; 
 	
+    regout(0x20, x);            // Set addresss counter to top left (0,0)
+    regout(0x21, y);
+	regout(0x22, color); 
     LCD_CE_0;
 	
     LCD_CD_0;
@@ -644,6 +641,17 @@ void fillScreen(uint16_t color)
 		}
 	}
 }
+
+void makeRectangle(uint16_t x, uint16_t y, uint16_t h, uint16_t w, uint16_t color, uint16_t thick)
+{
+	
+	drawVerticalLine(x,y,h,color,thick); 
+	drawVerticalLine(x,y+w,h, color, thick); 
+	drawHorizontalLine(x,y,w, color, thick);
+	drawHorizontalLine(x+h,y,w, color, thick); 
+	
+}
+
 	
 
 void fillRectangle(uint16_t x, uint16_t y, uint16_t h, uint16_t w, uint16_t color )
