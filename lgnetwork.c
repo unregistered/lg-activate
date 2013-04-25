@@ -158,7 +158,7 @@ void LGNetwork::loop()
                         // Persist to EEPROM
 
                         // Send final ack
-                        sleep(100);
+                        sleep(1000);
                         LGSerial::slow_put("ACK");
                     }
 
