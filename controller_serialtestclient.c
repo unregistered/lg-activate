@@ -29,7 +29,7 @@ void Controller::loop()
 
     // Now we are done
 
-    // network.set_mode(LGNETWORK_OPERATE);
+    network.set_mode(LGNETWORK_OPERATE);
     LGSerial::print(StackCount());
 
     // LGSerial::print_hex(LGNetwork::baseUUID);

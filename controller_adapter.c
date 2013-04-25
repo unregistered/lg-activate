@@ -30,6 +30,8 @@ void Controller::setup()
 		network.set_mode(LGNETWORK_DISCOVER);
 	} else {
 		system_mode = LGDB::read_mode();
+		display_short_address();
+		network.set_mode(LGNETWORK_OPERATE);
 	}
 	update_LED(system_mode);
 	update_relay(system_mode);
@@ -43,11 +45,6 @@ void Controller::loop()
 		while(network.currentMode == LGNETWORK_DISCOVER) {
 			network.loop(); // Will transition to DISCOVER_READY when done
 			spin_SSDs();
-
-			if(millis() > 5000) {
-				LGNetwork::myShortAddr = 0x09;
-				network.currentMode = LGNETWORK_DISCOVER_READY;
-			}
 		}
 	}
 
@@ -57,6 +54,9 @@ void Controller::loop()
 	}
 
 	if(network.currentMode == LGNETWORK_OPERATE) {
+		// if(LGSerial::available()) {
+		// 	bool match = network.scan_for_header("CMD");
+		// }
 		update_LED(system_mode);
 		update_relay(system_mode);
 

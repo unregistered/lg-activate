@@ -1,3 +1,5 @@
+#ifdef atmega168
+
 #include <avr/io.h>
 #include <util/delay.h>
 
@@ -17,7 +19,7 @@ uint8_t GetYear();
 bool SetSecond(uint8_t sec);
 bool SetMinute(uint8_t min);
 bool SetHour(uint8_t hr);
-bool SetAmPm(bool pm);	
+bool SetAmPm(bool pm);
 bool SetDay(uint8_t day);
 bool SetDate(uint8_t date);
 bool SetMonth(uint8_t month);
@@ -53,8 +55,10 @@ bool DS1307Read(uint8_t address,uint8_t *data);
 #define SOFT_I2C_SCL_LOW	SCLDDR|=((1<<SCL))
 #define SOFT_I2C_SCL_HIGH	SCLDDR&=(~(1<<SCL))
 
-void SoftI2CInit();	
+void SoftI2CInit();
 void SoftI2CStart();
 void SoftI2CStop();
 uint8_t SoftI2CWriteByte(uint8_t data);
 uint8_t SoftI2CReadByte(uint8_t ack);
+
+#endif

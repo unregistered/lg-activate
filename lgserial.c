@@ -179,17 +179,18 @@ int LGSerial::get(char* buf, char stopchar, uint8_t maxlen, int timeout)
     if(timeout > 0)
         start_time = millis();
 
-
-    for(int i=0; i<maxlen; i++) {
+    uint8_t charcount = 0;
+    for(;;) {
         if(timeout > 0) {
             if( (millis() - start_time) > timeout) {
-                return i;
+                return charcount;
             }
         }
 
         if(LGSerial::available()) {
-            buf[i] = LGSerial::get();
-            if(buf[i] == 13) return i + 1;
+            char c = LGSerial::get();
+            buf[charcount++] = c;
+            if(c == stopchar) return charcount;
         }
     }
 

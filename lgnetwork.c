@@ -74,12 +74,12 @@ void LGNetwork::set_mode(network_mode_t newMode)
             for(int i=0; i < sizeof(ascii_id); i++) ascii_id[i] = '0';
             ascii_id[16] = 0;
 
-            LGSerial::print("ATSH"); // Starting with the upper bits
+            LGSerial::print_pgm( PSTR("ATSH") ); // Starting with the upper bits
             uint8_t high_chars_to_write = LGSerial::get(response_buf, '\r', 16) - 1;
             memcpy(ascii_id + (8 - high_chars_to_write), response_buf, high_chars_to_write);
 
             // Now the lower bits
-            LGSerial::print("ATSL");
+            LGSerial::print_pgm( PSTR("ATSL") );
             uint8_t low_chars_to_write = LGSerial::get(response_buf, '\r', 16) - 1;
             memcpy(ascii_id + 8 + (8 - low_chars_to_write), response_buf, low_chars_to_write);
             LGSerial::put("Ascii_id: ");
@@ -136,25 +136,30 @@ void LGNetwork::loop()
                     p.packet.short_address = next_address;
 
                     // Point ourselves to our target.
-                    // cmd_enter();
-                    // cmd_set_target_long_address(next_client.address);
-                    // cmd_exit();
+                    cmd_enter();
+                    cmd_set_target_long_address(next_client.address);
+                    cmd_exit();
+
+                    sleep(3000);
 
                     // Packet header
-                    LGSerial::slow_put("HCP");
+                    LGSerial::slow_put("SYN");
 
                     // Send the packet body
                     for(int i=0; i < sizeof(dhcp_packet_t); i++) {
                         LGSerial::slow_put(p.bytes[i]);
                     }
 
-                    bool response = scan_for_header("ACK", 10000);
+                    bool response = scan_for_header("SAK", 10000);
 
                     if(response) {
-                        LGSerial::print("Response received");
                         // Now commit it
                         LGNetwork::ap_table_cache[next_address] = (uint8_t)next_client.identifier;
                         // Persist to EEPROM
+
+                        // Send final ack
+                        sleep(100);
+                        LGSerial::slow_put("ACK");
                     }
 
                     // We clear it since we're done
@@ -170,7 +175,7 @@ void LGNetwork::loop()
         #if USE_NETWORK_CLIENT
 
             if(LGSerial::available()) {
-                bool matches = scan_for_header("HCP", 1000);
+                bool matches = scan_for_header("SYN", 1000);
 
                 if(matches) {
                     // Receive packet
@@ -181,19 +186,35 @@ void LGNetwork::loop()
                     }
                     LGNetwork::myShortAddr = LGSerial::get();
 
-                    // Persist to eeprom
-                    LGDB::write_address(LGNetwork::myShortAddr);
-                    LGDB::write_basestation_address(LGNetwork::baseUUID);
-
                     // Reply to the server
                     cmd_enter();
                     cmd_set_long_address_to_basestation();
                     cmd_set_short_address(LGNetwork::myShortAddr);
+                    LGSerial::print_pgm( PSTR("ATDA") ); // Force dissassociation to re-associate
+                    LGSerial::get(response_buf, 3);
                     cmd_exit();
 
-                    LGSerial::slow_put_pgm( PSTR("ACK") );
+                    // Give it time to associate
+                    sleep(3000);
 
-                    currentMode = LGNETWORK_DISCOVER_READY;
+                    // SYN-ACK
+                    LGSerial::slow_put_pgm( PSTR("SAK") );
+
+                    // Hopefully the server saw us
+                    matches = scan_for_header("ACK", 3000);
+                    if(matches) {
+                        // Persist to eeprom
+                        LGDB::write_address(LGNetwork::myShortAddr);
+                        LGDB::write_basestation_address(LGNetwork::baseUUID);
+
+                        currentMode = LGNETWORK_DISCOVER_READY;
+
+                    } else {
+                        cmd_enter();
+                        cmd_set_short_address(-1);
+                        cmd_exit();
+                    }
+
                 }
             }
         #endif
@@ -212,6 +233,9 @@ void LGNetwork::cmd_enter()
     else
         sleep(SAFE_GUARD_TIME);
 
+    // Clear serial buffer
+    while(LGSerial::available()) LGSerial::get();
+
     LGSerial::put_pgm( PSTR("+++") );
     LGSerial::get(response_buf, 3); // Expect response 'OK\r'
 }
@@ -221,7 +245,7 @@ void LGNetwork::cmd_exit()
     LGSerial::print_pgm( PSTR("ATAC") ); // Apply changes
     LGSerial::get(response_buf, 3);
     LGSerial::print_pgm( PSTR("ATCN") );
-    LGSerial::get(response_buf, '\r', 16);
+    LGSerial::get(response_buf, '\r', 16, 500);
 }
 
 void LGNetwork::cmd_persist()

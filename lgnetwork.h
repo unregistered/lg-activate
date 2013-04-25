@@ -75,7 +75,7 @@ public:
 #endif
 
 private:
-    char response_buf[12];
+    char response_buf[24];
 };
 
 #endif
