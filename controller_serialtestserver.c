@@ -22,7 +22,7 @@ void Controller::setup()
 
     unsigned long long start_time = millis();
 
-    while(millis() < (start_time + 10000)) { // 10 second associate time
+    while(millis() < (start_time + 30000)) { // 10 second associate time
         network.loop();
     }
 
@@ -31,10 +31,8 @@ void Controller::setup()
 
 void Controller::loop()
 {
-    if(millis() > 20000) {
-        network.loop();
-        while(true);
-    }
+    network.loop();
+    sleep(5000);
     // network.loop();
     // LGSerial::put("DATA-DHCP");
     // LGSerial::put("aoeuaoeu");

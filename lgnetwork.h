@@ -19,6 +19,22 @@ typedef enum {
     LGNETWORK_DISCOVER_READY
 } network_mode_t;
 
+typedef union {
+    struct packet {
+        uint64_t base_address;
+        uint8_t short_address;
+    } packet;
+    char bytes[9];
+} dhcp_packet_t;
+
+typedef union {
+    struct packet {
+        uint8_t short_address;
+        uint8_t system_mode;
+    } packet;
+    char bytes[2];
+} command_packet_t;
+
 class LGNetwork
 {
 public:

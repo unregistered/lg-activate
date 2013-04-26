@@ -10,6 +10,31 @@ static LGNetwork network;
 uint8_t button_press;
 unsigned long button_time;
 
+int8_t packet_ptr = -3;
+command_packet_t command_packet;
+
+// During operation, receive commands in the ISR so we don't interrupt button pushing
+ISR(USART_RX_vect)
+{
+	if(network.currentMode != LGNETWORK_OPERATE) return; // Don't be bothered until we're looking for commands
+
+    cli();
+    char ch = UDR;
+    if(ch == 'C' && packet_ptr == -3) {
+    	packet_ptr++;
+    } else if(ch == 'M' && packet_ptr == -2) {
+    	packet_ptr++;
+    } else if(ch == 'D' && packet_ptr == -1) {
+    	packet_ptr++;
+    } else if(packet_ptr >= 0) {
+    	if(packet_ptr < sizeof(command_packet_t)) command_packet.bytes[packet_ptr++] = ch;
+    } else {
+    	packet_ptr = -3;
+    }
+
+    sei();
+}
+
 void display_short_address()
 {
     update_ssd0(LGNetwork::myShortAddr % 10);
@@ -19,7 +44,7 @@ void display_short_address()
 // Variable initialization can be done here
 Controller::Controller()
 {
-	network = LGNetwork();//populates addresses from eeprom if they exist
+	network = LGNetwork(); //populates addresses from eeprom if they exist
 }
 
 // This runs once during program startup
@@ -57,7 +82,13 @@ void Controller::loop()
 	}
 
 	if(network.currentMode == LGNETWORK_OPERATE) {
-		network.loop();
+		if(packet_ptr == sizeof(command_packet_t)) {
+			// We filled up the command pointer
+			if(command_packet.packet.short_address == LGNetwork::myShortAddr)
+				system_mode = command_packet.packet.system_mode;
+
+			packet_ptr = -3; // Open ourselves to more commands
+		}
 
 		update_LED(system_mode);
 		update_relay(system_mode);
@@ -83,8 +114,10 @@ void Controller::loop()
 			}
 			else { // sync
 				if ((current_time - button_time) > BUTTON_SYNC_TIME ) {
+					LGDB::write_address(0xff);
 					update_LED(SYSTEM_ON); // We want to default to "on" while we discover
 					update_relay(SYSTEM_ON);
+					spin_SSDs();
 					network.set_mode(LGNETWORK_DISCOVER);
 				}
 			}

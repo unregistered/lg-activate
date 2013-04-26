@@ -21,23 +21,6 @@ uint64_t LGNetwork::baseUUID;
 uint8_t LGNetwork::myShortAddr;
 #endif
 
-typedef union {
-    struct packet {
-        uint64_t base_address;
-        uint8_t short_address;
-    } packet;
-    char bytes[9];
-} dhcp_packet_t;
-
-typedef union {
-    struct packet {
-        uint8_t short_address;
-        uint8_t is_auto;
-        uint8_t is_on;
-    } packet;
-    char bytes[3];
-} command_packet_t;
-
 LGNetwork::LGNetwork() : currentMode(LGNETWORK_INIT) {
     #ifdef USE_NETWORK_SERVER
     next_client.identifier = 0;
@@ -60,6 +43,7 @@ void LGNetwork::set_mode(network_mode_t newMode)
     if(newMode == LGNETWORK_OPERATE) {
         #ifdef USE_NETWORK_SERVER
             cmd_set_short_address(-1);
+            cmd_set_target_short_address(-1);
             cmd_set_coordinator();
 
         #elif USE_NETWORK_CLIENT
@@ -229,8 +213,7 @@ void LGNetwork::loop()
 
                 command_packet_t p;
                 p.packet.short_address = next_to_program;
-                p.packet.is_auto = 0;
-                p.packet.is_on = (millis() / 1000) % 2;
+                p.packet.system_mode = 0;
 
                 // Header
                 LGSerial::slow_put_pgm( PSTR("CMD") );
@@ -240,28 +223,11 @@ void LGNetwork::loop()
                     LGSerial::slow_put(p.bytes[i]);
                 }
 
+                // Remember our success
+                last_commanded_device_address = next_to_program;
             }
         #endif
 
-        #ifdef USE_NETWORK_CLIENT
-            if(scan_for_header("CMD", 500)) {
-                command_packet_t p;
-
-                char *ptr = (char*)&(LGNetwork::baseUUID);
-                for(uint8_t i=0; i < sizeof(command_packet_t); i++) {
-                    p.bytes[i] = LGSerial::get();
-                }
-
-                LGSerial::print("GOT");
-
-                if(p.packet.short_address == LGNetwork::myShortAddr) {
-                    LGSerial::print("ME!");
-
-                    system_mode = p.packet.is_on;
-                }
-
-            }
-        #endif
     }
 
 }
