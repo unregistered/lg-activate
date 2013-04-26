@@ -5,8 +5,11 @@
 #include "lgnetwork.h"
 #include "lg_ssd.h"
 #include "lgdb.h"
+#define BUTTON_SYNC_TIME 1500
 static LGNetwork network;
 uint8_t system_mode;
+uint8_t button_press;
+unsigned long button_time;
 
 void display_short_address()
 {
@@ -35,11 +38,13 @@ void Controller::setup()
 	}
 	update_LED(system_mode);
 	update_relay(system_mode);
+	
 }
 
 // This runs continuously in a loop.
 void Controller::loop()
 {
+	
 	if (network.currentMode == LGNETWORK_DISCOVER) {
 		update_LED(SYSTEM_AUTO);
 		while(network.currentMode == LGNETWORK_DISCOVER) {
@@ -59,11 +64,34 @@ void Controller::loop()
 		// }
 		update_LED(system_mode);
 		update_relay(system_mode);
-
-		if( (millis()/2048) % 2 == 0) {
-			system_mode = SYSTEM_OFF;
-		} else if ( (millis()/2048) % 2 == 1) {
-			system_mode = SYSTEM_ON;
+		
+		if (button_press == 0){
+			if (bit_is_clear(PIND,5)){//switch button
+				button_press = 1;
+				button_time = millis();
+			}
+			
 		}
+		else{
+			unsigned long current_time = millis();
+			if(!bit_is_clear(PIND,5)){ // manual override
+				button_press = 0;
+				if ((current_time - button_time) < BUTTON_SYNC_TIME ) {
+					sleep(250); //handles debouncing
+					if(!bit_is_clear(PIND,5)){ // if button not pressed
+						// on to off, off to on, auto to on
+						system_mode = (system_mode == SYSTEM_ON) ? SYSTEM_OFF : SYSTEM_ON;
+					}
+				}
+			}
+			else { // sync
+				if ((current_time - button_time) > BUTTON_SYNC_TIME ) {
+					update_LED(SYSTEM_AUTO);
+					network.set_mode(LGNETWORK_DISCOVER);
+				}
+			}
+
+		}
+
 	}
 }
