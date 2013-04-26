@@ -43,6 +43,9 @@ hexstr: clean main.hex
 adapter: COMPILE += -DCONTROLLER_FILE='"controller_adapter.c"' -DUSE_NETWORK_CLIENT -DCLIENT_ACTUATOR
 adapter: clean main.hex
 
+sensor: COMPILE += -DCONTROLLER_FILE='"controller_sensor.c"' -DUSE_NETWORK_CLIENT -DCLIENT_SENSOR
+sensor: clean main.hex
+
 rtc: COMPILE += -DCONTROLLER_FILE='"controller_rtc.c"' -DUSE_NETWORK_SERVER
 rtc: clean main.hex
 
