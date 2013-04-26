@@ -8,7 +8,12 @@
 
 #define SYSTEM_ON 0
 #define SYSTEM_OFF 1
-#define SYSTEM_AUTO 2
+#define SYSTEM_AUTO_ON 2
+#define SYSTEM_AUTO_OFF 3
+
+#ifdef USE_NETWORK_CLIENT
+extern uint8_t system_mode;
+#endif
 
 extern uint16_t StackCount();
 

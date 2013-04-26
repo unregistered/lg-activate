@@ -23,7 +23,6 @@ class LGNetwork
 {
 public:
     #ifdef USE_NETWORK_SERVER
-    static int8_t ap_table_cache[100];
     static uint64_t myUUID;
     #endif
 
@@ -72,6 +71,9 @@ public:
     void pending_clear();
     uint8_t get_next_free_address();
 
+    // Returns -1 if no valid entries or
+    // 0-99 for the next address to program
+    int8_t get_next_target_address();
 #endif
 
 private:

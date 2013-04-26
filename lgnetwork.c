@@ -3,8 +3,9 @@
 #include <string.h>
 
 #ifdef USE_NETWORK_SERVER
-int8_t LGNetwork::ap_table_cache[100];
 uint64_t LGNetwork::myUUID;
+
+uint8_t last_commanded_device_address;
 
 typedef struct {
     uint64_t address;
@@ -28,14 +29,19 @@ typedef union {
     char bytes[9];
 } dhcp_packet_t;
 
+typedef union {
+    struct packet {
+        uint8_t short_address;
+        uint8_t is_auto;
+        uint8_t is_on;
+    } packet;
+    char bytes[3];
+} command_packet_t;
+
 LGNetwork::LGNetwork() : currentMode(LGNETWORK_INIT) {
     #ifdef USE_NETWORK_SERVER
     next_client.identifier = 0;
 
-    // Populate table
-    for(int i=0; i < sizeof(LGNetwork::ap_table_cache); i++) {
-        LGNetwork::ap_table_cache[i] = LGDB::read_ap_table_entry(i);
-    }
     #endif
 
     #ifdef USE_NETWORK_CLIENT
@@ -82,8 +88,6 @@ void LGNetwork::set_mode(network_mode_t newMode)
             LGSerial::print_pgm( PSTR("ATSL") );
             uint8_t low_chars_to_write = LGSerial::get(response_buf, '\r', 16) - 1;
             memcpy(ascii_id + 8 + (8 - low_chars_to_write), response_buf, low_chars_to_write);
-            LGSerial::put("Ascii_id: ");
-            LGSerial::print(ascii_id);
 
             uint8_t *p = (uint8_t*)&(LGNetwork::myUUID); // Ptr to current byte
 
@@ -153,9 +157,8 @@ void LGNetwork::loop()
                     bool response = scan_for_header("SAK", 10000);
 
                     if(response) {
-                        // Now commit it
-                        LGNetwork::ap_table_cache[next_address] = (uint8_t)next_client.identifier;
-                        // Persist to EEPROM
+                        // Now commit it to EEPROM
+                        LGDB::write_ap_table_entry(next_address, 0xe3);
 
                         // Send final ack
                         sleep(1000);
@@ -219,7 +222,46 @@ void LGNetwork::loop()
             }
         #endif
     } else { // LGNETWORK_OPERATE
+        #ifdef USE_NETWORK_SERVER
+            int8_t next_to_program = get_next_target_address();
+            if(next_to_program >= 0) {
+                uint16_t data = LGDB::read_ap_table_entry(next_to_program);
 
+                command_packet_t p;
+                p.packet.short_address = next_to_program;
+                p.packet.is_auto = 0;
+                p.packet.is_on = (millis() / 1000) % 2;
+
+                // Header
+                LGSerial::slow_put_pgm( PSTR("CMD") );
+
+                // Body
+                for(uint8_t i=0; i < sizeof(command_packet_t); i++) {
+                    LGSerial::slow_put(p.bytes[i]);
+                }
+
+            }
+        #endif
+
+        #ifdef USE_NETWORK_CLIENT
+            if(scan_for_header("CMD", 500)) {
+                command_packet_t p;
+
+                char *ptr = (char*)&(LGNetwork::baseUUID);
+                for(uint8_t i=0; i < sizeof(command_packet_t); i++) {
+                    p.bytes[i] = LGSerial::get();
+                }
+
+                LGSerial::print("GOT");
+
+                if(p.packet.short_address == LGNetwork::myShortAddr) {
+                    LGSerial::print("ME!");
+
+                    system_mode = p.packet.is_on;
+                }
+
+            }
+        #endif
     }
 
 }
@@ -423,14 +465,36 @@ void LGNetwork::pending_clear()
 
 uint8_t LGNetwork::get_next_free_address()
 {
-    for(int i=0; i < sizeof(LGNetwork::ap_table_cache); i++) {
-        if(LGNetwork::ap_table_cache[i] == -1) {
+    for(int i=0; i < sizeof(lgdb_ap_table); i++) {
+        if(LGDB::read_ap_table_entry(i) == 0xffff) {
             // Then we're open
             return i;
         }
     }
 
     return -1;
+}
+
+int8_t LGNetwork::get_next_target_address()
+{
+    uint8_t start_searching_at = last_commanded_device_address + 1;
+    if(start_searching_at > 99)
+        start_searching_at = 0; // Wrap-around to 0
+
+    for(
+        uint8_t i=start_searching_at; // Start searching at the last addr + 1, with wraparound
+        i != last_commanded_device_address; // Keep searching until we reach this address
+        i = (i == 99) ? 0 : i+1// Increment but also wrap around
+    ) {
+        if(LGDB::read_ap_table_entry(i) != 0xffff) {
+            return i;
+        }
+    }
+
+    if(LGDB::read_ap_table_entry(last_commanded_device_address) == 0xffff) // We have no open entries
+        return -1;
+    else // It's something
+        return last_commanded_device_address;
 }
 
 #endif

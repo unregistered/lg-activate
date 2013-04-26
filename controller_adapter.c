@@ -7,7 +7,6 @@
 #include "lgdb.h"
 #define BUTTON_SYNC_TIME 1500
 static LGNetwork network;
-uint8_t system_mode;
 uint8_t button_press;
 unsigned long button_time;
 
@@ -38,15 +37,14 @@ void Controller::setup()
 	}
 	update_LED(system_mode);
 	update_relay(system_mode);
-	
+
 }
 
 // This runs continuously in a loop.
 void Controller::loop()
 {
-	
+
 	if (network.currentMode == LGNETWORK_DISCOVER) {
-		update_LED(SYSTEM_AUTO);
 		while(network.currentMode == LGNETWORK_DISCOVER) {
 			network.loop(); // Will transition to DISCOVER_READY when done
 			spin_SSDs();
@@ -59,18 +57,17 @@ void Controller::loop()
 	}
 
 	if(network.currentMode == LGNETWORK_OPERATE) {
-		// if(LGSerial::available()) {
-		// 	bool match = network.scan_for_header("CMD");
-		// }
+		network.loop();
+
 		update_LED(system_mode);
 		update_relay(system_mode);
-		
+
 		if (button_press == 0){
 			if (bit_is_clear(PIND,5)){//switch button
 				button_press = 1;
 				button_time = millis();
 			}
-			
+
 		}
 		else{
 			unsigned long current_time = millis();
@@ -86,7 +83,8 @@ void Controller::loop()
 			}
 			else { // sync
 				if ((current_time - button_time) > BUTTON_SYNC_TIME ) {
-					update_LED(SYSTEM_AUTO);
+					update_LED(SYSTEM_ON); // We want to default to "on" while we discover
+					update_relay(SYSTEM_ON);
 					network.set_mode(LGNETWORK_DISCOVER);
 				}
 			}

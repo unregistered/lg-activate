@@ -26,11 +26,16 @@ void Controller::setup()
         network.loop();
     }
 
+    network.set_mode(LGNETWORK_OPERATE);
 }
 
 void Controller::loop()
 {
-    network.loop();
+    if(millis() > 20000) {
+        network.loop();
+        while(true);
+    }
+    // network.loop();
     // LGSerial::put("DATA-DHCP");
     // LGSerial::put("aoeuaoeu");
     // sleep(1000);

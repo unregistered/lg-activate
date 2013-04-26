@@ -1,5 +1,9 @@
 #include "util.h"
 
+#ifdef USE_NETWORK_CLIENT
+uint8_t system_mode;
+#endif
+
 void sleep(int ms)
 {
     for(int i=0; i < ms; i++)
