@@ -6,7 +6,7 @@ uint16_t EEMEM lgdb_ap_table[100];
 #endif
 
 #ifdef USE_NETWORK_CLIENT
-uint16_t EEMEM lgdb_my_addr;
+uint8_t EEMEM lgdb_my_addr;
 uint64_t EEMEM lgdb_basestation_addr;
 uint8_t EEMEM lgdb_mode;
 #endif
@@ -19,13 +19,13 @@ LGDB::LGDB()
 
 #ifdef USE_NETWORK_CLIENT
 
-uint16_t LGDB::read_address()
+uint8_t LGDB::read_address()
 {
-    return read<uint16_t>((char*)&lgdb_my_addr);
+    return read<uint8_t>((char*)&lgdb_my_addr);
 }
-void LGDB::write_address(uint16_t val)
+void LGDB::write_address(uint8_t val)
 {
-    write<uint16_t>((char*)&lgdb_my_addr, val);
+    write<uint8_t>((char*)&lgdb_my_addr, val);
 }
 
 uint64_t LGDB::read_basestation_address()

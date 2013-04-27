@@ -1,7 +1,7 @@
 #include <avr/eeprom.h>
 
 #ifdef USE_NETWORK_CLIENT
-extern uint16_t EEMEM lgdb_my_addr;
+extern uint8_t EEMEM lgdb_my_addr;
 extern uint64_t EEMEM lgdb_basestation_addr;
 extern uint8_t EEMEM lgdb_mode;
 #endif
@@ -17,8 +17,8 @@ public:
     LGDB();
 
 #ifdef USE_NETWORK_CLIENT
-    static uint16_t read_address();
-    static void write_address(uint16_t);
+    static uint8_t read_address();
+    static void write_address(uint8_t);
 
     static uint64_t read_basestation_address();
     static void write_basestation_address(uint64_t);
