@@ -21,29 +21,29 @@ LGDB::LGDB()
 
 uint16_t LGDB::read_address()
 {
-    return read<uint16_t>((char*)lgdb_my_addr);
+    return read<uint16_t>((char*)&lgdb_my_addr);
 }
 void LGDB::write_address(uint16_t val)
 {
-    write<uint16_t>((char*)lgdb_my_addr, val);
+    write<uint16_t>((char*)&lgdb_my_addr, val);
 }
 
 uint64_t LGDB::read_basestation_address()
 {
-    return read<uint64_t>((char*)lgdb_basestation_addr);
+    return read<uint64_t>((char*)&lgdb_basestation_addr);
 }
 void LGDB::write_basestation_address(uint64_t val)
 {
-    write<uint64_t>((char*)lgdb_basestation_addr, val);
+    write<uint64_t>((char*)&lgdb_basestation_addr, val);
 }
 
 uint8_t LGDB::read_mode()
 {
-    return read<uint8_t>((char*)lgdb_mode);
+    return read<uint8_t>((char*)&lgdb_mode);
 }
 void LGDB::write_mode(uint8_t val)
 {
-    write<uint8_t>((char*)lgdb_mode, val);
+    write<uint8_t>((char*)&lgdb_mode, val);
 }
 
 #endif
