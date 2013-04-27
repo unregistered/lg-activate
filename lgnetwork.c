@@ -87,11 +87,11 @@ void LGNetwork::set_mode(network_mode_t newMode)
             cmd_set_coordinator();
 
             #ifdef CLIENT_SENSOR
-                LGSerial::print("ATNI s");
-                LGSerial::get(response_buf, 3);
+                LGSerial::print_pgm( PSTR("ATNIs") );
+                cmd_wait_for_ok();
             #elif CLIENT_ACTUATOR
-                LGSerial::print("ATNI a");
-                LGSerial::get(response_buf, 3);
+                LGSerial::print_pgm( PSTR("ATNIa") );
+                cmd_wait_for_ok();
             #endif
         #endif
     }
@@ -99,6 +99,30 @@ void LGNetwork::set_mode(network_mode_t newMode)
     cmd_exit();
 
     currentMode = newMode;
+}
+
+void LGNetwork::force_disconnect()
+{
+    // Close our eyes and send commands blindly
+    sleep(1100);
+    LGSerial::put_pgm( PSTR("+++") );
+    sleep(1100);
+    LGSerial::print_pgm( PSTR("ATRE") );
+    sleep(500);
+    LGSerial::print_pgm( PSTR("ATDA") );
+    sleep(500);
+    LGSerial::print_pgm( PSTR("ATAC") );
+    sleep(500);
+    LGSerial::print_pgm( PSTR("ATCN") );
+    sleep(500);
+
+    // Flush serial buffer
+    while(LGSerial::available()) LGSerial::get();
+}
+
+void LGNetwork::cmd_wait_for_ok()
+{
+    LGSerial::get(response_buf, 3);
 }
 
 void LGNetwork::loop()
@@ -177,8 +201,7 @@ void LGNetwork::loop()
                     cmd_enter();
                     cmd_set_long_address_to_basestation();
                     cmd_set_short_address(LGNetwork::myShortAddr);
-                    LGSerial::print_pgm( PSTR("ATDA") ); // Force dissassociation to re-associate
-                    LGSerial::get(response_buf, 3);
+                    cmd_dissociate();
                     cmd_exit();
 
                     // Give it time to associate
@@ -209,6 +232,8 @@ void LGNetwork::loop()
         #ifdef USE_NETWORK_SERVER
             int8_t next_to_program = get_next_target_address();
             if(next_to_program >= 0) {
+                LGSerial::put("Program outlet ");
+                LGSerial::print(next_to_program);
                 uint16_t data = LGDB::read_ap_table_entry(next_to_program);
 
                 command_packet_t p;
@@ -245,35 +270,44 @@ void LGNetwork::cmd_enter()
     while(LGSerial::available()) LGSerial::get();
 
     LGSerial::put_pgm( PSTR("+++") );
-    LGSerial::get(response_buf, 3); // Expect response 'OK\r'
+    cmd_wait_for_ok(); // Expect response 'OK\r'
 }
 
 void LGNetwork::cmd_exit()
 {
     LGSerial::print_pgm( PSTR("ATAC") ); // Apply changes
-    LGSerial::get(response_buf, 3);
+    cmd_wait_for_ok();
     LGSerial::print_pgm( PSTR("ATCN") );
-    LGSerial::get(response_buf, '\r', 16, 500);
+    sleep(100); // BUG: ATCN doesn't return a response sometimes
+    if(LGSerial::available()) {
+        LGSerial::get(response_buf, 3);
+    }
 }
 
 void LGNetwork::cmd_persist()
 {
     LGSerial::print_pgm( PSTR("ATWR") ); // Write to memory
-    LGSerial::get(response_buf, 3);
+    cmd_wait_for_ok();
 }
 
 void LGNetwork::cmd_reset()
 {
     LGSerial::print_pgm( PSTR("ATRE") ); // Restore to factory settings
-    LGSerial::get(response_buf, 3); // OK\r
+    cmd_wait_for_ok(); // OK\r
 }
 
 void LGNetwork::cmd_setup()
 {
     LGSerial::print_pgm( PSTR("ATID" LG_ATID) ); // Set network ID to LG_ATID
-    LGSerial::get(response_buf, 3); // OK\r
+    cmd_wait_for_ok(); // OK\r
     // LGSerial::put("ATGT" GUARD_TIME "\r\n"); // Set guard time
-    // LGSerial::get(response_buf, 3);
+    // cmd_wait_for_ok();
+}
+
+void LGNetwork::cmd_dissociate()
+{
+    LGSerial::print_pgm( PSTR("ATDA") ); // Force dissassociation to re-associate
+    cmd_wait_for_ok();
 }
 
 void LGNetwork::cmd_set_channel(network_mode_t mode)
@@ -283,12 +317,12 @@ void LGNetwork::cmd_set_channel(network_mode_t mode)
     else // LGNETWORK_OPERATE
         LGSerial::print_pgm( PSTR("ATCH" OPERATING_CHANNEL) );
 
-    LGSerial::get(response_buf, 3);
+    cmd_wait_for_ok();
 }
 
 void LGNetwork::cmd_set_short_address(uint8_t addr)
 {
-    char sendbuf[] = "ATMY 0000\r\n";
+    char sendbuf[] = "ATMY 0000\r";
     if(addr == 0xff) {
         sendbuf[5] = 'F';
         sendbuf[6] = 'F';
@@ -298,15 +332,15 @@ void LGNetwork::cmd_set_short_address(uint8_t addr)
         byte_to_asciis(sendbuf + 7, addr);
     }
     LGSerial::put(sendbuf);
-    LGSerial::get(response_buf, 3);
+    cmd_wait_for_ok();
 }
 
 void LGNetwork::cmd_set_target_short_address(uint8_t addr)
 {
     LGSerial::print_pgm( PSTR("ATDH 0000") ); // Set high byte to 0
-    LGSerial::get(response_buf, 3);
+    cmd_wait_for_ok();
 
-    char sendbuf[] = "ATDL 0000\r\n";
+    char sendbuf[] = "ATDL 0000\r";
     if(addr == 0xff) {
         sendbuf[5] = 'F';
         sendbuf[6] = 'F';
@@ -316,19 +350,19 @@ void LGNetwork::cmd_set_target_short_address(uint8_t addr)
         byte_to_asciis(sendbuf + 7, addr);
     }
     LGSerial::put(sendbuf);
-    LGSerial::get(response_buf, 3);
+    cmd_wait_for_ok();
 }
 
 void LGNetwork::cmd_set_target_long_address(const uint64_t &addr)
 {
-    char sendbuf[] = "ATDH00000000\r\n";
+    char sendbuf[] = "ATDH00000000\r";
     char* data = (char*)&(addr);
     for(uint8_t i=0; i < 8; i+=2) {
         byte_to_asciis(sendbuf + 4 + i, *data);
         data++;
     }
     LGSerial::put(sendbuf);
-    LGSerial::get(response_buf, 3);
+    cmd_wait_for_ok();
 
     sendbuf[2] = 'D';
     sendbuf[3] = 'L';
@@ -337,20 +371,20 @@ void LGNetwork::cmd_set_target_long_address(const uint64_t &addr)
         data++;
     }
     LGSerial::put(sendbuf);
-    LGSerial::get(response_buf, 3);
+    cmd_wait_for_ok();
 }
 
 #ifdef USE_NETWORK_CLIENT
 void LGNetwork::cmd_set_long_address_to_basestation()
 {
-    char sendbuf[] = "ATDH00000000\r\n";
+    char sendbuf[] = "ATDH00000000\r";
     char* data = (char*)&(LGNetwork::baseUUID);
     for(uint8_t i=0; i < 8; i+=2) {
         byte_to_asciis(sendbuf + 4 + i, *data);
         data++;
     }
     LGSerial::put(sendbuf);
-    LGSerial::get(response_buf, 3);
+    cmd_wait_for_ok();
 
     // sendbuf[2] = 'D';
     // sendbuf[3] = 'L';
@@ -359,7 +393,7 @@ void LGNetwork::cmd_set_long_address_to_basestation()
     //     data++;
     // }
     // LGSerial::put(sendbuf);
-    // LGSerial::get(response_buf, 3);
+    // cmd_wait_for_ok();
 }
 #endif
 
@@ -469,18 +503,18 @@ void LGNetwork::cmd_set_coordinator()
 {
     #ifdef USE_NETWORK_SERVER
         LGSerial::print_pgm( PSTR("ATCE1") );
-        LGSerial::get(response_buf, 3);
+        cmd_wait_for_ok();
 
         LGSerial::print_pgm( PSTR("ATA204") ); // Coordinator auto-associate
-        LGSerial::get(response_buf, 3);
+        cmd_wait_for_ok();
     #endif
 
     #ifdef USE_NETWORK_CLIENT
         LGSerial::print_pgm( PSTR("ATCE0") );
-        LGSerial::get(response_buf, 3);
+        cmd_wait_for_ok();
 
         LGSerial::print_pgm( PSTR("ATA104") ); // Autoassociate
-        LGSerial::get(response_buf, 3);
+        cmd_wait_for_ok();
     #endif
 
 }

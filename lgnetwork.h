@@ -55,11 +55,15 @@ public:
     void set_mode(network_mode_t newMode);
     void loop(); // Call this periodically
 
+    void force_disconnect(); // Call this before re-programming
+
 public:
+    void cmd_wait_for_ok();
     void cmd_enter();
     void cmd_reset();
     void cmd_exit();
     void cmd_persist();
+    void cmd_dissociate();
 
     void cmd_setup();
     void cmd_set_channel(network_mode_t mode);
