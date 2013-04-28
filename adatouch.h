@@ -17,15 +17,16 @@
 
 #include <stdint.h>
 
-class Point {
+class Point 
+{
 public:
-  Point(void);
+	Point(void);
 	Point(int16_t x, int16_t y, int16_t z);
 	
 	bool operator==(Point);
 	bool operator!=(Point);
 	
-	int16_t x, y, z;
+	uint16_t x, y, z;
 };
 
 class TouchScreen {
@@ -35,9 +36,11 @@ public:
 	
 	bool isTouching(void);
 	uint16_t pressure(void);
-	int readTouchY();
-	int readTouchX();
-	Point getPoint();
+	int readTouchYM(); //pc3
+	int readTouchXM(); //pc2
+	int readTouchXP(); //pc0
+	int readTouchYP(); //pc1
+	//void getPoint();
 	int16_t pressureThreshhold;
 	
 private:
