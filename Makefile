@@ -34,6 +34,9 @@ usbserial: clean main.hex
 ssd: COMPILE += -DCONTROLLER_FILE='"controller_ssd.c"' -DUSE_NETWORK_CLIENT
 ssd: clean main.hex
 
+display: COMPILE += -DCONTROLLER_FILE='"controller_display.c"' -DUSE_NETWORK_SERVER
+display: clean main.hex
+
 db: COMPILE += -DCONTROLLER_FILE='"controller_db.c"' -DUSE_NETWORK_SERVER
 db: clean main.hex
 
