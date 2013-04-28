@@ -21,28 +21,34 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
-#include <avr/pgmspace.h>
-#include <math.h>
+#include <avr/pgmspace.h> 
+#include <math.h> 
 
 void color_bars();
-void drawHorizontalLine(uint16_t /*x*/, uint16_t/*y*/, uint16_t /*length*/, uint16_t /*color*/, uint16_t /*thickness*/);
-void drawVerticalLine (uint16_t /*x*/, uint16_t /*y*/, uint16_t /*length*/, uint16_t /*color*/, uint16_t /*thickness*/);
-void drawDiagonalLine (uint16_t/*x1*/, uint16_t /*y1*/, uint16_t /*x2*/, uint16_t /*y2*/, uint16_t /*color*/);
-void drawPixel (uint16_t /*x1*/, uint16_t /*y1*/, uint16_t /*color*/);
+void drawHorizontalLine(uint16_t /*x*/, uint16_t/*y*/, uint16_t /*length*/, uint16_t /*color*/, uint16_t /*thickness*/); 
+void drawVerticalLine (uint16_t /*x*/, uint16_t /*y*/, uint16_t /*length*/, uint16_t /*color*/, uint16_t /*thickness*/); 
+void drawDiagonalLine (uint16_t/*x1*/, uint16_t /*y1*/, uint16_t /*x2*/, uint16_t /*y2*/, uint16_t /*color*/); 
+void drawPixel (uint16_t /*x1*/, uint16_t /*y1*/, uint16_t /*color*/); 
 void fillScreen(uint16_t /*color*/);
-void fillRectangle(uint16_t /*x*/, uint16_t /*y*/, uint16_t /*h*/, uint16_t /*w*/, uint16_t /*color*/ );
-void makeRectangle(uint16_t /*x*/, uint16_t /*y*/, uint16_t /*h*/, uint16_t /*w*/, uint16_t /*color*/, uint16_t /*thick*/);
-void drawChar(uint16_t /*x*/, uint16_t /*y*/, unsigned char c/*h*/, uint16_t /*color*/, uint16_t /*bg*/, uint16_t /*size*/);
-void drawString(uint16_t x, uint16_t y, unsigned char* str, uint16_t color, uint16_t bg, uint16_t size);
-
+void fillRectangle(uint16_t /*x*/, uint16_t /*y*/, uint16_t /*h*/, uint16_t /*w*/, uint16_t /*color*/, uint16_t	/*thick*/); 
+void makeRectangle(uint16_t /*x*/, uint16_t /*y*/, uint16_t /*h*/, uint16_t /*w*/, uint16_t /*color*/, uint16_t /*thick*/); 
+void drawChar(uint16_t /*x*/, uint16_t /*y*/, const char c/*h*/, uint16_t /*color*/, uint16_t /*bg*/, uint16_t /*size*/); 
+void drawString(uint16_t /*x*/, uint16_t /*y*/, const char* /*str*/, uint16_t /*color*/, uint16_t /*bg*/, uint16_t /*size*/);
 //void bw_image();
 void regout(uint16_t, uint16_t);
 void lcdout(uint8_t);
 void initialize(void);
 void reset();
 uint16_t color565(uint8_t, uint8_t, uint8_t);
+void homeMenu(); 
+void statusMenu(); 
+void devicesMenu(); 
+void settingsMenu(); 
+void scheduleMenu(); 
 
 // Define some bits in the I/O ports
+
+
 
 #define BLACK 0x0000
 #define BLUE 0x001F
@@ -53,10 +59,11 @@ uint16_t color565(uint8_t, uint8_t, uint8_t);
 #define TEST 0x96a8
 #define YELLOW 0xFFE0
 #define WHITE 0xFFFF
+#define GREY 0x8888
 
 #define LCD_Data_B  0x07        // Bits in Port B for LCD data bits 0-1
 #define LCD_Data_D  0xfc        // Bits in Port D for LCD data bits 3-7
-#define LCD_Data_BitB0 0x01
+#define LCD_Data_BitB0 0x01 
 
 #define LCD_CD      (1 << PD3)  // PORTB, bit 4 - LCD register select (0 = command (addr), 1 = data)
 #define LCD_RD      (1 << PD5)  // PORTB, bit 3 - LCD /RD (read)
@@ -201,162 +208,59 @@ uint8_t blu[8] = { 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff };
 #include "adafruit335.img"
 
 
-int main(void)
+int tmain(void) 
 {
-
+	
     DDRB |= LCD_Data_B;         // Set PORTB bits 0-1 for output
 
     DDRD |= 0xffff;         // Set PORTD bits 2-7 for output
-
+	
     PORTC |= LCD_Bits_C;        // Set all the control lines high
     DDRC |= LCD_Bits_C;         // Set control port bits for output
-
+	
     initialize();               // Initialize the LCD display
-
+	
     regout(0x50, 0);            // Set window to the full 240x320 screen
     regout(0x51, 239);
     regout(0x52, 0);
     regout(0x53, 319);
-	// Loop between displaying color bars and an image
-
-
-
-
-	while (1)
+	     // Loop between displaying color bars and an image
+    
+	
+	
+	
+	while (1) 
 	{
-		//fillScreen(TEST);
-		//_delay_ms(1000);
-		//fillScreen(BLACK);
-		//_delay_ms(1000);
-		//fillScreen(GREEN);
-		//_delay_ms(1000);
-		//fillScreen(CYAN);
-		//_delay_ms(1000);
-		//fillScreen(YELLOW);
-		//_delay_ms(1000);
-		//fillScreen(BLUE);
-		//_delay_ms(1000);
-		//fillScreen(RED);
-
-
-
-		//_delay_ms(1000);
-
-		//color_bars();
-		_delay_ms(1000);
-
-		//bw_image();
-		fillScreen(WHITE);
-		_delay_ms(1000);
-
-
-		//drawVerticalLine(10,10,100, RED, 5);
-		//drawHorizontalLine(10,10,300, RED, 5);
-
-		makeRectangle(10,10,65,140, MAGENTA, 3);
-		makeRectangle(85,10,65,140, MAGENTA, 3);
-		makeRectangle(160,10,65,140, MAGENTA, 3);
-		makeRectangle(10,160,65,140, MAGENTA, 3);
-		makeRectangle(85,160,65,140, MAGENTA, 3);
-		makeRectangle(160,160,65,140, MAGENTA, 3);
-		_delay_ms(1000);
-
-
-        drawString(15, 15, "Hello World", BLACK, WHITE, 1);
-
-
-		/*makeRectangle(85,10,65,100, MAGENTA, 5);
-		 makeRectangle(160,10,65,100, MAGENTA, 5);
-		 makeRectangle(10,160,65,100, MAGENTA, 5);
-		 makeRectangle(85,160,65,100, MAGENTA, 5);
-		 makeRectangle(160,160,65,100, MAGENTA, 5); */
-		/*
-		 uint16_t x,y;
-		 for (x = 10; x < 15; x= x+1)
-		 {
-		 for (y = 10; y<300; y = y++)
-		 {
-		 drawPixel(x,y,BLUE);
-		 }
-		 }
-		 for (x = 210; x < 215; x= x+1)
-		 {
-		 for (y = 10; y<300; y = y++)
-		 {
-		 drawPixel(x,y,BLUE);
-		 }
-		 }
-
-		 for (x = 10; x < 210; x= x+1)
-		 {
-		 for (y = 10; y<20; y = y++)
-		 {
-		 drawPixel(x,y,BLUE);
-		 }
-		 }
-		 for (x = 10; x < 210; x= x+1)
-		 {
-		 for (y = 300; y<310; y = y++)
-		 {
-		 drawPixel(x,y,BLUE);
-		 }
-		 }*/
-
-		//_delay_ms(1000);
-
-
-		//drawVerticalLine(10,10, 100, RED);
-		//_delay_ms(1000);
-		//drawVerticalLine(10, 310, 100, RED);
-		//_delay_ms(1000);
-		//drawHorizontalLine(10,10,300, RED);
-		//_delay_ms(1000);
-		//drawHorizontalLine(310, 10, 300, RED);
-
-		//drawHorizontalLine(10, 10, 300, RED, RED);
-		_delay_ms(1000);
-		//drawHorizontalLine(110,10,300,RED, RED);
-		//_delay_ms(1000);
-
-
-
-		//fillScreen(TEST);
-		//_delay_ms(2000);
-		/*
-		 fillScreen(MAGENTA);
-		 _delay_ms(1000);
-		 fillScreen(CYAN);
-		 _delay_ms(1000);
-		 fillScreen(GREEN);
-		 _delay_ms(1000);
-		 */
+	
+		homeMenu(); 
+		
     }
 }
 
 /*
- color_bars - draw eight color bars on the full screen
+ color_bars - draw eight color bars on the full screen 
  */
 void color_bars()
 {
     uint8_t i, j, k;
     uint16_t color;
     uint8_t hi, lo;
-
+	
     regout(0x20, 0);            // Set addresss counter to top left (0,0)
     regout(0x21, 0);
-
+	
     LCD_CE_0;
-
+	
     LCD_CD_0;
     lcdout(0);
     lcdout(0x22);
     LCD_CD_1;
-
+	
     for (j = 0; j < 8; j++) {
 		color = color565(red[j], grn[j], blu[j]);
 		hi = color >> 8;
 		lo = color;
-
+		
 		for (k = 0; k < 40; k++) {
 			for (i = 0; i < 240; i++) {
 				lcdout(hi);
@@ -364,7 +268,7 @@ void color_bars()
 			}
 		}
     }
-
+	
     LCD_CE_0;
 }
 
@@ -376,21 +280,21 @@ void color_bars()
 void regout(uint16_t a, uint16_t d)
 {
     uint8_t hi, lo;
-
+	
     LCD_CE_0;                   // Enable the chip
-
+	
     hi = a >> 8;
     lo = a & 0xff;
     LCD_CD_0;                   // CD = command
     lcdout(hi);                 // Send high part of reg address
     lcdout(lo);                 // Send low part of reg address
-
+	
     hi = d >> 8;
     lo = d & 0xff;
     LCD_CD_1;                   // CD = data
     lcdout(hi);                 // High part of data
     lcdout(lo);                 // Low part of data
-
+	
     LCD_CE_1;                   // Disable the chip
 }
 
@@ -398,26 +302,26 @@ void regout(uint16_t a, uint16_t d)
  lcdout - Write a byte to the LCD
  */
 void lcdout(uint8_t x)
-{
+{   
 	//PORTD &= ~(PD7<<1);
-	//PORTD |= (PD7 << 1);
-
-	//PORTB |= (PB1<<1);
-	///PORTB &= ~(PB1<<1);
+	//PORTD |= (PD7 << 1); 
+	 
+	//PORTB |= (PB1<<1); 
+	///PORTB &= ~(PB1<<1); 
 	int i ;
 	for (i = 0; i < 8; i++)
 	{
-
-		PORTB &= ~(PB1<<1);
-
-
-		PORTB |= x & LCD_Data_BitB0;    // put low two bits in
+	
+		PORTB &= ~(PB1<<1); 
+		
+		
+		PORTB |= x & LCD_Data_BitB0;    // put low two bits in 
 		PORTB &= (x | ~LCD_Data_BitB0);
-
+		
 		PORTB |= (PB1<<1);
 		x = x>>1;
 	}
-
+	
     //PORTD |= x & LCD_Data_D;    // put high six bits in D
     //PORTD &= (x | ~LCD_Data_D);
     LCD_WR_0;                   // Toggle the /WR input
@@ -434,17 +338,17 @@ void initialize()
     uint16_t a, d;
     uint16_t n;
     const uint16_t *p;
-
+	
     reset();
-
+	
     n = sizeof(ILI932x_regValues) / sizeof(uint16_t);
     n = n/2;
     p = ILI932x_regValues;
-
+	
     while (n--) {
 		a = pgm_read_word(p++);
 		d = pgm_read_word(p++);
-
+		
 		if (a == TFTLCD_DELAY_50)
 			_delay_ms(50);
 		else if (a == TFTLCD_DELAY_200)
@@ -460,24 +364,24 @@ void initialize()
 void reset()
 {
     uint8_t i;
-
+	
     PORTD |= 0xffff;        // Set all the control lines high
-
+	
     _delay_ms(100);     // Delay 100ms to let things settle
-
+	
     LCD_RST_0;
     _delay_us(2);      // Extend the reset a bit
     LCD_RST_1;
-
+	
     // Not sure why this is needed, or if it is.
     LCD_CE_0;
-    lcdout(0);
+    lcdout(0);                                                   
     for (i = 7; i != 0; i--) {
 		LCD_WR_0;
 		LCD_WR_1;
     }
     LCD_CE_1;
-
+	
     _delay_ms(100);
 }
 
@@ -491,25 +395,25 @@ uint16_t color565(uint8_t r, uint8_t g, uint8_t b)
 
 void drawVerticalLine(uint16_t x, uint16_t y, uint16_t len, uint16_t color, uint16_t thick )
 {
-	uint16_t i, j;
+	uint16_t i, j; 
 	for (i = x; i < x+len+thick; i++)
 	{
 		for (j = y; j < y+thick; j++)
 		{
-			drawPixel(i,j,color);
+			drawPixel(i,j,color); 
 		}
 	}
-
+	
 }
 
 void drawHorizontalLine (uint16_t x, uint16_t y, uint16_t len, uint16_t color, uint16_t thick)
 {
-	uint16_t i, j;
+	uint16_t i, j; 
     for (i = x; i < x+thick; i++)
 	{
 		for (j = y; j < y+len+thick; j++)
 		{
-			drawPixel(i,j,color);
+			drawPixel(i,j,color); 
 		}
 	}
 }
@@ -517,136 +421,148 @@ void drawHorizontalLine (uint16_t x, uint16_t y, uint16_t len, uint16_t color, u
 
 
 void drawDiagonalLine (uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color)
-{ // apply bresenham's algorithm ! //
-
+{ // apply bresenham's algorithm ! // 
+	
     regout(0x20, 0);            // Set addresss counter to top left (0,0)
     regout(0x21, 0);
-
-	uint8_t hi, lo, i;
-	hi = color>>8;
+	
+	uint8_t hi, lo, i; 
+	hi = color>>8; 
 	lo = color;
 	//uint8_t hib,lob;
-
-	//hib = bcolor>>8;
-	//lob = bcolor;
+	
+	//hib = bcolor>>8; 
+	//lob = bcolor; 
     LCD_CE_0;
-
+	
     LCD_CD_0;
-	lcdout(0);
-	lcdout(0x22);
-	LCD_CD_1;
-
-	int deltax = x2-x1;
-	int deltay = y2-y1;
-	double error = 0;
-	double deltaerr = (deltay/deltax);
-	uint16_t y = y1;
-
+	lcdout(0); 
+	lcdout(0x22); 
+	LCD_CD_1; 
+	
+	int deltax = x2-x1; 
+	int deltay = y2-y1; 
+	double error = 0; 
+	double deltaerr = (deltay/deltax); 
+	uint16_t y = y1; 
+	
 	for (i = x1; i<x2; i++)
 	{
-		lcdout(hi);
-		lcdout(lo);
-		error = error + deltaerr;
+		lcdout(hi); 
+		lcdout(lo); 
+		error = error + deltaerr; 
 		if (error >= 0.5)
-		{
-			y = y+1;
-			error = error -1;
-			for (i =0; i<239+y; i++)
 			{
+				y = y+1; 
+				error = error -1; 
+				for (i =0; i<239+y; i++)
+				{
 				//lcdout(hib);
-				//lcdout(lob);
-
+				//lcdout(lob); 
+				
+				}
+				
 			}
-
-		}
-
+		
 	}
-
+	
 }
 
 void drawPixel (uint16_t x, uint16_t y, uint16_t color)
 {
-
-	LCD_CE_0;
-
+	
+	LCD_CE_0; 
+	
     regout(0x20, x);            // Set addresss counter to top left (0,0)
     regout(0x21, y);
-	regout(0x22, color);
+	regout(0x22, color); 
     LCD_CE_0;
-
+	
     LCD_CD_0;
 }
-
-void drawChar(uint16_t x, uint16_t y, unsigned char c, uint16_t color, uint16_t bg, uint16_t size)
+ 
+void drawChar(uint16_t x, uint16_t y, const char c, uint16_t color, uint16_t bg, uint16_t size)
 {
 	int8_t i,j;
-	for (i=0; i<6; i++ )
+	if (size == 1)
 	{
-		uint8_t line;
-		if (i == 5)
-			line = 0x0;
-		else
-			line = pgm_read_byte(font+(c*5)+i);
-		for (j = 7; j>0; j--)
+		for (i=0; i<6; i++ )
 		{
-			if (line & 0x1)
+			uint8_t line;
+			if (i == 5)
+				line = 0x0;
+			else
+				line = pgm_read_byte(font+(c*5)+i);
+			for (j = 7; j>0; j--)
 			{
-				if (size == 1) // default size
+				if (line & 0x1)
 				{
 					drawPixel(x+j, y+i, color);
 				}
-				//else { // big size
-				//fillRect(x+(i*size), y+(j*size), size, size, color);
-			}
-			else if (bg != color)
-			{
-				if (size == 1) // default size
+				else if (bg != color)
 				{
 					drawPixel(x+j, y+i, bg);
 				}
-				else
-				{ // big size
-					//fillRect(x+i*size, y+j*size, size, size, bg);
-				}
+				line >>= 1;
 			}
-			line >>= 1;
 		}
 	}
-
-}
-
-void drawString(uint16_t x, uint16_t y, unsigned char* str, uint16_t color, uint16_t bg, uint16_t size)
-{
-    for(uint8_t i=0; str[i]; i++) {
-        drawChar(x, y + 6*i, str[i], color, bg, size);
-    }
+	else
+	{
+		for (i=0; i<size*5+1; i=i+size )
+		{
+			uint8_t line;
+			if (i == size*5)
+				line = 0x0;
+			else
+				line = pgm_read_byte(font+(c*5)+i/size);
+			for (j = size*6+1; j>0; j=j-size)
+			{
+				if (line & 0x1)
+				{
+					drawPixel(x+j, y+i, color);
+					drawPixel(x+j-1, y+i, color);
+					drawPixel(x+j, y+i+1, color);
+					drawPixel(x+j-1, y+i+1, color);
+				}
+				else if (bg != color)
+				{
+					drawPixel(x+j, y+i, bg);
+					drawPixel(x+j-1, y+i, bg);
+					drawPixel(x+j, y+i+1, bg);
+					drawPixel(x+j-1, y+i+1, bg);
+				}
+				line >>= 1;
+			}
+		}
+	}
 }
 
 void fillScreen(uint16_t color)
 {
 	regout(0x20, 0);            // Set addresss counter to top left (0,0)
     regout(0x21, 0);
-
+	
 	regout(0x50, 0);            // Set window to the full 240x320 screen
     regout(0x51, 239);
     regout(0x52, 0);
     regout(0x53, 319);
-
+	
     LCD_CE_0;
-
+	
     LCD_CD_0;
     lcdout(0);
     lcdout(0x22);
     LCD_CD_1;
-	uint8_t hi, lo;
-	int k, i;
+	uint8_t hi, lo; 
+	int k, i; 
 	hi = color >> 8;
 	lo = color;
-
-
+	
+	
 	for (k = 0; k < 320; k++)
 	{
-		for (i = 0; i < 240; i++)
+		for (i = 0; i < 240; i++) 
 		{
 			lcdout(hi);
 			lcdout(lo);
@@ -656,21 +572,145 @@ void fillScreen(uint16_t color)
 
 void makeRectangle(uint16_t x, uint16_t y, uint16_t h, uint16_t w, uint16_t color, uint16_t thick)
 {
-
-	drawVerticalLine(x,y,h,color,thick);
-	drawVerticalLine(x,y+w,h, color, thick);
+	
+	drawVerticalLine(x,y,h,color,thick); 
+	drawVerticalLine(x,y+w,h, color, thick); 
 	drawHorizontalLine(x,y,w, color, thick);
-	drawHorizontalLine(x+h,y,w, color, thick);
+	drawHorizontalLine(x+h,y,w, color, thick); 
+	
+}
+
+	
+
+void fillRectangle(uint16_t x, uint16_t y, uint16_t h, uint16_t w, uint16_t color, uint16_t thick )
+{
+	uint16_t i ,j; 
+	for (i = y+thick; i < y+w; i++)
+	{
+		drawVerticalLine(x+thick,i,h-thick, color,1); 
+	}
+    
+    
+}
+
+void drawString(uint16_t x, uint16_t y, const char* str, uint16_t color, uint16_t bg, uint16_t size)
+{
+	uint8_t i; 
+	for(i=0; str[i]; i++)
+	{
+        drawChar(x, y + size*6*i, str[i], color, bg, size);
+    }
 }
 
 
-
-void fillRectangle(uint16_t x, uint16_t y, uint16_t h, uint16_t w, uint16_t color )
+void homeMenu() 
 {
-    regout(0x20, 0);            // Set addresss counter to top left (0,0)
-    regout(0x21, 0);
+	uint16_t schcolor = color565(142,35,35); //red 
+	uint16_t setcolor = color565(35, 142, 35); // green 
+	uint16_t devcolor = color565(205,173,0); // yellow 
+	uint16_t stacolor = color565(51,153,204); //blue 
+	fillScreen(WHITE); 
+	makeRectangle(10,10,90,140,BLACK, 4); 
+	fillRectangle(10,10,90,140,setcolor, 4); 
+	//makeRectangle(15,15,90,140,MAGENTA, 3); 
+	makeRectangle(10,160,90,140, BLACK, 4);
+	fillRectangle(10,160,90,140,devcolor,4); 
+	//makeRectangle(15,165,90,140, BLACK, 3);
+	makeRectangle(110,10, 90, 140, BLACK, 4); 
+	fillRectangle(110,10,90,140, schcolor,4); 
+	//makeRectangle(115,15, 90, 140, BLACK, 3); 
+	makeRectangle(110,160, 90, 140, BLACK, 4);
+	fillRectangle(110,160, 90, 140, stacolor, 4); 
+	//makeRectangle(115,165, 90, 140, MAGENTA, 3);
+	
+	const char * home = "HOME"; 
+	const char * set = "Settings"; 
+	const char * sched = "Schedule"; 
+	const char * dev = "Add Device"; 
+	const char * stats = "Status"; 
+	const char * day = "04/25/13"; 
+	
+	drawString(215,120 , home, BLACK, WHITE, 3);
+	drawString(55,35, set, BLACK, setcolor, 2); 
+	drawString(155,20, dev, BLACK, schcolor, 2); 
+	drawString(55, 180, sched, BLACK, devcolor, 2); 
+	drawString(155,200, stats, BLACK, stacolor, 2); 
+	 
+	drawString(224, 1 , day, GREY, WHITE, 2);
+	makeRectangle(223,0, 15,100, RED, 2); 
+	makeRectangle(224, 219, 15, 100, RED, 2); 
+	/*
+	unsigned int minutes = 0; 
+	unsigned int secs = 0; 
+	const char* secdisp = "0"; 
+	const char* mindisp = "0"; 
+	const char t = "";*/
+	const char * time = "01:23 PM"; 
+	drawString(225, 220, time, GREY, WHITE, 2);
+	
+		/*
+		_delay_ms(100); 
+		;
+		if (secs%2 == 0)
+		{
+		time = "        "; 
+		}
+		else 
+		{
+		time = "01:24 PM"; 	
+		}
 
-    LCD_CE_0;
+			secs++; 
+		drawString(225, 220, time, GREY, WHITE, 2); 
+		if (secs > 10)
+		{
+			minutes++; 	
+			secs = 0; 
+		}*/
+		statusMenu(); 
+		devicesMenu();
+		settingsMenu(); 
+		scheduleMenu(); 
+		 /*
+		secdisp += (unsigned char)secdisp; 
+		mindisp += (unsigned char)minutes; 
+		t = secdisp + ":" + minutes + "PM";  
+		unsigned char * temp = &t;  
+		drawString(215, 210, time, GREY, WHITE, 2); 
+	*/
+}
 
-    LCD_CD_0;
+
+void statusMenu() 
+{
+	uint16_t stacolor = color565(51,153,204); //blue
+	fillScreen(stacolor); 
+	makeRectangle(15,15, 185,280, BLACK, 5); 
+	const char* status = "STATUS"; 
+	drawString(195,50 , status, BLACK, stacolor, 2);
+	
+}
+void devicesMenu() 
+{	uint16_t schcolor = color565(142,35,35); 
+	fillScreen(schcolor); 
+	makeRectangle(15,15, 185,280, BLACK, 5); 
+	const char* AddDevices = "ADD ADAPTERS"; 
+	drawString(195,50 , AddDevices, BLACK, schcolor, 2);
+}
+void settingsMenu() 
+{	uint16_t setcolor = color565(35,142,35); 
+	fillScreen(setcolor); 
+	makeRectangle(15,15, 185,280, BLACK, 5); 
+	const char* settings = "SETTINGS"; 
+	drawString(195,50 ,settings, BLACK, setcolor, 2);
+}
+void scheduleMenu() 
+{
+	uint16_t devcolor = color565(205,173,0); 
+	fillScreen(devcolor); 
+	makeRectangle(15,15, 185,280, BLACK, 5); 
+	const char* Adapter = "PICK ADAPTER"; 
+	drawString(195,50 , Adapter, BLACK, devcolor, 2);
+	
+	
 }
