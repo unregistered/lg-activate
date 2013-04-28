@@ -23,6 +23,9 @@
 #include <util/delay.h>
 #include <avr/pgmspace.h> 
 #include <math.h> 
+//#include "adatouch.cpp" 
+#include "util.h"
+//#include "lgserial.h"
 
 void color_bars();
 void drawHorizontalLine(uint16_t /*x*/, uint16_t/*y*/, uint16_t /*length*/, uint16_t /*color*/, uint16_t /*thickness*/); 
@@ -335,6 +338,8 @@ void lcdout(uint8_t x)
  */
 void initialize()
 {
+	//LGSerial::init(); 
+	//LGSerial::put("Hello World!");
     uint16_t a, d;
     uint16_t n;
     const uint16_t *p;
@@ -605,22 +610,28 @@ void drawString(uint16_t x, uint16_t y, const char* str, uint16_t color, uint16_
 
 void homeMenu() 
 {
+	
+	sleep(100); 
+	 
+	
+	
+	
 	uint16_t schcolor = color565(142,35,35); //red 
 	uint16_t setcolor = color565(35, 142, 35); // green 
 	uint16_t devcolor = color565(205,173,0); // yellow 
 	uint16_t stacolor = color565(51,153,204); //blue 
 	fillScreen(WHITE); 
 	makeRectangle(10,10,90,140,BLACK, 4); 
-	fillRectangle(10,10,90,140,setcolor, 4); 
+	makeRectangle(15,15,90,140,setcolor, 4); 
 	//makeRectangle(15,15,90,140,MAGENTA, 3); 
 	makeRectangle(10,160,90,140, BLACK, 4);
-	fillRectangle(10,160,90,140,devcolor,4); 
+	makeRectangle(15,165,90,140,devcolor,4); 
 	//makeRectangle(15,165,90,140, BLACK, 3);
 	makeRectangle(110,10, 90, 140, BLACK, 4); 
-	fillRectangle(110,10,90,140, schcolor,4); 
+	makeRectangle(115,15,90,140, schcolor,4); 
 	//makeRectangle(115,15, 90, 140, BLACK, 3); 
 	makeRectangle(110,160, 90, 140, BLACK, 4);
-	fillRectangle(110,160, 90, 140, stacolor, 4); 
+	makeRectangle(115,165, 90, 140, stacolor, 4); 
 	//makeRectangle(115,165, 90, 140, MAGENTA, 3);
 	
 	const char * home = "HOME"; 
@@ -647,7 +658,24 @@ void homeMenu()
 	const char t = "";*/
 	const char * time = "01:23 PM"; 
 	drawString(225, 220, time, GREY, WHITE, 2);
-	
+	int x,y; 
+	/*while(1)
+	{
+		/*
+		sleep(1000);
+		TouchScreen ts = TouchScreen(10,10,10,10,10); 
+		DDRC = 0x0;  
+		DDRC = 0x5;
+		 
+		x = ts.readTouchYM(); 
+		//LGSerial::print(y); 
+		//DDRC |= 0xf; 
+		DDRC = 0x0;
+		DDRC = 0xa; 
+		
+		y = ts.readTouchXM();
+		//LGSerial::print(x); 
+		*/
 		/*
 		_delay_ms(100); 
 		;
@@ -667,17 +695,36 @@ void homeMenu()
 			minutes++; 	
 			secs = 0; 
 		}*/
-		statusMenu(); 
-		devicesMenu();
-		settingsMenu(); 
-		scheduleMenu(); 
+		/*
+		if (x > 30 && x<100 && y>0 && y < 130)
+		{
+			settingsMenu(); 
+		}
+		
+		else if (y> 140 && y<220 && x>30 && x<100)
+		{
+			devicesMenu(); 
+		}
+		*/
+		//else if (/*x>125 && x<215*/ &&y>60 && y<130)
+		//{
+				//scheduleMenu(); 
+		//}
+	
+		/*
+		else if (x>125 && x<215 && y>140 && y<220) 
+		{
+			statusMenu(); 
+		}*;
+		 
 		 /*
 		secdisp += (unsigned char)secdisp; 
 		mindisp += (unsigned char)minutes; 
 		t = secdisp + ":" + minutes + "PM";  
 		unsigned char * temp = &t;  
 		drawString(215, 210, time, GREY, WHITE, 2); 
-	*/
+	
+	}*/
 }
 
 
@@ -685,32 +732,34 @@ void statusMenu()
 {
 	uint16_t stacolor = color565(51,153,204); //blue
 	fillScreen(stacolor); 
-	makeRectangle(15,15, 185,280, BLACK, 5); 
+	makeRectangle(15,15, 200,280, BLACK, 5); 
 	const char* status = "STATUS"; 
-	drawString(195,50 , status, BLACK, stacolor, 2);
+	drawString(210,50 , status, BLACK, stacolor, 2);
+	
+	
 	
 }
 void devicesMenu() 
 {	uint16_t schcolor = color565(142,35,35); 
 	fillScreen(schcolor); 
-	makeRectangle(15,15, 185,280, BLACK, 5); 
+	makeRectangle(15,15, 200,280, BLACK, 5); 
 	const char* AddDevices = "ADD ADAPTERS"; 
-	drawString(195,50 , AddDevices, BLACK, schcolor, 2);
+	drawString(210,50 , AddDevices, BLACK, schcolor, 2);
 }
 void settingsMenu() 
 {	uint16_t setcolor = color565(35,142,35); 
 	fillScreen(setcolor); 
-	makeRectangle(15,15, 185,280, BLACK, 5); 
+	makeRectangle(15,15, 200,280, BLACK, 5); 
 	const char* settings = "SETTINGS"; 
-	drawString(195,50 ,settings, BLACK, setcolor, 2);
+	drawString(210,50 ,settings, BLACK, setcolor, 2);
 }
 void scheduleMenu() 
 {
 	uint16_t devcolor = color565(205,173,0); 
 	fillScreen(devcolor); 
-	makeRectangle(15,15, 185,280, BLACK, 5); 
+	makeRectangle(15,15, 200,280, BLACK, 5); 
 	const char* Adapter = "PICK ADAPTER"; 
-	drawString(195,50 , Adapter, BLACK, devcolor, 2);
+	drawString(210,50 , Adapter, BLACK, devcolor, 2);
 	
 	
 }
