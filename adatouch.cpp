@@ -16,13 +16,13 @@
 //#include "wiring_private.h"
 #include <avr/pgmspace.h>
 //#include "TouchScreen.h"
-
+#include "adatouch.h"
 #define XM (1 << PC0); 
 #define XP (1 << PC1); 
 #define YM (1 << PC2); 
 #define YP (1 << PC3); 
 
-#define 
+
 
 
 // #include http://code.google.com/p/arduino/source/browse/trunk/hardware/arduino/cores/arduino/?r=972 // 
@@ -34,8 +34,9 @@
 
 #define NUMSAMPLES 2
 
-Point::Point(void) {
-  x = y = 0;
+Point::Point(void)
+{
+	x = y = 0;
 }
 
 Point::Point(int16_t x0, int16_t y0, int16_t z0) {
@@ -58,7 +59,8 @@ static void insert_sort(int array[], uint8_t size)
 	uint8_t j;
 	int save;
 	
-	for (int i = 1; i < size; i++) {
+	for (int i = 1; i < size; i++) 
+	{
 		save = array[i];
 		for (j = i; j >= 1 && save < array[j - 1]; j--)
 			array[j] = array[j - 1];
@@ -66,36 +68,36 @@ static void insert_sort(int array[], uint8_t size)
 	}
 }
 #endif
-
-Point TouchScreen::getPoint(void) {
+/*
+void TouchScreen::getPoint(void) {
 	int x, y, z;
 	int samples[NUMSAMPLES]; // 2 
 	uint8_t i, valid;
+	*/
 	
-	/*
-	uint8_t xp_port = digitalPinToPort(_xp); // defined pins_arduino.h // // return port of specified pin
-	uint8_t yp_port = digitalPinToPort(_yp); // defined pins_arduino.h // // return port of specified pin
-	uint8_t xm_port = digitalPinToPort(_xm); // defined pins_arduino.h // 
-	uint8_t ym_port = digitalPinToPort(_ym); // defined pins_arduino.h // 	
-	*/ 
-	/*
-	uint8_t xp_port = pgm_read_byte(); 
-	uint8_t yp_port = pgm_read_byte(); 
-	uint8_t xm_port = pgm_read_byte();
-	uint8_t ym_port = pgm_read_byte();
-	*/
-	/*
-	uint8_t xp_pin = digitalPinToBitMask(_xp);  // defined pins_arduino.h // 
-	uint8_t yp_pin = digitalPinToBitMask(_yp);	// return bitmask of specified pin // 
-	uint8_t xm_pin = digitalPinToBitMask(_xm);	// return bitmask of specified pin // 
-	uint8_t ym_pin = digitalPinToBitMask(_ym);
-	*/
-	/*
-	uint8_t xp_pin = pgm_read_byte(); 
-	uint8_t yp_pin = pgm_read_byte();
-	uint8_t xm_pin = pgm_read_byte();
-	uint8_t ym_pin = pgm_read_byte();
-	*/
+	//uint8_t xp_port = digitalPinToPort(_xp); // defined pins_arduino.h // // return port of specified pin
+	//uint8_t yp_port = digitalPinToPort(_yp); // defined pins_arduino.h // // return port of specified pin
+	//uint8_t xm_port = digitalPinToPort(_xm); // defined pins_arduino.h // 
+	//uint8_t ym_port = digitalPinToPort(_ym); // defined pins_arduino.h // 	
+	 
+	
+	//uint8_t xp_port = pgm_read_byte(); 
+	//uint8_t yp_port = pgm_read_byte(); 
+	//uint8_t xm_port = pgm_read_byte();
+	//uint8_t ym_port = pgm_read_byte();
+	
+	
+	//uint8_t xp_pin = digitalPinToBitMask(_xp);  // defined pins_arduino.h // 
+	//uint8_t yp_pin = digitalPinToBitMask(_yp);	// return bitmask of specified pin // 
+	//uint8_t xm_pin = digitalPinToBitMask(_xm);	// return bitmask of specified pin // 
+	//uint8_t ym_pin = digitalPinToBitMask(_ym);
+	
+	
+	//uint8_t xp_pin = pgm_read_byte(); 
+	//uint8_t yp_pin = pgm_read_byte();
+	//uint8_t xm_pin = pgm_read_byte();
+	//uint8_t ym_pin = pgm_read_byte();
+	
 	// def digitalPintoPort // 
 	
 	//const uint8_t PROGMEM digital_pin_to_port_PGM[] = {
@@ -145,7 +147,7 @@ Point TouchScreen::getPoint(void) {
         _BV(5),
 	};*/
 	
-	
+	/*
 	valid = 1;
 	
 	// Configure y+/y- to inputs ?
@@ -194,7 +196,7 @@ Point TouchScreen::getPoint(void) {
 		
 		ADCSRA |= (1<<ADSC); 
 		
-		while (ADSCRA& (1<<ADSC)); 
+		while (ADCSRA& (1<<ADSC)); 
 		
 		samples[i] = ADCH; 
 	}
@@ -205,6 +207,7 @@ Point TouchScreen::getPoint(void) {
 #if NUMSAMPLES > 2
 	insert_sort(samples, NUMSAMPLES);
 #endif*/
+/*
 #if NUMSAMPLES == 2
 	if (samples[0] != samples[1]) { valid = 0; }
 #endif
@@ -246,7 +249,7 @@ Point TouchScreen::getPoint(void) {
 		
 		ADCSRA |= (1<<ADSC); 
 		
-		while (ADSCRA& (1<<ADSC)); 
+		while (ADCSRA& (1<<ADSC)); 
 		
 		samples[i] = ADCH;
 	}
@@ -254,6 +257,7 @@ Point TouchScreen::getPoint(void) {
 #if NUMSAMPLES > 2
 	insert_sort(samples, NUMSAMPLES);
 #endif*/
+/*
 #if NUMSAMPLES == 2
 	if (samples[0] != samples[1]) { valid = 0; }
 #endif
@@ -261,21 +265,55 @@ Point TouchScreen::getPoint(void) {
 	y = (1023-samples[NUMSAMPLES/2]);
 	
 	// Set X+ to ground
-	pinMode(_xp, OUTPUT);
-	*portOutputRegister(xp_port) &= ~xp_pin;
+	//pinMode(_xp, OUTPUT);
+	DDRC |= 0x2; 
+	
+	//*portOutputRegister(xp_port) &= ~xp_pin;
+	PORTC &= ~XP; 
 	//digitalWrite(_xp, LOW);
 	
 	// Set Y- to VCC
-	*portOutputRegister(ym_port) |= ym_pin;
+	//*portOutputRegister(ym_port) |= ym_pin;
+	PORTC |= YM; 
 	//digitalWrite(_ym, HIGH); 
 	
 	// Hi-Z X- and Y+
-	*portOutputRegister(yp_port) &= ~yp_pin;
+	//*portOutputRegister(yp_port) &= ~yp_pin;
+	PORTC &= ~YP; 
 	//digitalWrite(_yp, LOW);
-	pinMode(_yp, INPUT);
+	//pinMode(_yp, INPUT);
+	DDRC |= 0x0; 
+	// analog read // 
+	ADMUX |= (1<<REFS0); 
+	ADMUX &= ~(1<<REFS1); 
 	
-	int z1 = analogRead(_xm); 
-	int z2 = analogRead(_yp);
+	ADMUX |= (1<<ADLAR); 
+	
+	ADMUX |= (3 << MUX0); 
+	ADMUX &= (0xf0 | (3<<MUX0)); 
+	
+	ADCSRA |= (7<<ADPS0); 
+	ADCSRA |= (1<<ADEN); 
+	
+	ADCSRA |= (1<<ADSC); 
+	
+	while (ADCSRA& (1<<ADSC)); 
+	
+	int z1 = ADCH; 
+	
+	ADMUX |= (1<<REFS0); 
+	ADMUX &= ~(1<<REFS1); 
+	
+	ADMUX |= (1<<ADLAR); 
+	
+	ADMUX |= (0 << MUX0); 
+	ADMUX &= (0xf0 | (0<<MUX0)); 
+	
+	ADCSRA |= (7<<ADPS0); 
+	ADCSRA |= (1<<ADEN); 
+	
+	ADCSRA |= (1<<ADSC); 
+	int z2 = ADCH; 
 	
 	if (_rxplate != 0) {
 		// now read the x 
@@ -296,11 +334,11 @@ Point TouchScreen::getPoint(void) {
 		z = 0;
 	}
 	
-	return Point(x, y, z);
-}
+	//return Point(x, y, z);
+}*/
 
 TouchScreen::TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym) {
-	DDRC = 0x00;  
+
 	_yp = yp;
 	_xm = xm;
 	_ym = ym;
@@ -312,7 +350,6 @@ TouchScreen::TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym) {
 
 TouchScreen::TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym,
 						 uint16_t rxplate) {
-	DDRC = 0x00; 
 	_yp = yp;
 	_xm = xm;
 	_ym = ym;
@@ -322,38 +359,171 @@ TouchScreen::TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym,
 	pressureThreshhold = 10;
 }
 
-int TouchScreen::readTouchX(void) {
-	pinMode(_yp, INPUT);
-	pinMode(_ym, INPUT);
-	digitalWrite(_yp, LOW); // wiring digital.c 
-	digitalWrite(_ym, LOW);
+int TouchScreen::readTouchYM(void) {
+	//pinMode(_yp, INPUT);
+	//pinMode(_ym, INPUT);
+	//DDRC |= 0x5;  
+	//DDRC |= 0x0; 
+	//digitalWrite(_yp, LOW); // wiring digital.c 
+	//digitalWrite(_ym, LOW);
+	//PORTC &= ~XP; 
+	//PORTC &= ~XM; 
+	//PORTC &= ~XP; 
+	PORTC |= YM; 
+
+
+	//PORTC &= ~YP; 
+	//pinMode(_xp, OUTPUT);
+	//digitalWrite(_xp, HIGH);
+	//pinMode(_xm, OUTPUT);
+	//digitalWrite(_xm, LOW);
 	
-	pinMode(_xp, OUTPUT);
-	digitalWrite(_xp, HIGH);
-	pinMode(_xm, OUTPUT);
-	digitalWrite(_xm, LOW);
+	//return (1023-analogRead(_yp));
+	// analog read y+; 
+	ADMUX |= (1<<REFS0); 
+	ADMUX &= ~(1<<REFS1); 
 	
-	return (1023-analogRead(_yp));
+	ADMUX |= (1<<ADLAR); 
+	
+	ADMUX |= (3 << MUX0); 
+	ADMUX &= (0xf0 | (3<<MUX0)); 
+	
+	ADCSRA |= (7<<ADPS0); 
+	ADCSRA |= (1<<ADEN); 
+	
+	ADCSRA |= (1<<ADSC); 
+	
+	while (ADCSRA& (1<<ADSC)); 
+	//DDRC |= 0xa; 
+	return (ADCH); 
 }
 
 
-int TouchScreen::readTouchY(void) {
-	pinMode(_xp, INPUT);
-	pinMode(_xm, INPUT);
-	digitalWrite(_xp, LOW);
-	digitalWrite(_xm, LOW);
+int TouchScreen::readTouchXP(void) {
 	
-	pinMode(_yp, OUTPUT);
-	digitalWrite(_yp, HIGH);
-	pinMode(_ym, OUTPUT);
-	digitalWrite(_ym, LOW);
 	
-	return (1023-analogRead(_xm));
+	//pinMode(_xp, INPUT);
+	//pinMode(_xm, INPUT);
+	//digitalWrite(_xp, LOW);
+	//digitalWrite(_xm, LOW);
+	//DDRC |= 0x0; 
+	//PORTC &= ~YM; 
+	//PORTC &= ~YP; 
+	
+	
+	//pinMode(_yp, OUTPUT);
+	//digitalWrite(_yp, HIGH);
+	//pinMode(_ym, OUTPUT);
+	//digitalWrite(_ym, LOW);
+	
+	//DDRC |= 0x5; 
+	PORTC |= XM; 
+	//PORTC &= ~XP; 
+	
+	ADMUX |= (1<<REFS0); 
+	ADMUX &= ~(1<<REFS1); 
+	
+	ADMUX |= (1<<ADLAR); 
+	
+	ADMUX |= (2 << MUX0); 
+	ADMUX &= (0xf0 | (2<<MUX0)); 
+	
+	ADCSRA |= (7<<ADPS0); 
+	ADCSRA |= (1<<ADEN); 
+	
+	ADCSRA |= (1<<ADSC); 
+	
+	while (ADCSRA& (1<<ADSC)); 
+	
+	return (ADCH);
+	//DDRC |= 0xa; 
 }
 
+int TouchScreen::readTouchXM(void) {
+	int x; 
+	//DDRC |= 0xa;
+	//pinMode(_xp, INPUT);
+	//pinMode(_xm, INPUT);
+	//digitalWrite(_xp, LOW);
+	//digitalWrite(_xm, LOW);
+	//DDRC |= 0x0; 
+	
+	//PORTC &= ~YM; 
+	//PORTC &= ~YP; 
+	
+	
+	//pinMode(_yp, OUTPUT);
+	//digitalWrite(_yp, HIGH);
+	//pinMode(_ym, OUTPUT);
+	//digitalWrite(_ym, LOW);
+	
+	 
+	PORTC |= XP; 
+	//PORTC |= YM; 
+	//PORTC &= ~XM; 
+	
+	ADMUX |= (1<<REFS0); 
+	ADMUX &= ~(1<<REFS1); 
+	
+	ADMUX |= (1<<ADLAR); 
+	
+	ADMUX |= (0 << MUX0); 
+	ADMUX &= (0xf0 | (0<<MUX0)); 
+	
+	ADCSRA |= (7<<ADPS0); 
+	ADCSRA |= (1<<ADEN); 
+	
+	ADCSRA |= (1<<ADSC); 
+	
+	while (ADCSRA& (1<<ADSC)); 
+	// DDRC |= 0x5; 
+	x = ADCH; 
+	
+	return x; 
+	
+}
 
+int TouchScreen::readTouchYP(void) {
+	
+	
+	//pinMode(_xp, INPUT);
+	//pinMode(_xm, INPUT);
+	//digitalWrite(_xp, LOW);
+	//digitalWrite(_xm, LOW);
+	//DDRC |= 0x0; 
+	//PORTC &= ~XM; 
+	//PORTC &= ~XP; 
+	
+	
+	//pinMode(_yp, OUTPUT);
+	//digitalWrite(_yp, HIGH);
+	//pinMode(_ym, OUTPUT);
+	//digitalWrite(_ym, LOW);
+	
+	//DDRC |= 0xf; 
+	PORTC |= YP; 
+	//PORTC &= ~YM; 
+	
+	ADMUX |= (1<<REFS0); 
+	ADMUX &= ~(1<<REFS1); 
+	
+	ADMUX |= (1<<ADLAR); 
+	
+	ADMUX |= (1 << MUX0); 
+	ADMUX &= (0xf0 | (1<<MUX0)); 
+	
+	ADCSRA |= (7<<ADPS0); 
+	ADCSRA |= (1<<ADEN); 
+	
+	ADCSRA |= (1<<ADSC); 
+	
+	while (ADCSRA& (1<<ADSC)); 
+	
+	return (ADCH);
+}
 uint16_t TouchScreen::pressure(void) {
-	// Set X+ to ground
+	
+	/*// Set X+ to ground
 	pinMode(_xp, OUTPUT);
 	digitalWrite(_xp, LOW);
 	
@@ -383,5 +553,6 @@ uint16_t TouchScreen::pressure(void) {
 		return rtouch;
 	} else {
 		return (1023-(z2-z1));
-	}
+	}*/
+	return 0; 
 }
