@@ -158,17 +158,14 @@ void lcdout(uint8_t x)
 
 	//PORTB |= (PB1<<1);
 	///PORTB &= ~(PB1<<1);
-	int i ;
-	for (i = 0; i < 8; i++)
+	for (uint8_t i = 0; i < 8; i++)
 	{
+		PORTB &= ~(PB1<<1); // Clk to low
 
-		PORTB &= ~(PB1<<1);
-
-
-		PORTB |= x & LCD_Data_BitB0;    // put low two bits in
+		PORTB |= x & LCD_Data_BitB0;    // put low two bit in
 		PORTB &= (x | ~LCD_Data_BitB0);
 
-		PORTB |= (PB1<<1);
+		PORTB |= (PB1<<1); // Clk to high
 		x = x>>1;
 	}
 
