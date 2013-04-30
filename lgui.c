@@ -29,7 +29,8 @@ ScreenManager::ScreenManager()
 
 void ScreenManager::presentScreen(LGUIScreen &s)
 {
-    // currentScreen->beforeExit();
+    if(currentScreen)
+        currentScreen->beforeExit();
 
     s.beforeRender(); // hooks
     s.render();
