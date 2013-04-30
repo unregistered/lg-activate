@@ -168,10 +168,17 @@ void StatusScreen::loop()
 DeviceScreen::DeviceScreen(){}
 void DeviceScreen::render()
 {
-    uint16_t schcolor = color565(142,35,35);
-    fillScreen(schcolor);
-    makeRectangle(15,15, 200,280, BLACK, 5);
-    drawString(210,50 , "ADD ADAPTERS", BLACK, schcolor, 2);
+    uint16_t schcolor = color565(142,35,35); 
+	fillScreen(schcolor); 
+	makeRectangle(5,5, 225,310, BLACK, 4); 
+	const char* AddDevices = "DEVICES"; 
+	drawString(225,50 , AddDevices, BLACK, schcolor, 2);
+	
+	makeRectangle(60,60, 120, 200, BLACK, 7); 
+	makeRectangle(80, 30, 70, 120, BLACK, 5); 
+	makeRectangle(80, 160, 70,120, BLACK, 5); 
+	drawString(115, 80, "ADD", BLACK, schcolor, 2); 
+	drawString(115 , 175, "REMOVE", BLACK, schcolor, 2); 
 }
 void DeviceScreen::loop()
 {
