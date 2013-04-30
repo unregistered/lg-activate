@@ -20,6 +20,8 @@ public:
     LGUIScreen();
     virtual void render();
     virtual void loop();
+    virtual void beforeRender();
+    virtual void afterRender();
 
 protected:
     int getTouchX();
@@ -48,6 +50,8 @@ public:
     AddDeviceScreen();
     void render();
     void loop();
+    virtual void beforeRender();
+    virtual void afterRender();
 };
 
 class SettingsScreen : public LGUIScreen

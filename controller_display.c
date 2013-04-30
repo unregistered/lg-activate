@@ -23,6 +23,10 @@ void Controller::setup()
 	LGSerial::init();
 	adafruit_initialize();
 
+	// Initialize buttons
+    DDRD &= ~(1 << DDD7); // Back
+    DDRB &= ~(1 << DDB2); // Home
+
 	manager.presentScreen(homeScreen);
 }
 

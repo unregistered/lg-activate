@@ -19,13 +19,25 @@ ScreenManager::ScreenManager()
 
 void ScreenManager::presentScreen(LGUIScreen &s)
 {
+    s.beforeRender(); // hooks
     s.render();
+    s.afterRender(); // hooks
     currentScreen = &s;
 }
 
 void ScreenManager::loop()
 {
-    currentScreen->loop();
+    // Do things common to all screens
+    bool backButton = bit_is_set(PIND, 7);
+    bool homeButton = bit_is_set(PINB, 2);
+
+    if(backButton) {
+        //
+    } else if( homeButton && (currentScreen != &homeScreen) ) {
+        presentScreen(homeScreen);
+    } else {
+        currentScreen->loop();
+    }
 }
 
 HomeScreen::HomeScreen(){}
@@ -86,15 +98,15 @@ void HomeScreen::loop()
     }
     else if (y> 140 && y<220 && x>30 && x<100)
     {
-        // manager.presentScreen(settingsScreen);
+        manager.presentScreen(settingsScreen);
     }
     else if (x>125 && x<215 &&y>60 && y<130)
     {
-        // manager.presentScreen(statusScreen);
+        manager.presentScreen(statusScreen);
     }
     else if (x>125 && x<215 && y>140 && y<220)
     {
-        // manager.presentScreen(scheduleScreen);
+        manager.presentScreen(scheduleScreen);
     }
 }
 
@@ -121,15 +133,16 @@ void AddDeviceScreen::render()
     const char* AddDevices = "ADD ADAPTERS";
     drawString(210,50 , AddDevices, BLACK, schcolor, 2);
 }
-void AddDeviceScreen::loop()
+void AddDeviceScreen::beforeRender()
 {
     network.set_mode(LGNETWORK_DISCOVER);
-    unsigned long long start_time = millis();
-
-    while(true) {//millis() < (start_time + 30000)) { // 10 second associate time
-        network.loop();
-    }
-
+}
+void AddDeviceScreen::loop()
+{
+    network.loop();
+}
+void AddDeviceScreen::afterRender()
+{
     network.set_mode(LGNETWORK_OPERATE);
 }
 
@@ -195,7 +208,6 @@ int LGUIScreen::getTouchY()
 
     PORTC |= YM;
 
-    // analog read y+;
     ADMUX |= (1<<REFS0);
     ADMUX &= ~(1<<REFS1);
 
@@ -211,4 +223,14 @@ int LGUIScreen::getTouchY()
 
     while (ADCSRA& (1<<ADSC));
     return (ADCH);
+}
+
+void LGUIScreen::beforeRender()
+{
+
+}
+
+void LGUIScreen::afterRender()
+{
+
 }
