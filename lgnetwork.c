@@ -2,6 +2,8 @@
 #include "lgdb.h"
 #include <string.h>
 
+LGNetwork network;
+
 #ifdef USE_NETWORK_SERVER
 uint64_t LGNetwork::myUUID;
 

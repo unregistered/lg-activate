@@ -100,4 +100,6 @@ private:
     char response_buf[24];
 };
 
+extern LGNetwork network;
+
 #endif

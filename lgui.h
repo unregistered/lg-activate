@@ -1,4 +1,5 @@
 #include "adafruit335.h"
+#include "lgnetwork.h"
 
 #ifndef LGUI_H
 #define LGUI_H

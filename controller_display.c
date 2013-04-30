@@ -10,10 +10,12 @@
 #include "adafruit335.c"
 #include "controller_display.h"
 #include "lgserial.h"
+#include "lgnetwork.h"
 #include "lgui.h"
 
 Controller::Controller() {
 	manager = ScreenManager();
+	network = LGNetwork();
 }
 
 void Controller::setup()

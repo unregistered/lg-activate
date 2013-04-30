@@ -86,15 +86,15 @@ void HomeScreen::loop()
     }
     else if (y> 140 && y<220 && x>30 && x<100)
     {
-        manager.presentScreen(settingsScreen);
+        // manager.presentScreen(settingsScreen);
     }
     else if (x>125 && x<215 &&y>60 && y<130)
     {
-        manager.presentScreen(statusScreen);
+        // manager.presentScreen(statusScreen);
     }
     else if (x>125 && x<215 && y>140 && y<220)
     {
-        manager.presentScreen(scheduleScreen);
+        // manager.presentScreen(scheduleScreen);
     }
 }
 
@@ -123,7 +123,14 @@ void AddDeviceScreen::render()
 }
 void AddDeviceScreen::loop()
 {
+    network.set_mode(LGNETWORK_DISCOVER);
+    unsigned long long start_time = millis();
 
+    while(millis() < (start_time + 30000)) { // 10 second associate time
+        network.loop();
+    }
+
+    network.set_mode(LGNETWORK_OPERATE);
 }
 
 SettingsScreen::SettingsScreen(){}
