@@ -29,12 +29,6 @@ void LGSerial::init()
     // Set for async, no parity, 1 stop bit, 8 data bits
     UCSRC = (3 << UCSZ0);
 
-    #ifdef USE_NETWORK_CLIENT
-    #ifdef CLIENT_ACTUATOR
-    UCSRB |= (1 << RXCIE); // Interrupt enable
-    #endif
-    #endif
-
     #endif
 
 }

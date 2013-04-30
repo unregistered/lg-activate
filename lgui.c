@@ -126,7 +126,7 @@ void AddDeviceScreen::loop()
     network.set_mode(LGNETWORK_DISCOVER);
     unsigned long long start_time = millis();
 
-    while(millis() < (start_time + 30000)) { // 10 second associate time
+    while(true) {//millis() < (start_time + 30000)) { // 10 second associate time
         network.loop();
     }
 

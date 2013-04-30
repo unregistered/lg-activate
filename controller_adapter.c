@@ -7,19 +7,35 @@
 #include "lg_ssd.h"
 #include "lgdb.h"
 #define BUTTON_SYNC_TIME 1500
-static LGNetwork network;
 uint8_t button_press;
 unsigned long button_time;
 
+// Start at -3, since the header 'CMD' is 3 bytes. Once it reaches 0,
+// then we can accept the packet data
 int8_t packet_ptr = -3;
 command_packet_t command_packet;
 
+bool shouldSpin;
+
 // During operation, receive commands in the ISR so we don't interrupt button pushing
+void rx_intr_enable()
+{
+	cli();
+	UCSRB |= (1 << RXCIE); // Interrupt enable
+	sei();
+}
+
+void rx_intr_disable()
+{
+	cli();
+	UCSRB &= ~(1 << RXCIE); // Interrupt enable
+	sei();
+}
+
 ISR(USART_RX_vect)
 {
-	if(network.currentMode != LGNETWORK_OPERATE) return; // Don't be bothered until we're looking for commands
-
     cli();
+
     char ch = UDR;
     if(ch == 'C' && packet_ptr == -3) {
     	packet_ptr++;
@@ -38,7 +54,7 @@ ISR(USART_RX_vect)
 
 ISR(TIMER0_OVF_vect)
 {
-	if(network.currentMode == LGNETWORK_DISCOVER)
+	if(shouldSpin)
 		spin_SSDs();
 }
 
@@ -67,15 +83,21 @@ void Controller::setup()
 	sei();
 
 	if ( LGNetwork::myShortAddr == 0xFF ){	//means address is not in memory
-		cli();
+		shouldSpin = true;
 		network.set_mode(LGNETWORK_DISCOVER);
-		sei();
+		system_mode = SYSTEM_SYNC;
 	} else {
+		shouldSpin = false;
+
 		system_mode = LGDB::read_mode();
+		if(system_mode == 0xF) { // Hasn't yet been set
+			LGDB::write_mode(SYSTEM_ON);
+		}
+
 		display_short_address();
-		cli();
 		network.set_mode(LGNETWORK_OPERATE);
-		sei();
+
+		rx_intr_enable();
 	}
 
 	update_LED(system_mode);
@@ -88,14 +110,22 @@ void Controller::loop()
 {
 
 	if (network.currentMode == LGNETWORK_DISCOVER) {
+		update_LED(SYSTEM_SYNC);
 		while(network.currentMode == LGNETWORK_DISCOVER) {
 			network.loop(); // Will transition to DISCOVER_READY when done
 		}
 	}
 
 	if(network.currentMode == LGNETWORK_DISCOVER_READY) {
+		shouldSpin = false;
 		display_short_address();
+
+		system_mode = SYSTEM_ON;
+		LGDB::write_mode(SYSTEM_ON);
+
 		network.set_mode(LGNETWORK_OPERATE);
+
+		rx_intr_enable();
 	}
 
 	if(network.currentMode == LGNETWORK_OPERATE) {
@@ -134,17 +164,15 @@ void Controller::loop()
 			}
 			else { // sync
 				if ((current_time - button_time) > BUTTON_SYNC_TIME ) {
+					shouldSpin = true;
 					LGDB::write_address(0xff);
-					update_LED(SYSTEM_ON); // We want to default to "on" while we discover
+					update_LED(SYSTEM_SYNC); // We want to default to "on" while we discover
 					update_relay(SYSTEM_ON);
 
-					cli();
-					network.force_disconnect(); // So we aren't interrupted later
-					sei();
+					rx_intr_disable();
 
-					cli();
+					network.force_disconnect(); // So we aren't interrupted later
 					network.set_mode(LGNETWORK_DISCOVER);
-					sei();
 				}
 			}
 

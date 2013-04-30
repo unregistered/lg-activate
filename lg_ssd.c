@@ -66,7 +66,8 @@ void update_relay(uint8_t status){
 void update_LED(uint8_t mode){
     //red is off
     //green is on
-    //blue is sync
+    //blue is auto
+	//off is syncing
     if (mode == SYSTEM_OFF){     //OFF
         PORTB |= 1 << PB0; // Set LEDR to 1
         PORTB &= ~(1 << PB1); //LEDG to 0
@@ -77,10 +78,15 @@ void update_LED(uint8_t mode){
         PORTB |= 1 << PB1;
         PORTB &= ~(1 << PB2);
     }
-    else { //mode = 2   //SYNCING
+    else if (mode == SYSTEM_AUTO_ON || mode == SYSTEM_AUTO_OFF){   //AUTO
         PORTB &= ~(1 << PB0);
         PORTB &= ~(1 << PB1);
         PORTB |= 1 << PB2;
+    }
+	else {	//mode == 3){   //SYNCING
+        PORTB &= ~(1 << PB0);
+        PORTB &= ~(1 << PB1);
+        PORTB &= ~(1 << PB2);
     }
 
 }//end update_LED

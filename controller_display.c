@@ -11,7 +11,7 @@
 #include "controller_display.h"
 #include "lgserial.h"
 #include "lgnetwork.h"
-#include "lgui.h"
+#include "lgui.c"
 
 Controller::Controller() {
 	manager = ScreenManager();

@@ -78,6 +78,7 @@ private:
 };
 
 extern ScreenManager manager;
+
 extern HomeScreen homeScreen;
 extern StatusScreen statusScreen;
 extern AddDeviceScreen addDeviceScreen;
