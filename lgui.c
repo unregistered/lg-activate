@@ -84,7 +84,7 @@ void HomeScreen::render()
 
 	drawString(215,120 , home, BLACK, WHITE, 3);
 	drawString(55,35, set, BLACK, WHITE, 2);
-	drawString(155,20, dev, BLACK, WHITE, 2);
+	drawString(155,35, dev, BLACK, WHITE, 2);
 	drawString(55, 180, sched, BLACK, WHITE, 2);
 	drawString(155,200, stats, BLACK, WHITE,  2);
 
@@ -105,6 +105,12 @@ void HomeScreen::loop()
     int x = getTouchX();
     int y = getTouchY();
 
+    LGSerial::put("X: ");
+    LGSerial::print(x);
+    LGSerial::put("Y: ");
+    LGSerial::print(y);
+    LGSerial::print("-----");
+
     if (x > 30 && x<100 && y>60 && y < 130)
     {
         manager.presentScreen(deviceScreen);
@@ -121,6 +127,8 @@ void HomeScreen::loop()
     {
         manager.presentScreen(schedulePickDeviceScreen);
     }
+
+    sleep(100);
 }
 
 StatusScreen::StatusScreen(){}
@@ -168,17 +176,17 @@ void StatusScreen::loop()
 DeviceScreen::DeviceScreen(){}
 void DeviceScreen::render()
 {
-    uint16_t schcolor = color565(142,35,35); 
-	fillScreen(schcolor); 
-	makeRectangle(5,5, 225,310, BLACK, 4); 
-	const char* AddDevices = "DEVICES"; 
+    uint16_t schcolor = color565(142,35,35);
+	fillScreen(schcolor);
+	makeRectangle(5,5, 225,310, BLACK, 4);
+	const char* AddDevices = "DEVICES";
 	drawString(225,50 , AddDevices, BLACK, schcolor, 2);
-	
-	makeRectangle(60,60, 120, 200, BLACK, 7); 
-	makeRectangle(80, 30, 70, 120, BLACK, 5); 
-	makeRectangle(80, 160, 70,120, BLACK, 5); 
-	drawString(115, 80, "ADD", BLACK, schcolor, 2); 
-	drawString(115 , 175, "REMOVE", BLACK, schcolor, 2); 
+
+	makeRectangle(60,60, 120, 200, BLACK, 7);
+	makeRectangle(80, 30, 70, 120, BLACK, 5);
+	makeRectangle(80, 160, 70,120, BLACK, 5);
+	drawString(115, 80, "ADD", BLACK, schcolor, 2);
+	drawString(115 , 175, "REMOVE", BLACK, schcolor, 2);
 }
 void DeviceScreen::loop()
 {
@@ -250,6 +258,8 @@ void SettingsScreen::loop()
         // SET MODE //
         manager.presentScreen(settingsSetModeScreen);
     }
+
+    sleep(100);
 }
 
 SettingsSetTimeScreen::SettingsSetTimeScreen(){}
@@ -513,6 +523,8 @@ void SchedulePickDeviceScreen::loop()
         manager.presentScreen(scheduleScreen);
 		// subScheduleMenu('2');
 	}
+
+    sleep(100);
 }
 
 LGUIScreen::LGUIScreen(){}
