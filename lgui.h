@@ -20,8 +20,9 @@ public:
     LGUIScreen();
     virtual void render();
     virtual void loop();
-    virtual void beforeRender();
-    virtual void afterRender();
+    virtual void beforeRender() {};
+    virtual void afterRender() {};
+    virtual void beforeExit() {};
 
 protected:
     int getTouchX();
@@ -44,14 +45,30 @@ public:
     void loop();
 };
 
-class AddDeviceScreen : public LGUIScreen
+class DeviceScreen : public LGUIScreen
 {
 public:
-    AddDeviceScreen();
+    DeviceScreen();
     void render();
     void loop();
-    virtual void beforeRender();
+};
+
+class DeviceAddScreen : public LGUIScreen
+{
+public:
+    DeviceAddScreen();
+    void render();
+    void loop();
     virtual void afterRender();
+    virtual void beforeExit();
+};
+
+class DeviceRemoveScreen : public LGUIScreen
+{
+public:
+    DeviceRemoveScreen();
+    void render();
+    void loop();
 };
 
 class SettingsScreen : public LGUIScreen
@@ -62,10 +79,35 @@ public:
     void loop();
 };
 
+class SettingsSetTimeScreen : public LGUIScreen
+{
+public:
+    SettingsSetTimeScreen();
+    void render();
+    void loop();
+};
+
+class SettingsSetModeScreen : public LGUIScreen
+{
+public:
+    SettingsSetModeScreen();
+    void render();
+    void loop();
+};
+
+
 class ScheduleScreen : public LGUIScreen
 {
 public:
     ScheduleScreen();
+    void render();
+    void loop();
+};
+
+class SchedulePickDeviceScreen : public LGUIScreen
+{
+public:
+    SchedulePickDeviceScreen();
     void render();
     void loop();
 };
@@ -83,10 +125,19 @@ private:
 
 extern ScreenManager manager;
 
-extern HomeScreen homeScreen;
+extern HomeScreen homeScreen; // Links to Settings, Status, Devices, Schedule
+
 extern StatusScreen statusScreen;
-extern AddDeviceScreen addDeviceScreen;
-extern SettingsScreen settingsScreen;
+
+extern DeviceScreen deviceScreen;
+extern DeviceAddScreen deviceAddScreen;
+extern DeviceRemoveScreen deviceRemoveScreen;
+
+extern SettingsScreen settingsScreen; // Links to Set Time, Set Mode
+extern SettingsSetTimeScreen settingsSetTimeScreen;
+extern SettingsSetModeScreen settingsSetModeScreen;
+
+extern SchedulePickDeviceScreen schedulePickDeviceScreen; // Links to schedule
 extern ScheduleScreen scheduleScreen;
 
 #endif

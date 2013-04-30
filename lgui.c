@@ -2,26 +2,39 @@
 
 ScreenManager manager;
 
-HomeScreen homeScreen;
+HomeScreen homeScreen; // Links to Settings, Status, Devices, Schedule
 StatusScreen statusScreen;
-AddDeviceScreen addDeviceScreen;
-SettingsScreen settingsScreen;
+DeviceScreen deviceScreen;
+DeviceAddScreen deviceAddScreen;
+DeviceRemoveScreen deviceRemoveScreen;
+SettingsScreen settingsScreen; // Links to Set Time, Set Mode
+SettingsSetTimeScreen settingsSetTimeScreen;
+SettingsSetModeScreen settingsSetModeScreen;
+SchedulePickDeviceScreen schedulePickDeviceScreen; // Links to schedule
 ScheduleScreen scheduleScreen;
 
 ScreenManager::ScreenManager()
 {
     homeScreen = HomeScreen();
     statusScreen = StatusScreen();
-    addDeviceScreen = AddDeviceScreen();
+    deviceScreen = DeviceScreen();
+    deviceAddScreen = DeviceAddScreen();
+    deviceRemoveScreen = DeviceRemoveScreen();
     settingsScreen = SettingsScreen();
+    settingsSetModeScreen = SettingsSetModeScreen();
+    settingsSetTimeScreen = SettingsSetTimeScreen();
+    schedulePickDeviceScreen = SchedulePickDeviceScreen();
     scheduleScreen = ScheduleScreen();
 }
 
 void ScreenManager::presentScreen(LGUIScreen &s)
 {
+    currentScreen->beforeExit();
+
     s.beforeRender(); // hooks
     s.render();
     s.afterRender(); // hooks
+
     currentScreen = &s;
 }
 
@@ -94,7 +107,7 @@ void HomeScreen::loop()
 
     if (x > 30 && x<100 && y>60 && y < 130)
     {
-        manager.presentScreen(addDeviceScreen);
+        manager.presentScreen(deviceScreen);
     }
     else if (y> 140 && y<220 && x>30 && x<100)
     {
@@ -106,7 +119,7 @@ void HomeScreen::loop()
     }
     else if (x>125 && x<215 && y>140 && y<220)
     {
-        manager.presentScreen(scheduleScreen);
+        manager.presentScreen(schedulePickDeviceScreen);
     }
 }
 
@@ -124,24 +137,49 @@ void StatusScreen::loop()
 
 }
 
-AddDeviceScreen::AddDeviceScreen(){}
-void AddDeviceScreen::render()
+DeviceScreen::DeviceScreen(){}
+void DeviceScreen::render()
 {
     uint16_t schcolor = color565(142,35,35);
     fillScreen(schcolor);
     makeRectangle(15,15, 200,280, BLACK, 5);
-    const char* AddDevices = "ADD ADAPTERS";
-    drawString(210,50 , AddDevices, BLACK, schcolor, 2);
+    drawString(210,50 , "ADD ADAPTERS", BLACK, schcolor, 2);
 }
-void AddDeviceScreen::beforeRender()
+void DeviceScreen::loop()
+{
+
+}
+
+DeviceRemoveScreen::DeviceRemoveScreen(){}
+void DeviceRemoveScreen::render()
+{
+    uint16_t schcolor = color565(142,35,35);
+    fillScreen(schcolor);
+    makeRectangle(15,15, 200,280, BLACK, 5);
+    drawString(210,50 , "ADD ADAPTERS", BLACK, schcolor, 2);
+}
+void DeviceRemoveScreen::loop()
+{
+
+}
+
+DeviceAddScreen::DeviceAddScreen(){}
+void DeviceAddScreen::render()
+{
+    uint16_t schcolor = color565(142,35,35);
+    fillScreen(schcolor);
+    makeRectangle(15,15, 200,280, BLACK, 5);
+    drawString(210,50 , "ADD ADAPTERS", BLACK, schcolor, 2);
+}
+void DeviceAddScreen::afterRender()
 {
     network.set_mode(LGNETWORK_DISCOVER);
 }
-void AddDeviceScreen::loop()
+void DeviceAddScreen::loop()
 {
     network.loop();
 }
-void AddDeviceScreen::afterRender()
+void DeviceAddScreen::beforeExit()
 {
     network.set_mode(LGNETWORK_OPERATE);
 }
@@ -160,6 +198,34 @@ void SettingsScreen::loop()
 
 }
 
+SettingsSetTimeScreen::SettingsSetTimeScreen(){}
+void SettingsSetTimeScreen::render()
+{
+    uint16_t setcolor = color565(35,142,35);
+    fillScreen(setcolor);
+    makeRectangle(15,15, 200,280, BLACK, 5);
+    const char* settings = "SETTINGS";
+    drawString(210,50 ,settings, BLACK, setcolor, 2);
+}
+void SettingsSetTimeScreen::loop()
+{
+
+}
+
+SettingsSetModeScreen::SettingsSetModeScreen(){}
+void SettingsSetModeScreen::render()
+{
+    uint16_t setcolor = color565(35,142,35);
+    fillScreen(setcolor);
+    makeRectangle(15,15, 200,280, BLACK, 5);
+    const char* settings = "SETTINGS";
+    drawString(210,50 ,settings, BLACK, setcolor, 2);
+}
+void SettingsSetModeScreen::loop()
+{
+
+}
+
 ScheduleScreen::ScheduleScreen(){}
 void ScheduleScreen::render()
 {
@@ -170,6 +236,20 @@ void ScheduleScreen::render()
     drawString(210,50 , Adapter, BLACK, devcolor, 2);
 }
 void ScheduleScreen::loop()
+{
+
+}
+
+SchedulePickDeviceScreen::SchedulePickDeviceScreen(){}
+void SchedulePickDeviceScreen::render()
+{
+    uint16_t devcolor = color565(205,173,0);
+    fillScreen(devcolor);
+    makeRectangle(15,15, 200,280, BLACK, 5);
+    const char* Adapter = "PICK ADAPTER";
+    drawString(210,50 , Adapter, BLACK, devcolor, 2);
+}
+void SchedulePickDeviceScreen::loop()
 {
 
 }
@@ -225,12 +305,3 @@ int LGUIScreen::getTouchY()
     return (ADCH);
 }
 
-void LGUIScreen::beforeRender()
-{
-
-}
-
-void LGUIScreen::afterRender()
-{
-
-}
