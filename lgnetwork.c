@@ -168,7 +168,7 @@ void LGNetwork::loop()
 
                     if(response) {
                         // Now commit it to EEPROM
-                        LGDB::write_ap_table_entry(next_address, 0xe3);
+                        LGDB::write_device_table_entry(next_address, 0xe3);
 
                         // Send final ack
                         sleep(1000);
@@ -236,7 +236,7 @@ void LGNetwork::loop()
             if(next_to_program >= 0) {
                 LGSerial::put("Program outlet ");
                 LGSerial::print(next_to_program);
-                uint16_t data = LGDB::read_ap_table_entry(next_to_program);
+                uint16_t data = LGDB::read_device_table_entry(next_to_program);
 
                 command_packet_t p;
                 p.packet.short_address = next_to_program;
@@ -467,8 +467,8 @@ void LGNetwork::pending_clear()
 
 uint8_t LGNetwork::get_next_free_address()
 {
-    for(int i=0; i < sizeof(lgdb_ap_table); i++) {
-        if(LGDB::read_ap_table_entry(i) == 0xffff) {
+    for(int i=0; i < sizeof(lgdb_device_table); i++) {
+        if(LGDB::read_device_table_entry(i) == 0xff) {
             // Then we're open
             return i;
         }
@@ -488,12 +488,12 @@ int8_t LGNetwork::get_next_target_address()
         i != last_commanded_device_address; // Keep searching until we reach this address
         i = (i == 99) ? 0 : i+1// Increment but also wrap around
     ) {
-        if(LGDB::read_ap_table_entry(i) != 0xffff) {
+        if(LGDB::read_device_table_entry(i) != 0xffff) {
             return i;
         }
     }
 
-    if(LGDB::read_ap_table_entry(last_commanded_device_address) == 0xffff) // We have no open entries
+    if(LGDB::read_device_table_entry(last_commanded_device_address) == 0xffff) // We have no open entries
         return -1;
     else // It's something
         return last_commanded_device_address;

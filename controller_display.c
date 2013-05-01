@@ -13,6 +13,7 @@
 #include "lgnetwork.h"
 #include "lgui.c"
 #include "lg_rtc.h"
+#include "lgdb.h"
 
 Controller::Controller() {
 	manager = ScreenManager();
@@ -30,6 +31,7 @@ void Controller::setup()
     DDRB &= ~(1 << DDB2); // Home
 
     scheduleScreen.device_idx = 0;
+    LGDB::write_device_table_entry(0, 0x00);
 	manager.presentScreen(scheduleScreen);
 }
 
