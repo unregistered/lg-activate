@@ -499,6 +499,7 @@ int8_t LGNetwork::get_next_target_address()
         return last_commanded_device_address;
 }
 
+
 #endif
 
 void LGNetwork::cmd_set_coordinator()

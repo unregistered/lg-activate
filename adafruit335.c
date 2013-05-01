@@ -453,7 +453,7 @@ void fillRectangle(uint16_t x, uint16_t y, uint16_t h, uint16_t w, uint16_t colo
 
 }
 
-void drawString(uint16_t x, uint16_t y, const char* str, uint16_t color, uint16_t bg, uint16_t size)
+void drawString(uint16_t x, uint16_t y, char* str, uint16_t color, uint16_t bg, uint16_t size)
 {
 	uint8_t i;
 	for(i=0; str[i]; i++)

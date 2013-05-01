@@ -11,6 +11,8 @@
 #define YP (1 << PC3);
 
 
+class ScreenManager;
+
 /**
 * Base class for screens
 */
@@ -85,6 +87,17 @@ public:
     SettingsSetTimeScreen();
     void render();
     void loop();
+
+private:
+    void renderMonth();
+    void renderDay();
+    void renderYear();
+    void renderHour();
+    void renderMinute();
+    void renderAMPM();
+
+    void numToStr(uint8_t num);
+    char buf[3];
 };
 
 class SettingsSetModeScreen : public LGUIScreen
@@ -102,6 +115,8 @@ public:
     ScheduleScreen();
     void render();
     void loop();
+
+    uint8_t device_idx;
 };
 
 class SchedulePickDeviceScreen : public LGUIScreen

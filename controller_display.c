@@ -12,6 +12,7 @@
 #include "lgserial.h"
 #include "lgnetwork.h"
 #include "lgui.c"
+#include "lg_rtc.h"
 
 Controller::Controller() {
 	manager = ScreenManager();
@@ -22,12 +23,14 @@ void Controller::setup()
 {
 	LGSerial::init();
 	adafruit_initialize();
+	ClockInit();
 
 	// Initialize buttons
     DDRD &= ~(1 << DDD7); // Back
     DDRB &= ~(1 << DDB2); // Home
 
-	manager.presentScreen(homeScreen);
+    scheduleScreen.device_idx = 0;
+	manager.presentScreen(scheduleScreen);
 }
 
 void Controller::loop()
