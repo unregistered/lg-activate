@@ -455,10 +455,20 @@ void fillRectangle(uint16_t x, uint16_t y, uint16_t h, uint16_t w, uint16_t colo
 
 void drawString(uint16_t x, uint16_t y, char* str, uint16_t color, uint16_t bg, uint16_t size)
 {
-	uint8_t i;
-	for(i=0; str[i]; i++)
-	{
+    uint8_t i;
+    for(i=0; str[i]; i++)
+    {
         drawChar(x, y + size*6*i, str[i], color, bg, size);
+    }
+}
+
+void drawPgmString(uint16_t x, uint16_t y, PGM_P str, uint16_t color, uint16_t bg, uint16_t size)
+{
+    char c;
+    uint8_t i;
+    while( (c = pgm_read_byte(str++)) != 0) {
+        drawChar(x, y + size*6*i, c, color, bg, size);
+        i++;
     }
 }
 

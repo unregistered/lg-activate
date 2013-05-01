@@ -16,6 +16,7 @@ void fillRectangle(uint16_t /*x*/, uint16_t /*y*/, uint16_t /*h*/, uint16_t /*w*
 void makeRectangle(uint16_t /*x*/, uint16_t /*y*/, uint16_t /*h*/, uint16_t /*w*/, uint16_t /*color*/, uint16_t /*thick*/);
 void drawChar(uint16_t /*x*/, uint16_t /*y*/, const char c/*h*/, uint16_t /*color*/, uint16_t /*bg*/, uint16_t /*size*/);
 void drawString(uint16_t /*x*/, uint16_t /*y*/, char* /*str*/, uint16_t /*color*/, uint16_t /*bg*/, uint16_t /*size*/);
+void drawPgmString(uint16_t /*x*/, uint16_t /*y*/, PGM_P /*str*/, uint16_t /*color*/, uint16_t /*bg*/, uint16_t /*size*/);
 //void bw_image();
 void regout(uint16_t, uint16_t);
 void lcdout(uint8_t);

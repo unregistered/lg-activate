@@ -137,8 +137,6 @@ void LGNetwork::loop()
                 cmd_get_one_unassociated_device();
                 cmd_exit();
             } else {
-                LGSerial::print("Found client:");
-
                 // We can operate on the pending device, by assigning it an address
                 int8_t next_address = (int8_t)get_next_free_address();
                 if(next_address >= 0 && next_address < 100) {

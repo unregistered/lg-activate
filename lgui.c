@@ -484,42 +484,7 @@ void SettingsSetModeScreen::loop()
 	if (x>159 && x<189);  // vacation //
 }
 
-ScheduleScreen::ScheduleScreen() {}
-// void ScheduleScreen::renderDays()
-// {
-//     // // char days[] = "SuMoTuWeThFrSa";
-//     // // char buf[3];
-//     // uint16_t color;
-
-//     // for(uint8_t i=0; i < 7; i++) {
-//     //     if(currentDay == i)
-//     //         color = MAGENTA;
-//     //     else
-//     //         color = BLACK;
-
-//     //     // Copy the part of the string we're interested in displaying
-//     //     // buf[0] = days[i*2];
-//     //     // buf[1] = days[i*2+1];
-//     //     // buf[3] = 0;
-
-//     //     // drawString(200, 21 + (43*i), days, color, WHITE, 2);
-//     // }
-
-//     // // if(currentDay == 0)
-//     // //     color = MAGENTA
-//     // // else
-//     // //     color = BLACK
-
-//     // // drawString(200,21, "Su", color,  WHITE, 2 );
-
-
-//     // // drawString(200,65, "Mo", MAGENTA, WHITE, 2 );
-//     // // drawString(200,106,"Tu", MAGENTA,  WHITE, 2);
-//     // // drawString(200,148,"We", MAGENTA, WHITE, 2);
-//     // // drawString(200,192,"Th", MAGENTA,  WHITE, 2);
-//     // // drawString(200,237,"Fr", MAGENTA,  WHITE, 2 );
-//     // // drawString(200,279,"Sa", MAGENTA, WHITE,  2);
-// }
+ScheduleScreen::ScheduleScreen(){}
 void ScheduleScreen::render()
 {
     fillScreen(WHITE);
@@ -540,15 +505,13 @@ void ScheduleScreen::render()
 	makeRectangle(180,226,40,44, BLACK, 3);
 	makeRectangle(180,270,40,44, BLACK, 3);
 
-    // renderDays();
-    drawString(200,21, "Su", MAGENTA,  WHITE, 2 );
-    drawString(200,65, "Mo", MAGENTA, WHITE, 2 );
-    drawString(200,106,"Tu", MAGENTA,  WHITE, 2);
-    drawString(200,148,"We", MAGENTA, WHITE, 2);
-    drawString(200,192,"Th", MAGENTA,  WHITE, 2);
-    drawString(200,237,"Fr", MAGENTA,  WHITE, 2 );
-    drawString(200,279,"Sa", MAGENTA, WHITE,  2);
-
+	drawPgmString(200,21,  PSTR("Su"), MAGENTA,  WHITE, 2 );
+	drawPgmString(200,65,  PSTR("Mo"), MAGENTA, WHITE, 2 );
+	drawPgmString(200,114, PSTR("Tu"), MAGENTA,  WHITE, 2);
+	drawPgmString(200,148, PSTR("We"), MAGENTA, WHITE, 2);
+	drawPgmString(200,192, PSTR("Th"), MAGENTA,  WHITE, 2);
+	drawPgmString(200,234, PSTR("Fr"), MAGENTA,  WHITE, 2 );
+	drawPgmString(200,276, PSTR("Sa"), MAGENTA, WHITE,  2);
 
 	drawString(150, 45, "ON", BLACK, WHITE, 3);
 	drawString(110, 35, "OFF", BLACK, WHITE, 3);
