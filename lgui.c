@@ -529,7 +529,7 @@ void SettingsSetModeScreen::loop()
 }
 
 static uint8_t scheduleScreenCurrentDay;
-ScheduleScreen::ScheduleScreen() {}
+ScheduleScreen::ScheduleScreen() : consecutive_presses(0) {}
 void ScheduleScreen::renderDays()
 {
     PGM_P pstr = PSTR("SuMoTuWeThFrSa");
@@ -678,35 +678,35 @@ void ScheduleScreen::loop()
     }
 
 	//off+ //
+    bool pressed = false;
 	if ((x>35 && x<75)	 && (y>255 && y<295)) {
-        incr_time(device_idx, scheduleScreenCurrentDay, false);
-
-        renderOnTime();
-        renderOffTime();
+        pressed = true;
+        incr_time(device_idx, scheduleScreenCurrentDay, false, consecutive_presses);
     }
 	//on+ //
 	if ((x>90 && x<130)	 && (y>255 && y<295)) {
-        incr_time(device_idx, scheduleScreenCurrentDay, true);
-
-        renderOnTime();
-        renderOffTime();
+        pressed = true;
+        incr_time(device_idx, scheduleScreenCurrentDay, true, consecutive_presses);
     }
 	//off- //
 	if ((x>35 && x<75)	 && (y>85 && y<125))
     {
-        decr_time(device_idx, scheduleScreenCurrentDay, false);
-
-        renderOnTime();
-        renderOffTime();
+        pressed = true;
+        decr_time(device_idx, scheduleScreenCurrentDay, false, consecutive_presses);
     }
 	//on-//
 	if ((x>90 && x<130)	 && (y>85 && y<125))
     {
-        decr_time(device_idx, scheduleScreenCurrentDay, true);
-
+        pressed = true;
+        decr_time(device_idx, scheduleScreenCurrentDay, true, consecutive_presses);
+    }
+    if(pressed) {
+        consecutive_presses++;
         renderOnTime();
         renderOffTime();
     }
+
+
 	// auto- //
 	if ((x>-20 && x<20)	 && (y>85 && y<125))
 	{

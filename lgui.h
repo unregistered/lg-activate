@@ -116,13 +116,14 @@ public:
     void renderDays();
     void renderOnTime();
     void renderOffTime();
-	void renderAuto(); 
+	void renderAuto();
     void loop();
 
     uint8_t device_idx;
 private:
-    void incr_time(uint8_t device, uint8_t day, bool on_off_b);
-    void decr_time(uint8_t device, uint8_t day, bool on_off_b);
+    uint8_t consecutive_presses;
+    void incr_time(uint8_t device, uint8_t day, bool on_off_b, uint8_t increment);
+    void decr_time(uint8_t device, uint8_t day, bool on_off_b, uint8_t increment);
 };
 
 class SchedulePickDeviceScreen : public LGUIScreen

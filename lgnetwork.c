@@ -237,10 +237,19 @@ void LGNetwork::loop()
         #endif
     } else { // LGNETWORK_OPERATE
         #ifdef USE_NETWORK_SERVER
+            // Give priority to those devices whose turn it is
+            // uint8_t hour = GetHour();
+            // uint8_t minute = GetMinute();
+            // uint8_t day = GetDay();
+
+            // for(uint8_t i=0; i < sizeof(lgdb_device_table); i++) {
+            //     for(uint8_t onoff=0; j < 1; j++) { // On / off
+            //         uint8_t devhour = LGDB::read_hour(i, day, true); // Read ontime
+            //     }
+
+            // }
             int8_t next_to_program = get_next_target_address();
             if(next_to_program >= 0) {
-                LGSerial::put("Program outlet ");
-                LGSerial::print(next_to_program);
                 uint16_t data = LGDB::read_device_table_entry(next_to_program);
 
                 command_packet_t p;
