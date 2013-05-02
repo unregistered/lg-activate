@@ -1,6 +1,7 @@
 #include "lgnetwork.h"
 #include "lgdb.h"
 #include <string.h>
+#include "lg_rtc.h"
 
 LGNetwork network;
 
@@ -237,38 +238,103 @@ void LGNetwork::loop()
         #endif
     } else { // LGNETWORK_OPERATE
         #ifdef USE_NETWORK_SERVER
-            // Give priority to those devices whose turn it is
-            // uint8_t hour = GetHour();
-            // uint8_t minute = GetMinute();
-            // uint8_t day = GetDay();
+            // See if anybody's up
+            uint8_t hour = GetHour();
+            if(GetAmPm())
+                hour += 12; // Convert to 24 hour time
 
-            // for(uint8_t i=0; i < sizeof(lgdb_device_table); i++) {
-            //     for(uint8_t onoff=0; j < 1; j++) { // On / off
-            //         uint8_t devhour = LGDB::read_hour(i, day, true); // Read ontime
-            //     }
+            uint8_t minute = GetMinute();
+            uint8_t day = GetDay();
+
+            command_packet_t p;
+
+            LGSerial::put("Time is ");
+            LGSerial::print(hour);
+            LGSerial::print(minute);
+            LGSerial::print(day);
+
+            for(uint8_t i=0; i < sizeof(lgdb_device_table); i++) {
+                if(LGDB::read_device_table_entry(i) != 0) {
+                    continue;
+                }
+                uint8_t devhour_on = LGDB::read_hour(i, day, true); // Read ontime
+                uint8_t devminute_on = LGDB::read_minute(i, day, true);
+                uint8_t devhour_off = LGDB::read_hour(i, day, false);
+                uint8_t devminute_off = LGDB::read_minute(i, day, false);
+                uint8_t autodevice = LGDB::read_sensor_table_entry(i, day);
+
+                LGSerial::put("Device ");
+                LGSerial::print(i);
+                LGSerial::put("On Hour ");
+                LGSerial::print(devhour_on);
+                LGSerial::put("On minute ");
+                LGSerial::print(devminute_on);
+                LGSerial::put("Off Hour ");
+                LGSerial::print(devhour_off);
+                LGSerial::put("Off minute ");
+                LGSerial::print(devminute_off);
+
+
+                p.packet.short_address = i;
+
+                // Events: Turn Off, Turn On, Respond to Auto
+                if(devhour_off == hour && minute == devminute_off) {
+                    // Turn off
+                    LGSerial::put("Turn off device ");
+                    LGSerial::print(i);
+                    p.packet.system_mode = SYSTEM_OFF;
+
+                    // Send
+                    LGSerial::slow_put_pgm( PSTR("CMD") );
+                    // Body
+                    for(uint8_t i=0; i < sizeof(command_packet_t); i++) {
+                        LGSerial::slow_put(p.bytes[i]);
+                    }
+
+                } else if(devhour_on == hour && minute == devminute_on) {
+                    if(autodevice == 0xFF) {
+                        // Turn on
+                        LGSerial::put("Turn on device ");
+                        LGSerial::print(i);
+                        p.packet.system_mode = SYSTEM_ON;
+                    } else {
+                        LGSerial::put("Turn auto device ");
+                        LGSerial::print(i);
+                        p.packet.system_mode = SYSTEM_AUTO_OFF;
+                    }
+
+                    // Send
+                    LGSerial::slow_put_pgm( PSTR("CMD") );
+                    // Body
+                    for(uint8_t i=0; i < sizeof(command_packet_t); i++) {
+                        LGSerial::slow_put(p.bytes[i]);
+                    }
+
+                }
+            }
 
             // }
-            int8_t next_to_program = get_next_target_address();
-            LGSerial::put("Next: ");
-            LGSerial::print(next_to_program);
-            if(next_to_program >= 0) {
-                uint16_t data = LGDB::read_device_table_entry(next_to_program);
+            // int8_t next_to_program = get_next_target_address();
+            // LGSerial::put("Next: ");
+            // LGSerial::print(next_to_program);
+            // if(next_to_program >= 0) {
+            //     uint16_t data = LGDB::read_device_table_entry(next_to_program);
 
-                command_packet_t p;
-                p.packet.short_address = next_to_program;
-                p.packet.system_mode = SYSTEM_ON;
+            //     command_packet_t p;
+            //     p.packet.short_address = next_to_program;
+            //     p.packet.system_mode = SYSTEM_ON;
 
-                // Header
-                LGSerial::slow_put_pgm( PSTR("CMD") );
+            //     // Header
+            //     LGSerial::slow_put_pgm( PSTR("CMD") );
 
-                // Body
-                for(uint8_t i=0; i < sizeof(command_packet_t); i++) {
-                    LGSerial::slow_put(p.bytes[i]);
-                }
+            //     // Body
+            //     for(uint8_t i=0; i < sizeof(command_packet_t); i++) {
+            //         LGSerial::slow_put(p.bytes[i]);
+            //     }
 
-                // Remember our success
-                last_commanded_device_address = next_to_program;
-            }
+            //     // Remember our success
+            //     last_commanded_device_address = next_to_program;
+            // }
         #endif
 
     }

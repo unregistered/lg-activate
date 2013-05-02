@@ -105,7 +105,7 @@ void HomeScreen::render()
 	char * stats = "Status";
 	char buf[]= "00/00/00";
 	twodigit(buf, GetMonth(),false);
-	twodigit(buf+3, GetDay(), false);
+	twodigit(buf+3, GetDate(), false);
 	twodigit(buf+6, GetYear(), false);
 
 
@@ -384,8 +384,8 @@ void SettingsSetTimeScreen::renderMonth()
 }
 void SettingsSetTimeScreen::renderDay()
 {
-    // numToStr(GetDay());
-	twodigit(buf, GetDay());
+    // numToStr(GetDate());
+	twodigit(buf, GetDate());
     drawString(110, 68, buf, WHITE, BLACK, 2);
 }
 void SettingsSetTimeScreen::renderYear()
@@ -433,7 +433,7 @@ void SettingsSetTimeScreen::loop()
         }
         if (y>40 && y<61) {
             // day
-            uint8_t day = GetDay();
+            uint8_t day = GetDate();
             uint8_t next_day = day - 1;
             if(day == 0)
                 next_day = 31;

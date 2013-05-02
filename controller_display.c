@@ -31,12 +31,13 @@ void Controller::setup()
 	network.set_mode(LGNETWORK_OPERATE);
 
 	// For calibrating time
-	//SetHour(3);
-	//SetMinute(34);
-	//SetAmPm(0);
-	//SetYear(13);
-	//SetMonth(5);
-	//SetDay(2);
+	SetHour(4);
+	SetMinute(14);
+	SetAmPm(1);
+	SetYear(13);
+	SetMonth(5);
+	SetDay(4);
+	SetDate(2);
 
 	// Initialize buttons
     DDRD &= ~(1 << DDD7); // Back
@@ -45,11 +46,11 @@ void Controller::setup()
     scheduleScreen.device_idx = 0;
     LGDB::write_device_table_entry(0, 0x00);
     for(uint8_t i=0; i < 7; i++)
-	    LGDB::write_schedule_table_entry(0, i, 0x0000);
+	    LGDB::write_schedule_table_entry(0, i, 0x4100);
 
     LGDB::write_device_table_entry(1, 0x00);
     for(uint8_t i=0; i < 7; i++)
-	    LGDB::write_schedule_table_entry(1, i, 0x0000);
+	    LGDB::write_schedule_table_entry(1, i, 0x0041);
 
     LGDB::write_device_table_entry(2, 0x01);
     LGDB::write_device_table_entry(3, 0x01);
