@@ -225,16 +225,16 @@ void DeviceScreen::loop()
 {
 	int x = getTouchX();
     int y = getTouchY();
-	
+
 	if (x>80 && x<150)
 	{
 		if (y>30 && y<150)
 		{
-			manager.presentScreen(deviceAddScreen); 
+			manager.presentScreen(deviceAddScreen);
 		}
 		else if (y>160 && y<280)
 		{
-			
+
 		}
 
 	}
@@ -791,27 +791,26 @@ void SchedulePickDeviceScreen::render()
     makeRectangle(5,5, 230,305, BLACK, 2);
 	drawPgmString(225,50 , PSTR("PICK ADAPTER"), BLACK, devcolor, 2);
 
-	makeRectangle(30,30,80,120,BLACK, 4);
-	makeRectangle(130,30,80,120, BLACK, 4);
-	makeRectangle(30,170,80,120, BLACK, 4);
-	makeRectangle(130,170,80,120, BLACK, 4);
-
     uint8_t start_idx = 0;
 
-    if(LGDB::read_device_table_entry(start_idx) != 0xFF) {
-        drawPgmString(163, 67, PSTR("-1-"), BLACK, devcolor, 3);
+    if(LGDB::read_device_table_entry(start_idx) == 0) {
+        drawPgmString(163, 67, PSTR("-0-"), BLACK, devcolor, 3);
+        makeRectangle(130,30,80,120, BLACK, 4);
     }
 
-    if(LGDB::read_device_table_entry(start_idx + 1) != 0xFF) {
-        drawPgmString(163, 212, PSTR("-2-") , BLACK, devcolor, 3);
+    if(LGDB::read_device_table_entry(start_idx + 1) == 0) {
+        drawPgmString(163, 212, PSTR("-1-") , BLACK, devcolor, 3);
+        makeRectangle(130,170,80,120, BLACK, 4);
     }
 
-    if(LGDB::read_device_table_entry(start_idx + 2) != 0xFF) {
-        drawPgmString(63, 67, PSTR("-3-"), BLACK, devcolor, 3);
+    if(LGDB::read_device_table_entry(start_idx + 2) == 0) {
+        drawPgmString(63, 67, PSTR("-2-"), BLACK, devcolor, 3);
+        makeRectangle(30,30,80,120,BLACK, 4);
     }
 
-    if(LGDB::read_device_table_entry(start_idx + 3) != 0xFF) {
-        drawPgmString(63, 212, PSTR("-4-") , BLACK, devcolor, 3);
+    if(LGDB::read_device_table_entry(start_idx + 3) == 0) {
+        drawPgmString(63, 212, PSTR("-3-") , BLACK, devcolor, 3);
+        makeRectangle(30,170,80,120, BLACK, 4);
     }
 
 }
@@ -820,22 +819,22 @@ void SchedulePickDeviceScreen::loop()
     int x = getTouchX();
     int y = getTouchY();
 
-	if( x>25 && x<92 && y>19 && y<94 )
+	if( x> 110 && x<170 && y>30 && y<150 )
 	{
         scheduleScreen.device_idx = 0;
         manager.presentScreen(scheduleScreen);
 	}
-	else if ( x>108 && x<175 && y> 19 && y<94)
+	else if ( x>110 && x<170 && y> 170 && y<290)
 	{
         scheduleScreen.device_idx = 1;
         manager.presentScreen(scheduleScreen);
 	}
-	else if ( x>25 && x<92 && y>106 && y<181)
+	else if ( x> 0 && x<50 && y>30 && y<150)
 	{
         scheduleScreen.device_idx = 2;
         manager.presentScreen(scheduleScreen);
 	}
-	else if (x>108 && x<175 && y>106 && y<181 )
+	else if (x> 0 && x<50 && y>170 && y<290 )
 	{
         scheduleScreen.device_idx = 3;
         manager.presentScreen(scheduleScreen);
