@@ -84,17 +84,17 @@ void HomeScreen::render()
     uint16_t setcolor = color565(35, 142, 35); // green
 	uint16_t devcolor = color565(205,173,0); // yellow
 	uint16_t stacolor = color565(51,153,204); //blue
-	fillScreen(WHITE);
-	makeRectangle(10,10,90,140,BLACK, 4);
+	fillScreen(BLACK);
+	makeRectangle(10,10,90,140,WHITE, 2);
 	makeRectangle(15,15,90,140,setcolor, 4);
 	//makeRectangle(15,15,90,140,MAGENTA, 3);
-	makeRectangle(10,160,90,140, BLACK, 4);
+	makeRectangle(10,160,90,140, WHITE, 2);
 	makeRectangle(15,165,90,140,devcolor,4);
 	//makeRectangle(15,165,90,140, BLACK, 3);
-	makeRectangle(110,10, 90, 140, BLACK, 4);
+	makeRectangle(110,10, 90, 140, WHITE, 2);
 	makeRectangle(115,15,90,140, schcolor,4);
 	//makeRectangle(115,15, 90, 140, BLACK, 3);
-	makeRectangle(110,160, 90, 140, BLACK, 4);
+	makeRectangle(110,160, 90, 140, WHITE, 2);
 	makeRectangle(115,165, 90, 140, stacolor, 4);
 	//makeRectangle(115,165, 90, 140, MAGENTA, 3);
 
@@ -110,15 +110,15 @@ void HomeScreen::render()
 
 
 
-	drawString(215,120 , home, BLACK, WHITE, 3);
-	drawString(55,35, set, BLACK, WHITE, 2);
-	drawString(155,35, dev, BLACK, WHITE, 2);
-	drawString(55, 180, sched, BLACK, WHITE, 2);
-	drawString(155,200, stats, BLACK, WHITE,  2);
+	drawString(215,120 , home, WHITE, BLACK, 3);
+	drawString(55,35, set, WHITE, BLACK, 2);
+	drawString(155,35, dev, WHITE, BLACK, 2);
+	drawString(55, 180, sched, WHITE, BLACK, 2);
+	drawString(155,200, stats, WHITE, BLACK,  2);
 
-	drawString(224, 1 , buf, BLACK, WHITE, 2);
-	makeRectangle(223,0, 15,100, RED, 2);
-	makeRectangle(224, 219, 15, 100, RED, 2);
+	drawString(224, 1 , buf, WHITE, BLACK, 2);
+	//makeRectangle(223,0, 15,100, RED, 2);
+	//makeRectangle(224, 219, 15, 100, RED, 2);
     /*
     unsigned int minutes = 0;
     unsigned int secs = 0;
@@ -137,7 +137,7 @@ void HomeScreen::render()
 
 
 
-    drawString(225, 220, tim, BLACK, WHITE, 2);
+    drawString(225, 220, tim, WHITE, BLACK, 2);
     int x,y;
 }
 void HomeScreen::loop()
@@ -258,9 +258,9 @@ DeviceAddScreen::DeviceAddScreen(){}
 void DeviceAddScreen::render()
 {
     uint16_t schcolor = color565(142,35,35);
-    fillScreen(schcolor);
+    fillScreen(BLACK);
     makeRectangle(15,15, 200,280, BLACK, 5);
-    drawPgmString(210,50 , PSTR("ADD ADAPTERS"), BLACK, schcolor, 2);
+    drawPgmString(210,50 , PSTR("ADD ADAPTERS"), schcolor, BLACK, 2);
 }
 void DeviceAddScreen::afterRender()
 {
@@ -284,8 +284,10 @@ void SettingsScreen::render()
 	makeRectangle(5,5, 225,310, BLACK, 4);
 	drawPgmString(225,50 , PSTR("SETTINGS"), BLACK, setcolor, 2);
 
-	makeRectangle(60, 30, 130, 125, BLACK, 7);
-	makeRectangle(60, 170, 130, 125, BLACK, 7);
+	makeRectangle(60, 30, 130, 125, BLACK, 4);
+	makeRectangle(60, 170, 130, 125, BLACK, 4);
+	makeRectangle(50, 20, 130, 125, BLACK, 4);
+	makeRectangle(50, 180, 130, 125, BLACK, 4);
 	drawPgmString(90, 50, PSTR("MODE"), BLACK , setcolor, 3);
     drawPgmString(90, 200, PSTR("TIME"), BLACK, setcolor, 3);
 	drawPgmString(130, 50, PSTR("SET"), BLACK, setcolor, 3);
@@ -313,23 +315,23 @@ SettingsSetTimeScreen::SettingsSetTimeScreen(){}
 void SettingsSetTimeScreen::render()
 {
     uint16_t setcolor = color565(35,142,35);
-    fillScreen(WHITE);
+    fillScreen(BLACK);
 	makeRectangle(5,5, 230,310, setcolor, 3);
-	drawPgmString(225,50 , PSTR("SET TIME"), setcolor, WHITE, 2);
+	drawPgmString(225,50 , PSTR("SET TIME"), setcolor, BLACK, 2);
 
 	drawVerticalLine(0,160,235, setcolor,  3);
 
-	makeRectangle(190, 30, 30,100, BLACK, 3);
-	makeRectangle(190, 190, 30, 100, BLACK, 3);
-	drawPgmString(195, 60, PSTR("DATE"), BLACK, WHITE, 2);
-	drawPgmString(195, 220, PSTR("TIME"), BLACK , WHITE, 2);
+	makeRectangle(190, 30, 30,100, WHITE, 3);
+	makeRectangle(190, 190, 30, 100, WHITE, 3);
+	drawPgmString(195, 60, PSTR("DATE"), WHITE, BLACK, 2);
+	drawPgmString(195, 220, PSTR("TIME"), WHITE , BLACK, 2);
 
-	drawPgmString(175, 10, PSTR("MONTH"), BLACK, WHITE, 1);
-	drawPgmString(175, 63, PSTR("DAY"), BLACK, WHITE, 1);
-	drawPgmString(175, 107, PSTR("YEAR"), BLACK, WHITE, 1);
-	drawPgmString(175, 165, PSTR("HOUR"), BLACK, WHITE, 1);
-	drawPgmString(175, 213, PSTR("MINUTE"), BLACK, WHITE, 1);
-	drawPgmString(175, 276, PSTR("AM/PM"), BLACK, WHITE, 1);
+	drawPgmString(175, 10, PSTR("MONTH"), WHITE, BLACK, 1);
+	drawPgmString(175, 63, PSTR("DAY"), WHITE, BLACK, 1);
+	drawPgmString(175, 107, PSTR("YEAR"), WHITE, BLACK, 1);
+	drawPgmString(175, 165, PSTR("HOUR"), WHITE, BLACK, 1);
+	drawPgmString(175, 213, PSTR("MINUTE"), WHITE, BLACK, 1);
+	drawPgmString(175, 276, PSTR("AM/PM"), WHITE, BLACK, 1);
 
 	makeRectangle(135, 10, 35, 33, BLUE, 3);
 	makeRectangle(135, 63, 35, 34, BLUE, 3);
@@ -338,12 +340,12 @@ void SettingsSetTimeScreen::render()
 	makeRectangle(135, 223, 35, 34, BLUE, 3);
 	makeRectangle(135, 277, 35, 33, BLUE, 3);
 
-	drawChar(110, 45, '/', BLACK, WHITE, 2);
-	drawChar(110, 95, '/', BLACK, WHITE, 2);
-	drawChar(110, 205, ':', BLACK, WHITE, 2);
+	drawChar(110, 45, '/', WHITE, BLACK, 2);
+	drawChar(110, 95, '/', WHITE, BLACK, 2);
+	drawChar(110, 205, ':', WHITE, BLACK, 2);
 
-	drawHorizontalLine(105, 0, 319, BLACK, 3);
-	drawHorizontalLine(125, 0, 319, BLACK, 3);
+	drawHorizontalLine(105, 0, 319, WHITE, 3);
+	drawHorizontalLine(125, 0, 319, WHITE, 3);
 	makeRectangle(60, 10, 35, 33, RED, 3);
 	makeRectangle(60, 63, 35, 34, RED, 3);
 	makeRectangle(60, 117, 35, 33, RED, 3);
@@ -351,19 +353,19 @@ void SettingsSetTimeScreen::render()
 	makeRectangle(60, 223, 35, 34, RED, 3);
 	makeRectangle(60, 277, 35, 33, RED, 3);
 
-	drawChar(150, 20,  '+', BLUE, WHITE, 2);
-	drawChar(150, 73,  '+', BLUE, WHITE, 2);
-	drawChar(150, 127, '+', BLUE, WHITE, 2);
-	drawChar(150, 180, '+', BLUE, WHITE, 2);
-	drawChar(150, 233, '+', BLUE, WHITE, 2);
-	drawChar(150, 287, '+', BLUE, WHITE, 2);
+	drawChar(150, 20,  '+', BLUE, BLACK, 2);
+	drawChar(150, 73,  '+', BLUE, BLACK, 2);
+	drawChar(150, 127, '+', BLUE, BLACK, 2);
+	drawChar(150, 180, '+', BLUE, BLACK, 2);
+	drawChar(150, 233, '+', BLUE, BLACK, 2);
+	drawChar(150, 287, '+', BLUE, BLACK, 2);
 
-	drawChar(75, 20,  '-', RED, WHITE, 2);
-	drawChar(75, 73,  '-', RED, WHITE, 2);
-	drawChar(75, 127, '-', RED, WHITE, 2);
-	drawChar(75, 180, '-', RED, WHITE, 2);
-	drawChar(75, 233, '-', RED, WHITE, 2);
-	drawChar(75, 287, '-', RED, WHITE, 2);
+	drawChar(75, 20,  '-', RED, BLACK, 2);
+	drawChar(75, 73,  '-', RED, BLACK, 2);
+	drawChar(75, 127, '-', RED, BLACK, 2);
+	drawChar(75, 180, '-', RED, BLACK, 2);
+	drawChar(75, 233, '-', RED, BLACK, 2);
+	drawChar(75, 287, '-', RED, BLACK, 2);
 
 	// makeRectangle(10, 20, 20, 120, GREEN, 3);
 	// drawString(12, 30, "CONFIRM", BLACK, WHITE, 2);
@@ -378,38 +380,38 @@ void SettingsSetTimeScreen::renderMonth()
 {
     // numToStr(GetMonth());
 	twodigit(buf, GetMonth());
-    drawString(110, 15, buf, BLACK, WHITE, 2);
+    drawString(110, 15, buf, WHITE, BLACK, 2);
 }
 void SettingsSetTimeScreen::renderDay()
 {
     // numToStr(GetDay());
 	twodigit(buf, GetDay());
-    drawString(110, 68, buf, BLACK, WHITE, 2);
+    drawString(110, 68, buf, WHITE, BLACK, 2);
 }
 void SettingsSetTimeScreen::renderYear()
 {
     // numToStr(GetYear());
 	twodigit(buf, GetYear());
-    drawString(110, 122, buf, BLACK, WHITE, 2);
+    drawString(110, 122, buf, WHITE, BLACK, 2);
 }
 void SettingsSetTimeScreen::renderHour()
 {
     // numToStr(GetHour());
 	twodigit(buf, GetHour());
-    drawString(110, 175, buf, BLACK, WHITE, 2);
+    drawString(110, 175, buf, WHITE, BLACK, 2);
 }
 void SettingsSetTimeScreen::renderMinute()
 {
     // numToStr(GetMinute());
 	twodigit(buf, GetMinute());
-    drawString(110, 228, buf, BLACK, WHITE, 2);
+    drawString(110, 228, buf, WHITE, BLACK, 2);
 }
 void SettingsSetTimeScreen::renderAMPM()
 {
     if(GetAmPm())
-        drawPgmString(110, 282, PSTR("PM"), BLACK, WHITE, 2);
+        drawPgmString(110, 282, PSTR("PM"), WHITE, BLACK, 2);
     else
-        drawPgmString(110, 282, PSTR("AM"), BLACK, WHITE, 2);
+        drawPgmString(110, 282, PSTR("AM"), WHITE, BLACK, 2);
 }
 void SettingsSetTimeScreen::loop()
 {
@@ -494,22 +496,22 @@ SettingsSetModeScreen::SettingsSetModeScreen(){}
 void SettingsSetModeScreen::render()
 {
     uint16_t setcolor = color565(35,142,35);
-    fillScreen(WHITE);
+    fillScreen(BLACK);
 	makeRectangle(5,5, 230,310, setcolor, 2);
-	drawPgmString(225,50 , PSTR("SET MODE"), setcolor, WHITE, 2);
+	drawPgmString(225,50 , PSTR("SET MODE"), setcolor, BLACK, 2);
 
-	makeRectangle(35, 20, 35, 280, BLACK, 3);
-	makeRectangle(85, 20, 35, 280, BLACK, 3);
-	makeRectangle(135, 20, 35, 280, BLACK, 3);
-	makeRectangle(185, 20, 35, 280, BLACK, 3);
+	makeRectangle(35, 20, 35, 280, WHITE, 3);
+	makeRectangle(85, 20, 35, 280, WHITE, 3);
+	makeRectangle(135, 20, 35, 280, WHITE, 3);
+	makeRectangle(185, 20, 35, 280, WHITE, 3);
 
 	//drawVerticalLine(0,50, 239, BLACK, 4);
 	drawVerticalLine(0, 270, 239, BLACK, 4);
 
-	drawPgmString(200, 55, PSTR("1. SCHEDULE"), BLACK, WHITE, 2);
-	drawPgmString(150, 55, PSTR("2. MOTION"), BLACK, WHITE, 2);
-	drawPgmString(100, 55, PSTR("3. COMBINATION"), BLACK, WHITE, 2);
-	drawPgmString(50, 55,  PSTR("4. VACATION"), BLACK, WHITE, 2);
+	drawPgmString(200, 55, PSTR("1. SCHEDULE"), WHITE, BLACK, 2);
+	drawPgmString(150, 55, PSTR("2. MOTION"), WHITE, BLACK, 2);
+	drawPgmString(100, 55, PSTR("3. COMBINATION"), WHITE, BLACK, 2);
+	drawPgmString(50, 55,  PSTR("4. VACATION"), WHITE, BLACK, 2);
 
 	// makeRectangle(10, 60, 20, 160, GREEN, 3);
 	// drawString( 15, 100, "CONFIRM", setcolor, WHITE, 2);
@@ -547,9 +549,9 @@ void ScheduleScreen::renderDays()
         if(scheduleScreenCurrentDay == i)
             color = MAGENTA;
         else
-            color = BLACK;
+            color = WHITE;
 
-        drawString(200, 21 + 43*i, dstr, color, WHITE, 2);
+        drawString(200, 21 + 43*i, dstr, color, BLACK, 2);
     }
 }
 void ScheduleScreen::renderOnTime()
@@ -558,19 +560,19 @@ void ScheduleScreen::renderOnTime()
 
     uint8_t hr = LGDB::read_hour(device_idx, scheduleScreenCurrentDay, true);
     twodigit(buf, hr);
-    drawString(140, 136, buf, BLACK, WHITE, 2);
+    drawString(140, 136, buf, WHITE, BLACK, 2);
 
-    drawChar(140, 170, ':', BLACK, WHITE, 2);
+    drawChar(140, 170, ':', WHITE, BLACK, 2);
 
     // Minute
     uint8_t min = LGDB::read_minute(device_idx, scheduleScreenCurrentDay, true);
     twodigit(buf, min);
-    drawString(140, 190, buf, BLACK, WHITE, 2);
+    drawString(140, 190, buf, WHITE, BLACK, 2);
 
     if(hr >= 12)
-        drawString(140, 220, "PM", BLACK, WHITE, 2);
+        drawString(140, 220, "PM", WHITE, BLACK, 2);
     else
-        drawString(140, 220, "AM", BLACK, WHITE, 2);
+        drawString(140, 220, "AM", WHITE, BLACK, 2);
 
 }
 void ScheduleScreen::renderOffTime()
@@ -579,64 +581,64 @@ void ScheduleScreen::renderOffTime()
 
     uint8_t hr = LGDB::read_hour(device_idx, scheduleScreenCurrentDay, false);
     twodigit(buf, hr);
-    drawString(85, 136, buf, BLACK, WHITE, 2);
+    drawString(85, 136, buf, WHITE, BLACK, 2);
 
-    drawChar(85, 170, ':', BLACK, WHITE, 2);
+    drawChar(85, 170, ':', WHITE, BLACK, 2);
 
     uint8_t min = LGDB::read_minute(device_idx, scheduleScreenCurrentDay, false);
     twodigit(buf, min);
-    drawString(85, 190, buf, BLACK, WHITE, 2);
+    drawString(85, 190, buf, WHITE, BLACK, 2);
 
     if(hr >=12 )
-        drawString(85, 220, "PM", BLACK, WHITE, 2);
+        drawString(85, 220, "PM", WHITE, BLACK, 2);
     else
-        drawString(85, 220, "AM", BLACK, WHITE, 2);
+        drawString(85, 220, "AM", WHITE, BLACK, 2);
 
 }
 
 void ScheduleScreen::renderAuto()
 {
-	drawString(35, 136, "No Sensor", BLACK, WHITE, 2);  
+	drawString(35, 136, "No Sensor", WHITE, BLACK, 2);  
 }
 void ScheduleScreen::render()
 {
-    fillScreen(WHITE);
+    fillScreen(BLACK);
     uint16_t devcolor = color565(205,173,0);
 	makeRectangle(5,5, 230,310, devcolor, 2);
 
 	char* Adapter = "Adapter:00";
     twodigit(Adapter+8, device_idx, false);
 
-	drawString(225,50 , Adapter, BLACK  , WHITE, 2);
+	drawString(225,50 , Adapter, WHITE  , BLACK, 2);
 
-	makeRectangle(180,6,40,44, BLACK, 3);
-	makeRectangle(180,50,40,44, BLACK, 3);
-	makeRectangle(180,94,40,44, BLACK, 3);
-	makeRectangle(180,138,40,44, BLACK, 3);
-	makeRectangle(180,182,40,44, BLACK, 3);
-	makeRectangle(180,226,40,44, BLACK, 3);
-	makeRectangle(180,270,40,44, BLACK, 3);
+	makeRectangle(180,6,40,44, WHITE, 3);
+	makeRectangle(180,50,40,44, WHITE, 3);
+	makeRectangle(180,94,40,44, WHITE, 3);
+	makeRectangle(180,138,40,44, WHITE, 3);
+	makeRectangle(180,182,40,44, WHITE, 3);
+	makeRectangle(180,226,40,44, WHITE, 3);
+	makeRectangle(180,270,40,44, WHITE, 3);
 
     renderDays();
 
-	drawString(140, 25, "ON", BLACK, WHITE, 3);
-	drawString(85, 15, "OFF", BLACK, WHITE, 3);
-	drawString(30, 10, "AUTO", BLACK, WHITE, 3); 
+	drawString(140, 25, "ON", WHITE, BLACK, 3);
+	drawString(85, 15, "OFF", WHITE, BLACK, 3);
+	drawString(30, 10, "AUTO", WHITE, BLACK, 3); 
 
-	makeRectangle(130,85, 40, 40, BLACK, 2); //on-
-	makeRectangle(75, 85, 40, 40, BLACK, 2); //off-
-	makeRectangle(20, 85, 40, 40, BLACK, 2); // auto-
+	makeRectangle(130,85, 40, 40, WHITE, 2); //on-
+	makeRectangle(75, 85, 40, 40, WHITE, 2); //off-
+	makeRectangle(20, 85, 40, 40, WHITE, 2); // auto-
 
-	makeRectangle(130,255, 40,40, BLACK, 2); //on+
-	makeRectangle(75, 255, 40, 40, BLACK, 2); //off+
-	makeRectangle(20, 255, 40, 40, BLACK, 2); // auto+
+	makeRectangle(130,255, 40,40, WHITE, 2); //on+
+	makeRectangle(75, 255, 40, 40, WHITE, 2); //off+
+	makeRectangle(20, 255, 40, 40, WHITE, 2); // auto+
 
-	drawChar(140, 100, '-', RED, WHITE, 2);
-	drawChar(85, 100, '-', RED, WHITE, 2);
-	drawChar(30, 100, '-', RED, WHITE, 2); 
-	drawChar(140, 270, '+', BLUE, WHITE, 2);
-	drawChar(85, 270, '+', BLUE, WHITE, 2);
-	drawChar(30, 270, '+', BLUE, WHITE, 2); 
+	drawChar(140, 100, '-', RED, BLACK, 2);
+	drawChar(85, 100, '-', RED, BLACK, 2);
+	drawChar(30, 100, '-', RED, BLACK, 2); 
+	drawChar(140, 270, '+', BLUE, BLACK, 2);
+	drawChar(85, 270, '+', BLUE, BLACK, 2);
+	drawChar(30, 270, '+', BLUE, BLACK, 2); 
 	//strings to be updated with touch dimensions //
 
     renderOffTime();
