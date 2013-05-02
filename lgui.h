@@ -120,10 +120,8 @@ public:
 
     uint8_t device_idx;
 private:
-    uint8_t getOnTime();
-    uint8_t getOffTime();
-    void setOnTime(uint8_t time);
-    void setOffTime(uint8_t time);
+    void incr_time(uint8_t device, uint8_t day, bool on_off_b);
+    void decr_time(uint8_t device, uint8_t day, bool on_off_b);
 };
 
 class SchedulePickDeviceScreen : public LGUIScreen
