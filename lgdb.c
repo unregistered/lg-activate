@@ -65,22 +65,22 @@ void LGDB::write_schedule_table_entry(uint8_t entry, uint8_t day_of_week, uint16
 uint8_t LGDB::read_device_table_entry(uint8_t entry)
 {
     char* addr = (char*)(lgdb_device_table + entry);
-    return read<uint16_t>(addr);
+    return read<uint8_t>(addr);
 }
 void LGDB::write_device_table_entry(uint8_t entry, uint8_t val)
 {
     char* addr = (char*)(lgdb_device_table + entry);
-    write<uint16_t>(addr, val);
+    write<uint8_t>(addr, val);
 }
 
 uint8_t LGDB::read_adapter_table_entry(uint8_t entry)
 {
     char* addr = (char*)(lgdb_adapter_table + entry);
-    return read<uint16_t>(addr);
+    return read<uint8_t>(addr);
 }
 void LGDB::write_adapter_table_entry(uint8_t entry, uint8_t val)
 {
     char* addr = (char*)(lgdb_adapter_table + entry);
-    write<uint16_t>(addr, val);
+    write<uint8_t>(addr, val);
 }
 #endif

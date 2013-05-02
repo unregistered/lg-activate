@@ -32,10 +32,12 @@ void Controller::setup()
 
     scheduleScreen.device_idx = 0;
     LGDB::write_device_table_entry(0, 0x00);
+    // LGDB::write_schedule_table_entry(0, 0, 0x1313);
 	manager.presentScreen(scheduleScreen);
 }
 
 void Controller::loop()
 {
 	manager.loop();
+	LGSerial::print(StackCount());
 }

@@ -35,23 +35,23 @@ public:
 #endif
 
 #ifdef USE_NETWORK_SERVER
-    // 1 bit type - (0 actuator, 1 sensor)
-    // 1 bit (see below)
-    // For Actuators
-    //      means is_auto (1 for auto, 0 for just on)
-    // For Sensors
-    //      must be 0, 1 is invalid
-    // Note: a 11 in the first 2 bit positions means empty entry. So convenient
-    // that it initializies to 0xffff
-    //
-    // 7 bit On time (15 min increments)
-    // 7 bit Off time (15 min increments)
+    // 1 bit use_auto
+    // 7 bit On time
+    // {
+    //   1 bit am/pm_b
+    //   4 bit hour 0-12
+    //   2 bit minute 0, 15, 30, 45
+    // }
+    // 1 bit padding
+    // 7 bit off time
     static uint16_t read_schedule_table_entry(uint8_t device, uint8_t day_of_week);
     static void write_schedule_table_entry(uint8_t device, uint8_t day_of_week, uint16_t val);
 
+    // actuator id for auto
     static uint8_t read_adapter_table_entry(uint8_t entry);
     static void write_adapter_table_entry(uint8_t entry, uint8_t val);
 
+    // 1 bit, (0 actuator, 1 sensor)
     static uint8_t read_device_table_entry(uint8_t entry);
     static void write_device_table_entry(uint8_t entry, uint8_t val);
 #endif

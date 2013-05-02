@@ -114,9 +114,15 @@ class ScheduleScreen : public LGUIScreen
 public:
     ScheduleScreen();
     void render();
+    void renderDays();
+    void renderOnTime();
+    void renderOffTime();
     void loop();
 
     uint8_t device_idx;
+private:
+    uint8_t getOnTime();
+    uint8_t getOffTime();
 };
 
 class SchedulePickDeviceScreen : public LGUIScreen
