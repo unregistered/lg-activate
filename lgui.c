@@ -93,11 +93,11 @@ void HomeScreen::render()
 	char * dev = "Devices";
 	char * stats = "Status";
 	char buf[]= "00/00/00";
-	twodigit(buf, GetMonth(),false); 
-	twodigit(buf+3, GetDay(), false); 
-	twodigit(buf+6, GetYear(), false); 
-	
-	
+	twodigit(buf, GetMonth(),false);
+	twodigit(buf+3, GetDay(), false);
+	twodigit(buf+6, GetYear(), false);
+
+
 
 	drawString(215,120 , home, BLACK, WHITE, 3);
 	drawString(55,35, set, BLACK, WHITE, 2);
@@ -114,18 +114,18 @@ void HomeScreen::render()
     const char* secdisp = "0";
     const char* mindisp = "0";
     const char t = "";*/
-	 
-	//twodigit(buf, GetHour()); 
-	char tim[] = "00:00 PM"; 
-	twodigit(tim, GetHour(), false); 
-	twodigit(tim+3, GetMinute(), false); 
+
+	//twodigit(buf, GetHour());
+	char tim[] = "00:00 PM";
+	twodigit(tim, GetHour(), false);
+	twodigit(tim+3, GetMinute(), false);
 	if (GetAmPm() == 0)
 	{
-		tim[6] = 'A'; 
+		tim[6] = 'A';
 	}
-	
 
-	
+
+
     drawString(225, 220, tim, BLACK, WHITE, 2);
     int x,y;
 }
@@ -357,25 +357,25 @@ void SettingsSetTimeScreen::renderMonth()
 void SettingsSetTimeScreen::renderDay()
 {
     // numToStr(GetDay());
-	twodigit(buf, GetDay()); 
+	twodigit(buf, GetDay());
     drawString(110, 68, buf, BLACK, WHITE, 2);
 }
 void SettingsSetTimeScreen::renderYear()
 {
     // numToStr(GetYear());
-	twodigit(buf, GetYear()); 
+	twodigit(buf, GetYear());
     drawString(110, 122, buf, BLACK, WHITE, 2);
 }
 void SettingsSetTimeScreen::renderHour()
 {
     // numToStr(GetHour());
-	twodigit(buf, GetHour()); 
+	twodigit(buf, GetHour());
     drawString(110, 175, buf, BLACK, WHITE, 2);
 }
 void SettingsSetTimeScreen::renderMinute()
 {
     // numToStr(GetMinute());
-	twodigit(buf, GetMinute()); 
+	twodigit(buf, GetMinute());
     drawString(110, 228, buf, BLACK, WHITE, 2);
 }
 void SettingsSetTimeScreen::renderAMPM()
@@ -619,6 +619,8 @@ void ScheduleScreen::loop()
     {
         scheduleScreenCurrentDay = (y - 6)/44; // Starts at 6px, each is 44px wide
         renderDays();
+        renderOnTime();
+        renderOffTime();
     }
 
 	//off+ //
@@ -662,7 +664,6 @@ void ScheduleScreen::incr_time(uint8_t device, uint8_t day, bool on_off_b)
         hour = data >> 8;
 
     hour &= 0x7F;
-    LGSerial::print(hour);
     if(++hour == 96)
         hour = 0;
 
@@ -686,13 +687,14 @@ void ScheduleScreen::decr_time(uint8_t device, uint8_t day, bool on_off_b)
         hour = data >> 8;
 
     hour &= 0x7F;
-    LGSerial::print(hour);
     if(--hour < 0)
         hour = 95;
 
     if(on_off_b){
         data &= 0x80FF;
-        data |= (uint16_t)(hour << 8);
+        uint16_t mask = hour;
+        mask = mask << 8;
+        data |= mask;
     } else {
         data &= 0xFF80;
         data |= hour;
