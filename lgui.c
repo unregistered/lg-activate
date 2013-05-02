@@ -561,9 +561,9 @@ void ScheduleScreen::renderOnTime()
     uint8_t hr = LGDB::read_hour(device_idx, scheduleScreenCurrentDay, true);
 
     if(hr >= 12)
-        drawString(140, 220, "PM", BLACK, WHITE, 2);
+        drawString(140, 220, "PM", WHITE, BLACK, 2);
     else
-        drawString(140, 220, "AM", BLACK, WHITE, 2);
+        drawString(140, 220, "AM", WHITE, BLACK, 2);
 
     hr = hr % 12;
     if(hr == 0)
@@ -588,9 +588,9 @@ void ScheduleScreen::renderOffTime()
     uint8_t hr = LGDB::read_hour(device_idx, scheduleScreenCurrentDay, false);
 
     if(hr >=12 )
-        drawString(85, 220, "PM", BLACK, WHITE, 2);
+        drawString(85, 220, "PM", WHITE, BLACK, 2);
     else
-        drawString(85, 220, "AM", BLACK, WHITE, 2);
+        drawString(85, 220, "AM", WHITE, BLACK, 2);
 
     hr = hr % 12;
     if(hr == 0)
@@ -645,7 +645,7 @@ void ScheduleScreen::render()
 
 	drawString(140, 25, "ON", WHITE, BLACK, 3);
 	drawString(85, 15, "OFF", WHITE, BLACK, 3);
-	drawString(30, 10, "AUTO", WHITE, BLACK, 3); 
+	drawString(30, 10, "AUTO", WHITE, BLACK, 3);
 
 
 	makeRectangle(130,85, 40, 40, WHITE, 2); //on-
@@ -658,10 +658,10 @@ void ScheduleScreen::render()
 
 	drawChar(140, 100, '-', RED, BLACK, 2);
 	drawChar(85, 100, '-', RED, BLACK, 2);
-	drawChar(35, 100, 'x', RED, BLACK, 2); 
+	drawChar(35, 100, 'x', RED, BLACK, 2);
 	drawChar(140, 270, '+', BLUE, BLACK, 2);
 	drawChar(85, 270, '+', BLUE, BLACK, 2);
-	drawChar(30, 270, '+', BLUE, BLACK, 2); 
+	drawChar(30, 270, '+', BLUE, BLACK, 2);
 
 	//strings to be updated with touch dimensions //
 
@@ -712,8 +712,11 @@ void ScheduleScreen::loop()
     }
     if(pressed) {
         consecutive_presses++;
+
         renderOnTime();
         renderOffTime();
+    } else {
+        consecutive_presses = 0;
     }
 
 
@@ -747,7 +750,7 @@ void ScheduleScreen::loop()
 	}
     // sleep(20);
 }
-void ScheduleScreen::incr_time(uint8_t device, uint8_t day, bool on_off_b)
+void ScheduleScreen::incr_time(uint8_t device, uint8_t day, bool on_off_b, uint8_t increment)
 {
     uint16_t data = LGDB::read_schedule_table_entry(device, day);
     uint8_t hour = data;
@@ -755,8 +758,8 @@ void ScheduleScreen::incr_time(uint8_t device, uint8_t day, bool on_off_b)
         hour = data >> 8;
 
     hour &= 0x7F;
-    if(++hour == 96)
-        hour = 0;
+    hour += (increment) ? 4 : 1;
+    hour = hour % 96;
 
     if(on_off_b){
         data &= 0x80FF;
@@ -770,7 +773,7 @@ void ScheduleScreen::incr_time(uint8_t device, uint8_t day, bool on_off_b)
 
     LGDB::write_schedule_table_entry(device, day, data);
 }
-void ScheduleScreen::decr_time(uint8_t device, uint8_t day, bool on_off_b)
+void ScheduleScreen::decr_time(uint8_t device, uint8_t day, bool on_off_b, uint8_t increment)
 {
     uint16_t data = LGDB::read_schedule_table_entry(device, day);
     int8_t hour = data;
@@ -778,8 +781,8 @@ void ScheduleScreen::decr_time(uint8_t device, uint8_t day, bool on_off_b)
         hour = data >> 8;
 
     hour &= 0x7F;
-    if(--hour < 0)
-        hour = 95;
+    hour -= (increment) ? 4 : 1;
+    hour = hour % 96;
 
     if(on_off_b){
         data &= 0x80FF;
