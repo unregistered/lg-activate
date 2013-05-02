@@ -21,7 +21,6 @@ extern uint8_t EEMEM lgdb_adapter_table[MAX_DEVICE_COUNT];
 class LGDB
 {
 public:
-    LGDB();
 
 #ifdef USE_NETWORK_CLIENT
     static uint8_t read_address();
@@ -56,18 +55,7 @@ public:
     static void write_device_table_entry(uint8_t entry, uint8_t val);
 #endif
 
-private:
-    template<typename T>
-    static T read(void *addr) {
-        T data;
-        eeprom_read_block(&data, addr, sizeof(T));
-        return data;
-    }
 
-    template<typename T>
-    static void write(void *addr, T val) {
-        eeprom_write_block(&val, addr, sizeof(T));
-    }
 };
 
 #endif

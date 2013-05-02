@@ -53,7 +53,8 @@ uint16_t StackCount(void)
     return c;
 }
 
-int main(void)
+void main() __attribute__ ((noreturn));
+void main(void)
 {
     init_timer();
 
@@ -63,7 +64,5 @@ int main(void)
     for(;;){
         c.loop();
     }
-
-    return 0;   /* never reached */
 }
 

@@ -10,7 +10,6 @@
 #define YM (1 << PC2);
 #define YP (1 << PC3);
 
-
 class ScreenManager;
 
 /**

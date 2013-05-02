@@ -26,7 +26,6 @@ public:
   static void print(char*);
   static void print_pgm(PGM_P);
   static void print(int);
-  static void clear_screen();
   static void print_hex(uint64_t&);
 
   // Get data from the port
@@ -37,9 +36,6 @@ public:
 
   // Test if data is available
   static bool available();
-
-  // Clear serial buffer
-  static void clear();
 
 // private:
 //   LGSerial (arguments);

@@ -460,10 +460,10 @@ void SettingsSetModeScreen::render()
 	//drawVerticalLine(0,50, 239, BLACK, 4);
 	drawVerticalLine(0, 270, 239, BLACK, 4);
 
-	drawPgmString(200, 55, PSTR("1. SCHEDULE ONLY"), BLACK, WHITE, 2);
-	drawPgmString(150, 55, PSTR("2. MOTION ONLY "), BLACK, WHITE, 2);
-	drawPgmString(100, 55, PSTR("3. COMBINATION "), BLACK, WHITE, 2);
-	drawPgmString(50, 55,  PSTR("4. VACATION "), BLACK, WHITE, 2);
+	drawPgmString(200, 55, PSTR("1. SCHEDULE"), BLACK, WHITE, 2);
+	drawPgmString(150, 55, PSTR("2. MOTION"), BLACK, WHITE, 2);
+	drawPgmString(100, 55, PSTR("3. COMBINATION"), BLACK, WHITE, 2);
+	drawPgmString(50, 55,  PSTR("4. VACATION"), BLACK, WHITE, 2);
 
 	// makeRectangle(10, 60, 20, 160, GREEN, 3);
 	// drawString( 15, 100, "CONFIRM", setcolor, WHITE, 2);
@@ -548,8 +548,8 @@ void ScheduleScreen::render()
 
     renderDays();
 
-	drawPgmString(150, 25, PSTR("ON"), BLACK, WHITE, 3);
-	drawPgmString(110, 15, PSTR("OFF"), BLACK, WHITE, 3);
+	drawString(150, 25, "ON", BLACK, WHITE, 3);
+	drawString(110, 15, "OFF", BLACK, WHITE, 3);
 
 	makeRectangle(140,74, 35, 40, BLACK, 2); //on-
 	makeRectangle(100, 74, 35, 40, BLACK, 2); //off-
@@ -577,92 +577,84 @@ void ScheduleScreen::loop()
     // touch screen dimensions //
     // FIXME touchscreen targets are too low
 	// Sunday
-	if ((y>158 && y<192)  && (x>4 && x<30))
+	if ((x<180 && x>140)  && (y>6 && y<50))
     {
         scheduleScreenCurrentDay = 0;
         renderDays();
     }
 	// Monday
-	if ((y>158 && y<192)	 && (x>31 && x<59))
+	if ((x<180 && x>140)	 && (y>50 && y<94))
     {
         scheduleScreenCurrentDay = 1;
         renderDays();
     }
 	// Tues
-	if ((y>158 && y<192)	 && (x>60 && x<88))
+	if ((x<180 && x>140)	 && (y>94 && y<138))
     {
         scheduleScreenCurrentDay = 2;
         renderDays();
     }
 	// Weds
-	if ((y>158 && y<192)	 && (x>89 && x<117))
+	if ((x<180 && x>140)	 && (y>138 && y<182))
     {
         scheduleScreenCurrentDay = 3;
         renderDays();
     }
 	// Thurs
-	if ((y>158 && y<192)	 && (x>118 && x<146))
+	if ((x<180 && x>140)	 && (y>182 && y<226))
     {
         scheduleScreenCurrentDay = 4;
         renderDays();
     }
 	// Fri
-	if ((y>158 && y<192)	 && (x>147 && x<175))
+	if ((x<180 && x>140)	 && (y>226 && y<270))
     {
         scheduleScreenCurrentDay = 5;
         renderDays();
     }
 	// Sat
-	if ((x>158 && x<192)	 && (y>176 && y<202))
+	if ((x<180 && x>140)	 && (y>270 && y<314))
     {
         scheduleScreenCurrentDay = 6;
         renderDays();
     }
 
-
-	//on+ //
-	if ((x>117 && x<150)	 && (y>59 && y<84)) {
-        int8_t t = getOnTime();
-        if(++t == 96) t = 0;
-
-        renderOnTime();
-        renderOffTime();
-
-        LGSerial::print("ON+");
-    }
 	//off+ //
-	if ((x>83 && x<116)	 && (y>59 && y<84)) {
+	if ((x>65 && x<100)	 && (y>226 && y<306)) {
+        int8_t t = getOnTime();
+        if(++t == 96) t = 0;
+
+        renderOnTime();
+        renderOffTime();
+    }
+	//on+ //
+	if ((x>100 && x<135)	 && (y>266 && y<306)) {
         int8_t t = getOffTime();
         if(++t == 96) t = 0;
 
         renderOnTime();
         renderOffTime();
-
-        LGSerial::print("Off+");
     }
-	//on- //
-	if ((x>117 && x<150)	 && (y>166 && y<191))
+	//off- //
+	if ((x>65 && x<100)	 && (y>74 && y<114))
     {
         int8_t t = getOnTime();
         if(--t < 0) t = 95;
 
         renderOnTime();
         renderOffTime();
-
-        LGSerial::print("ON-");
     }
-	//off-//
-	if ((x>83 && x<116)	 && (y>166 && y<191))
+	//on-//
+	if ((x>100 && x<135)	 && (y>74 && y<114))
     {
         int8_t t = getOffTime();
         if(--t < 0) t = 95;
 
         renderOnTime();
         renderOffTime();
-
-        LGSerial::print("OFf-");
     }
 
+    sleep(100);
 	// CONFIRM//
 	// if ((x> 33 && 67) && (y> 125 && y<175)) ;
 }
@@ -711,7 +703,6 @@ void SchedulePickDeviceScreen::render()
 }
 void SchedulePickDeviceScreen::loop()
 {
-    return;
     int x = getTouchX();
     int y = getTouchY();
 
@@ -744,6 +735,32 @@ LGUIScreen::LGUIScreen(){}
 int LGUIScreen::getTouchX()
 {
     DDRC = 0x0;
+    DDRC = 0x5;
+
+    PORTC |= YM;
+
+    ADMUX |= (1<<REFS0);
+    ADMUX &= ~(1<<REFS1);
+
+    ADMUX |= (1<<ADLAR);
+
+    ADMUX |= (3 << MUX0);
+    ADMUX &= (0xf0 | (3<<MUX0));
+
+    ADCSRA |= (7<<ADPS0);
+    ADCSRA |= (1<<ADEN);
+
+    ADCSRA |= (1<<ADSC);
+
+    while (ADCSRA& (1<<ADSC));
+    int raw = (ADCH);
+    return 240 - (raw * 12)/10;
+
+}
+
+int LGUIScreen::getTouchY()
+{
+    DDRC = 0x0;
     DDRC = 0xa;
 
     PORTC |= XP;
@@ -763,30 +780,7 @@ int LGUIScreen::getTouchX()
 
     while (ADCSRA& (1<<ADSC));
     // DDRC |= 0x5;
-    return (ADCH);
-}
-
-int LGUIScreen::getTouchY()
-{
-    DDRC = 0x0;
-    DDRC = 0x5;
-
-    PORTC |= YM;
-
-    ADMUX |= (1<<REFS0);
-    ADMUX &= ~(1<<REFS1);
-
-    ADMUX |= (1<<ADLAR);
-
-    ADMUX |= (3 << MUX0);
-    ADMUX &= (0xf0 | (3<<MUX0));
-
-    ADCSRA |= (7<<ADPS0);
-    ADCSRA |= (1<<ADEN);
-
-    ADCSRA |= (1<<ADSC);
-
-    while (ADCSRA& (1<<ADSC));
-    return (ADCH);
+    int raw = (ADCH);
+    return (raw * 16)/10 - 30;
 }
 

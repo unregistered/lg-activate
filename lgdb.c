@@ -14,38 +14,36 @@ uint8_t EEMEM lgdb_mode;
 #endif
 
 
-LGDB::LGDB()
-{
-
-}
 
 #ifdef USE_NETWORK_CLIENT
 
 uint8_t LGDB::read_address()
 {
-    return read<uint8_t>((char*)&lgdb_my_addr);
+    return eeprom_read_byte(&lgdb_my_addr);
 }
 void LGDB::write_address(uint8_t val)
 {
-    write<uint8_t>((char*)&lgdb_my_addr, val);
+    eeprom_write_byte(&lgdb_my_addr, val);
 }
 
 uint64_t LGDB::read_basestation_address()
 {
-    return read<uint64_t>((char*)&lgdb_basestation_addr);
+    uint64_t data;
+    eeprom_read_block(&data, &lgdb_basestation_addr, sizeof(uint64_t));
+    return data;
 }
 void LGDB::write_basestation_address(uint64_t val)
 {
-    write<uint64_t>((char*)&lgdb_basestation_addr, val);
+    eeprom_write_block(&val, &lgdb_basestation_addr, sizeof(uint64_t));
 }
 
 uint8_t LGDB::read_mode()
 {
-    return read<uint8_t>((char*)&lgdb_mode);
+    return eeprom_read_byte(&lgdb_mode);
 }
 void LGDB::write_mode(uint8_t val)
 {
-    write<uint8_t>((char*)&lgdb_mode, val);
+    eeprom_write_byte(&lgdb_mode, val);
 }
 
 #endif
@@ -53,34 +51,28 @@ void LGDB::write_mode(uint8_t val)
 #ifdef USE_NETWORK_SERVER
 uint16_t LGDB::read_schedule_table_entry(uint8_t entry, uint8_t day_of_week)
 {
-    char* addr = (char*)(lgdb_schedule_table + (entry*7 + day_of_week));
-    return read<uint16_t>(addr);
+    return eeprom_read_word(lgdb_schedule_table + (entry*7 + day_of_week));
 }
 void LGDB::write_schedule_table_entry(uint8_t entry, uint8_t day_of_week, uint16_t val)
 {
-    char* addr = (char*)(lgdb_schedule_table + (entry*7 + day_of_week));
-    write<uint16_t>(addr, val);
+    eeprom_write_word(lgdb_schedule_table + (entry*7 + day_of_week), val);
 }
 
 uint8_t LGDB::read_device_table_entry(uint8_t entry)
 {
-    char* addr = (char*)(lgdb_device_table + entry);
-    return read<uint8_t>(addr);
+    return eeprom_read_byte(lgdb_device_table + entry);
 }
 void LGDB::write_device_table_entry(uint8_t entry, uint8_t val)
 {
-    char* addr = (char*)(lgdb_device_table + entry);
-    write<uint8_t>(addr, val);
+    eeprom_write_byte(lgdb_device_table + entry, val);
 }
 
 uint8_t LGDB::read_adapter_table_entry(uint8_t entry)
 {
-    char* addr = (char*)(lgdb_adapter_table + entry);
-    return read<uint8_t>(addr);
+    return eeprom_read_byte(lgdb_adapter_table + entry);
 }
 void LGDB::write_adapter_table_entry(uint8_t entry, uint8_t val)
 {
-    char* addr = (char*)(lgdb_adapter_table + entry);
-    write<uint8_t>(addr, val);
+    eeprom_write_byte(lgdb_adapter_table + entry, val);
 }
 #endif

@@ -134,11 +134,6 @@ void LGSerial::print_hex(uint64_t &num)
     print(str);
 }
 
-void LGSerial::clear_screen()
-{
-    LGSerial::put("\033[A\033[2K\033[A\033[2K");
-}
-
 char LGSerial::get()
 {
 	while ( !LGSerial::available() ) { ; }
@@ -206,9 +201,4 @@ bool LGSerial::available()
     #ifdef attiny4313
     return UCSRA & (1 << RXC );
     #endif
-}
-
-void LGSerial::clear()
-{
-    while(LGSerial::available()) LGSerial::get();
 }

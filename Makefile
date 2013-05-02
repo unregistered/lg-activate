@@ -7,7 +7,7 @@ FUSES      = -U hfuse:w:0xdf:m -U lfuse:w:0xe0:m
 
 # Tune the lines below only if you know what you are doing:
 AVRDUDE = avrdude $(PROGRAMMER) -p $(DEVICE)
-COMPILE = avr-g++ -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE) -Wno-write-strings -D$(DEVICE) -ffunction-sections -Wl,-gc-sections
+COMPILE = avr-g++ -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE) -Wno-write-strings -D$(DEVICE) -ffunction-sections -Wl,-gc-sections -ffreestanding -mcall-prologues -Wl,--relax -fdata-sections -fshort-enums -fpack-struct -funsigned-bitfields -funsigned-char
 
 # symbolic targets:
 all:

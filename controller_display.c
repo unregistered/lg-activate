@@ -39,5 +39,4 @@ void Controller::setup()
 void Controller::loop()
 {
 	manager.loop();
-	LGSerial::print(StackCount());
 }

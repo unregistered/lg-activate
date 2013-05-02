@@ -78,9 +78,9 @@ const uint16_t ILI932x_regValues[] PROGMEM = {
 
 // Define RGB values for eight color bars
 
-uint8_t red[8] = { 0, 0xff, 0, 0, 0xff, 0, 0xff, 0xff };
-uint8_t grn[8] = { 0, 0, 0xff, 0, 0xff, 0xff, 0, 0xff };
-uint8_t blu[8] = { 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff };
+// uint8_t red[8] = { 0, 0xff, 0, 0, 0xff, 0, 0xff, 0xff };
+// uint8_t grn[8] = { 0, 0, 0xff, 0, 0xff, 0xff, 0, 0xff };
+// uint8_t blu[8] = { 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff };
 
 // Define values for a 320x240 1 bit/pixel images
 
@@ -90,37 +90,37 @@ uint8_t blu[8] = { 0, 0, 0, 0xff, 0, 0xff, 0xff, 0xff };
 /*
  color_bars - draw eight color bars on the full screen
  */
-void color_bars()
-{
-    uint8_t i, j, k;
-    uint16_t color;
-    uint8_t hi, lo;
+// void color_bars()
+// {
+//     uint8_t i, j, k;
+//     uint16_t color;
+//     uint8_t hi, lo;
 
-    regout(0x20, 0);            // Set addresss counter to top left (0,0)
-    regout(0x21, 0);
+//     regout(0x20, 0);            // Set addresss counter to top left (0,0)
+//     regout(0x21, 0);
 
-    LCD_CE_0;
+//     LCD_CE_0;
 
-    LCD_CD_0;
-    lcdout(0);
-    lcdout(0x22);
-    LCD_CD_1;
+//     LCD_CD_0;
+//     lcdout(0);
+//     lcdout(0x22);
+//     LCD_CD_1;
 
-    for (j = 0; j < 8; j++) {
-		color = color565(red[j], grn[j], blu[j]);
-		hi = color >> 8;
-		lo = color;
+//     for (j = 0; j < 8; j++) {
+// 		color = color565(red[j], grn[j], blu[j]);
+// 		hi = color >> 8;
+// 		lo = color;
 
-		for (k = 0; k < 40; k++) {
-			for (i = 0; i < 240; i++) {
-				lcdout(hi);
-				lcdout(lo);
-			}
-		}
-    }
+// 		for (k = 0; k < 40; k++) {
+// 			for (i = 0; i < 240; i++) {
+// 				lcdout(hi);
+// 				lcdout(lo);
+// 			}
+// 		}
+//     }
 
-    LCD_CE_0;
-}
+//     LCD_CE_0;
+// }
 
 
 
