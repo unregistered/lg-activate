@@ -25,6 +25,12 @@ void Controller::setup()
 	LGSerial::init();
 	adafruit_initialize();
 	ClockInit();
+	//SetHour(3); 
+	//SetMinute(34); 
+	//SetAmPm(0); 
+	//SetYear(13); 
+	//SetMonth(5); 
+	//SetDay(2); 
 
 	// Initialize buttons
     DDRD &= ~(1 << DDD7); // Back
