@@ -339,6 +339,7 @@ void LGNetwork::loop()
 
 }
 
+#ifdef USE_NETWORK_SERVER
 void LGNetwork::set_remote(uint8_t id, uint8_t status)
 {
     command_packet_t p;
@@ -353,6 +354,7 @@ void LGNetwork::set_remote(uint8_t id, uint8_t status)
         LGSerial::slow_put(p.bytes[i]);
     }
 }
+#endif
 
 
 
