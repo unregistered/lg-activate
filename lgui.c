@@ -23,7 +23,7 @@ SettingsSetModeScreen settingsSetModeScreen;
 SchedulePickDeviceScreen schedulePickDeviceScreen; // Links to schedule
 ScheduleScreen scheduleScreen;
 
-ScreenManager::ScreenManager() : currentScreen(NULL)
+ScreenManager::ScreenManager() : currentScreen(NULL), history_idx(0)
 {
     homeScreen = HomeScreen();
     statusScreen = StatusScreen();
@@ -43,6 +43,13 @@ void ScreenManager::presentScreen(LGUIScreen &s)
         currentScreen->beforeExit();
     }
 
+    if(&s == &homeScreen) {
+        // We should clear the history stack
+        history_idx = 0;
+    }
+
+    history[history_idx++] = &s;
+
     s.beforeRender(); // hooks
     s.render();
     s.afterRender(); // hooks
@@ -57,7 +64,11 @@ void ScreenManager::loop()
     bool homeButton = bit_is_set(PINB, 2);
 
     if(backButton) {
-        //
+        if(history_idx > 1) {
+            LGUIScreen *screen = history[history_idx-2]; // -1 is ourself
+            history_idx-=2; // Pop from the stack
+            presentScreen(*screen);
+        }
     } else if( homeButton && (currentScreen != &homeScreen) ) {
         presentScreen(homeScreen);
     } else {

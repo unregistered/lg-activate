@@ -141,6 +141,8 @@ public:
 
 private:
     LGUIScreen *currentScreen;
+    LGUIScreen* history[5];
+    uint8_t history_idx;
 };
 
 extern ScreenManager manager;
