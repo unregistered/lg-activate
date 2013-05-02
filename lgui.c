@@ -646,21 +646,21 @@ void ScheduleScreen::loop()
     }
 
 	//off+ //
-	if ((x>75 && x<105)	 && (y>226 && y<306)) {
+	if ((x>35 && x<75)	 && (y>255 && y<295)) {
         incr_time(device_idx, scheduleScreenCurrentDay, false);
 
         renderOnTime();
         renderOffTime();
     }
 	//on+ //
-	if ((x>130 && x<170)	 && (y>266 && y<306)) {
+	if ((x>90 && x<130)	 && (y>255 && y<295)) {
         incr_time(device_idx, scheduleScreenCurrentDay, true);
 
         renderOnTime();
         renderOffTime();
     }
 	//off- //
-	if ((x>75 && x<105)	 && (y>74 && y<114))
+	if ((x>35 && x<75)	 && (y>85 && y<125))
     {
         decr_time(device_idx, scheduleScreenCurrentDay, false);
 
@@ -668,16 +668,23 @@ void ScheduleScreen::loop()
         renderOffTime();
     }
 	//on-//
-	if ((x>130 && x<170)	 && (y>74 && y<114))
+	if ((x>90 && x<130)	 && (y>85 && y<125))
     {
         decr_time(device_idx, scheduleScreenCurrentDay, true);
 
         renderOnTime();
         renderOffTime();
     }
-	// auto+ // 
-	
 	// auto- // 
+	if ((x>-20 && x<20)	 && (y>85 && y<125))
+	{
+		//LGSerial::print("Howdy, auto+"); 
+	}
+	// auto+ // 
+	if ((x>-20 && x<20)	 && (y>255 && y<295))
+	{
+		//LGSerial::print("Hello, auto-"); 
+	}
     // sleep(20);
 }
 void ScheduleScreen::incr_time(uint8_t device, uint8_t day, bool on_off_b)
