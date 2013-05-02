@@ -34,13 +34,8 @@ public:
 #endif
 
 #ifdef USE_NETWORK_SERVER
-    // 1 bit use_auto
+    // 1 bit padding
     // 7 bit On time
-    // {
-    //   1 bit am/pm_b
-    //   4 bit hour 0-12
-    //   2 bit minute 0, 15, 30, 45
-    // }
     // 1 bit padding
     // 7 bit off time
     static uint16_t read_schedule_table_entry(uint8_t device, uint8_t day_of_week);

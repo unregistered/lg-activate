@@ -30,13 +30,7 @@ void Controller::setup()
     DDRD &= ~(1 << DDD7); // Back
     DDRB &= ~(1 << DDB2); // Home
 
-    scheduleScreen.device_idx = 0;
-    LGDB::write_device_table_entry(0, 0x00);
-    LGDB::write_schedule_table_entry(0, 0, 0x0000);
-
-    LGDB::write_device_table_entry(1, 0x01);
-    LGDB::write_device_table_entry(2, 0x01);
-	manager.presentScreen(scheduleScreen);
+	manager.presentScreen(homeScreen);
 }
 
 void Controller::loop()

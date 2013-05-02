@@ -166,7 +166,14 @@ void LGNetwork::loop()
 
                     if(response) {
                         // Now commit it to EEPROM
-                        LGDB::write_device_table_entry(next_address, 0xe3);
+                        if(next_client.identifier == 's')
+                            LGDB::write_device_table_entry(next_address, 1);
+                        else
+                            LGDB::write_device_table_entry(next_address, 0);
+
+                        for(uint8_t i=0; i < 7; i++) {
+                            LGDB::write_schedule_table_entry(next_address, i, 0);
+                        }
 
                         // Send final ack
                         sleep(1000);
