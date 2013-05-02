@@ -2,6 +2,14 @@
 #include "lg_rtc.h"
 #include "lgdb.h"
 
+static void twodigit(char *str, uint8_t num, bool shouldNullTerminate = true)
+{
+    str[0] = (num / 10) + 48;
+    str[1] = (num % 10) + 48;
+    if(shouldNullTerminate)
+        str[2] = '\0';
+}
+
 ScreenManager manager;
 
 HomeScreen homeScreen; // Links to Settings, Status, Devices, Schedule
@@ -323,39 +331,29 @@ void SettingsSetTimeScreen::render()
     renderMinute();
     renderAMPM();
 }
-void SettingsSetTimeScreen::numToStr(uint8_t num)
-{
-    // Convert to string
-    uint8_t ones = num % 10;
-    uint8_t tens = num / 10;
-
-    buf[0] = '1';//(char)(tens + 48);
-    buf[1] = '2';(char)(ones + 48);
-    buf[3] = 0;
-}
 void SettingsSetTimeScreen::renderMonth()
 {
-    numToStr(GetMonth());
+    // numToStr(GetMonth());
     drawString(110, 15, buf, BLACK, WHITE, 2);
 }
 void SettingsSetTimeScreen::renderDay()
 {
-    numToStr(GetDay());
+    // numToStr(GetDay());
     drawString(110, 68, buf, BLACK, WHITE, 2);
 }
 void SettingsSetTimeScreen::renderYear()
 {
-    numToStr(GetYear());
+    // numToStr(GetYear());
     drawString(110, 122, buf, BLACK, WHITE, 2);
 }
 void SettingsSetTimeScreen::renderHour()
 {
-    numToStr(GetHour());
+    // numToStr(GetHour());
     drawString(110, 175, buf, BLACK, WHITE, 2);
 }
 void SettingsSetTimeScreen::renderMinute()
 {
-    numToStr(GetMinute());
+    // numToStr(GetMinute());
     drawString(110, 228, buf, BLACK, WHITE, 2);
 }
 void SettingsSetTimeScreen::renderAMPM()
@@ -511,17 +509,29 @@ void ScheduleScreen::renderOnTime()
     uint16_t data = LGDB::read_schedule_table_entry(device_idx, scheduleScreenCurrentDay);
     uint8_t ontime = (data & 0x7F00) >> 8;
 
-    drawString(150, 136, "00", BLACK, WHITE, 2);
-    drawChar(150, 158, ':', BLACK, WHITE, 2);
-    drawString(150, 190, "00", BLACK, WHITE, 2);
+    char buf[3];
+    LGSerial::print(ontime);
 
-    drawString(150, 220, "PM", BLACK, WHITE, 2);
+    uint8_t hr = ((ontime % 44) / 4);
+    twodigit(buf, hr);
+    drawString(150, 136, buf, BLACK, WHITE, 2);
+    drawChar(150, 170, ':', BLACK, WHITE, 2);
+
+    // Minute
+    uint8_t min = (ontime & 0x03) * 15;
+    twodigit(buf, min);
+    drawString(150, 190, buf, BLACK, WHITE, 2);
+
+    if(ontime >= 48)
+        drawString(150, 220, "PM", BLACK, WHITE, 2);
+    else
+        drawString(150, 220, "AM", BLACK, WHITE, 2);
 
 }
 void ScheduleScreen::renderOffTime()
 {
     drawString(110, 136, "10", BLACK, WHITE, 2);
-    drawChar(110, 158, ':', BLACK, WHITE, 2);
+    drawChar(110, 170, ':', BLACK, WHITE, 2);
     drawString(110, 190, "30", BLACK, WHITE, 2);
     drawString(110, 220, "AM", BLACK, WHITE, 2);
 
@@ -533,8 +543,7 @@ void ScheduleScreen::render()
 	makeRectangle(5,5, 230,310, devcolor, 2);
 
 	char* Adapter = "Adapter:00";
-    Adapter[8] = (device_idx / 10) + 48; // Set adapter
-    Adapter[9] = (device_idx % 10) + 48;
+    twodigit(Adapter+8, device_idx, false);
 
 	drawString(225,50 , Adapter, BLACK  , WHITE, 2);
 
@@ -575,62 +584,26 @@ void ScheduleScreen::loop()
     int y = getTouchY();
 
     // touch screen dimensions //
-    // FIXME touchscreen targets are too low
-	// Sunday
-	if ((x<180 && x>140)  && (y>6 && y<50))
+	if ((x<180 && x>140))
     {
-        scheduleScreenCurrentDay = 0;
-        renderDays();
-    }
-	// Monday
-	if ((x<180 && x>140)	 && (y>50 && y<94))
-    {
-        scheduleScreenCurrentDay = 1;
-        renderDays();
-    }
-	// Tues
-	if ((x<180 && x>140)	 && (y>94 && y<138))
-    {
-        scheduleScreenCurrentDay = 2;
-        renderDays();
-    }
-	// Weds
-	if ((x<180 && x>140)	 && (y>138 && y<182))
-    {
-        scheduleScreenCurrentDay = 3;
-        renderDays();
-    }
-	// Thurs
-	if ((x<180 && x>140)	 && (y>182 && y<226))
-    {
-        scheduleScreenCurrentDay = 4;
-        renderDays();
-    }
-	// Fri
-	if ((x<180 && x>140)	 && (y>226 && y<270))
-    {
-        scheduleScreenCurrentDay = 5;
-        renderDays();
-    }
-	// Sat
-	if ((x<180 && x>140)	 && (y>270 && y<314))
-    {
-        scheduleScreenCurrentDay = 6;
+        scheduleScreenCurrentDay = (y - 6)/44; // Starts at 6px, each is 44px wide
         renderDays();
     }
 
 	//off+ //
 	if ((x>65 && x<100)	 && (y>226 && y<306)) {
-        int8_t t = getOnTime();
+        int8_t t = getOffTime();
         if(++t == 96) t = 0;
+        setOffTime(t);
 
         renderOnTime();
         renderOffTime();
     }
 	//on+ //
 	if ((x>100 && x<135)	 && (y>266 && y<306)) {
-        int8_t t = getOffTime();
+        int8_t t = getOnTime();
         if(++t == 96) t = 0;
+        setOnTime(t);
 
         renderOnTime();
         renderOffTime();
@@ -638,8 +611,9 @@ void ScheduleScreen::loop()
 	//off- //
 	if ((x>65 && x<100)	 && (y>74 && y<114))
     {
-        int8_t t = getOnTime();
+        int8_t t = getOffTime();
         if(--t < 0) t = 95;
+        setOffTime(t);
 
         renderOnTime();
         renderOffTime();
@@ -647,16 +621,15 @@ void ScheduleScreen::loop()
 	//on-//
 	if ((x>100 && x<135)	 && (y>74 && y<114))
     {
-        int8_t t = getOffTime();
+        int8_t t = getOnTime();
         if(--t < 0) t = 95;
+        setOnTime(t);
 
         renderOnTime();
         renderOffTime();
     }
 
-    sleep(100);
-	// CONFIRM//
-	// if ((x> 33 && 67) && (y> 125 && y<175)) ;
+    // sleep(20);
 }
 uint8_t ScheduleScreen::getOnTime()
 {
@@ -667,6 +640,21 @@ uint8_t ScheduleScreen::getOffTime()
 {
     uint16_t data = LGDB::read_schedule_table_entry(device_idx, scheduleScreenCurrentDay);
     return (data & 0x007F);
+}
+
+void ScheduleScreen::setOnTime(uint8_t time)
+{
+    uint16_t data = LGDB::read_schedule_table_entry(device_idx, scheduleScreenCurrentDay);
+    data = data & 0xC0FF;
+    data = data | (time << 8);
+    LGDB::write_schedule_table_entry(device_idx, scheduleScreenCurrentDay, data);
+}
+void ScheduleScreen::setOffTime(uint8_t time)
+{
+    uint16_t data = LGDB::read_schedule_table_entry(device_idx, scheduleScreenCurrentDay);
+    data = data & 0xFFC0;
+    data = data | time;
+    LGDB::write_schedule_table_entry(device_idx, scheduleScreenCurrentDay, data);
 }
 
 SchedulePickDeviceScreen::SchedulePickDeviceScreen(){}

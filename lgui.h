@@ -122,6 +122,8 @@ public:
 private:
     uint8_t getOnTime();
     uint8_t getOffTime();
+    void setOnTime(uint8_t time);
+    void setOffTime(uint8_t time);
 };
 
 class SchedulePickDeviceScreen : public LGUIScreen

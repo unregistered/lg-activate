@@ -53,6 +53,11 @@ public:
     // 1 bit, (0 actuator, 1 sensor)
     static uint8_t read_device_table_entry(uint8_t entry);
     static void write_device_table_entry(uint8_t entry, uint8_t val);
+
+    static uint8_t read_hour(uint8_t device, uint8_t day, bool on_off_b);
+    static uint8_t read_minute(uint8_t device, uint8_t day, bool on_off_b);
+    static void incr_time(uint8_t device, uint8_t day, bool on_off_b);
+    static void decr_time(uint8_t device, uint8_t day, bool on_off_b);
 #endif
 
 

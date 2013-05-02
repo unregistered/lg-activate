@@ -75,4 +75,70 @@ void LGDB::write_adapter_table_entry(uint8_t entry, uint8_t val)
 {
     eeprom_write_byte(lgdb_adapter_table + entry, val);
 }
+
+uint8_t LGDB::read_hour(uint8_t device, uint8_t day, bool on_off_b)
+{
+    uint16_t data = LGDB::read_schedule_table_entry(device, day);
+    if(on_off_b)
+        data = data >> 8;
+
+    return (data & 0x007F) >> 2;
+}
+uint8_t LGDB::read_minute(uint8_t device, uint8_t day, bool on_off_b)
+{
+    uint16_t data = LGDB::read_schedule_table_entry(device, day);
+    if(on_off_b)
+        data = data >> 8;
+
+    return 15*(data & 0x0003);
+}
+void LGDB::incr_time(uint8_t device, uint8_t day, bool on_off_b)
+{
+    uint16_t data = LGDB::read_schedule_table_entry(device, day);
+    uint8_t hour = data;
+    if(on_off_b)
+        hour = data >> 8;
+
+    hour &= 0x7F;
+    if(++hour == 96)
+        hour = 0;
+
+    if(on_off_b){
+        LGSerial::put("Before:");
+        LGSerial::print(data);
+        data &= 0xC0FF;
+        LGSerial::put("After");
+        LGSerial::print(data);
+        uint16_t mask = hour;
+        mask = mask << 8;
+        data |= mask;
+    } else {
+        data &= 0xFFC0;
+        data += hour;
+    }
+
+    LGDB::write_schedule_table_entry(device, day, data);
+}
+void LGDB::decr_time(uint8_t device, uint8_t day, bool on_off_b)
+{
+    uint16_t data = LGDB::read_schedule_table_entry(device, day);
+    int8_t hour = data;
+    if(on_off_b)
+        hour = data >> 8;
+
+    hour &= 0x7F;
+    if(--hour < 0)
+        hour = 96;
+
+    if(on_off_b){
+        data &= 0xC0FF;
+        data |= (uint16_t)(hour << 8);
+    } else {
+        data &= 0xFFC0;
+        data += hour;
+    }
+
+    LGDB::write_schedule_table_entry(device, day, data);
+}
+
 #endif
