@@ -532,19 +532,19 @@ void ScheduleScreen::renderOnTime()
 
     uint8_t hr = LGDB::read_hour(device_idx, scheduleScreenCurrentDay, true);
     twodigit(buf, hr);
-    drawString(150, 136, buf, BLACK, WHITE, 2);
+    drawString(140, 136, buf, BLACK, WHITE, 2);
 
-    drawChar(150, 170, ':', BLACK, WHITE, 2);
+    drawChar(140, 170, ':', BLACK, WHITE, 2);
 
     // Minute
     uint8_t min = LGDB::read_minute(device_idx, scheduleScreenCurrentDay, true);
     twodigit(buf, min);
-    drawString(150, 190, buf, BLACK, WHITE, 2);
+    drawString(140, 190, buf, BLACK, WHITE, 2);
 
     if(hr >= 12)
-        drawString(150, 220, "PM", BLACK, WHITE, 2);
+        drawString(140, 220, "PM", BLACK, WHITE, 2);
     else
-        drawString(150, 220, "AM", BLACK, WHITE, 2);
+        drawString(140, 220, "AM", BLACK, WHITE, 2);
 
 }
 void ScheduleScreen::renderOffTime()
@@ -553,19 +553,24 @@ void ScheduleScreen::renderOffTime()
 
     uint8_t hr = LGDB::read_hour(device_idx, scheduleScreenCurrentDay, false);
     twodigit(buf, hr);
-    drawString(110, 136, buf, BLACK, WHITE, 2);
+    drawString(85, 136, buf, BLACK, WHITE, 2);
 
-    drawChar(110, 170, ':', BLACK, WHITE, 2);
+    drawChar(85, 170, ':', BLACK, WHITE, 2);
 
     uint8_t min = LGDB::read_minute(device_idx, scheduleScreenCurrentDay, false);
     twodigit(buf, min);
-    drawString(110, 190, buf, BLACK, WHITE, 2);
+    drawString(85, 190, buf, BLACK, WHITE, 2);
 
     if(hr >=12 )
-        drawString(110, 220, "PM", BLACK, WHITE, 2);
+        drawString(85, 220, "PM", BLACK, WHITE, 2);
     else
-        drawString(110, 220, "AM", BLACK, WHITE, 2);
+        drawString(85, 220, "AM", BLACK, WHITE, 2);
 
+}
+
+void ScheduleScreen::renderAuto()
+{
+	drawString(35, 136, "No Sensor", BLACK, WHITE, 2);  
 }
 void ScheduleScreen::render()
 {
@@ -588,23 +593,29 @@ void ScheduleScreen::render()
 
     renderDays();
 
-	drawString(150, 25, "ON", BLACK, WHITE, 3);
-	drawString(110, 15, "OFF", BLACK, WHITE, 3);
+	drawString(140, 25, "ON", BLACK, WHITE, 3);
+	drawString(85, 15, "OFF", BLACK, WHITE, 3);
+	drawString(30, 10, "AUTO", BLACK, WHITE, 3); 
 
-	makeRectangle(140,74, 35, 40, BLACK, 2); //on-
-	makeRectangle(100, 74, 35, 40, BLACK, 2); //off-
+	makeRectangle(130,85, 40, 40, BLACK, 2); //on-
+	makeRectangle(75, 85, 40, 40, BLACK, 2); //off-
+	makeRectangle(20, 85, 40, 40, BLACK, 2); // auto-
 
-	makeRectangle(140,266, 35,40, BLACK, 2); //on+
-	makeRectangle(100, 266, 35, 40, BLACK, 2); //off+
+	makeRectangle(130,255, 40,40, BLACK, 2); //on+
+	makeRectangle(75, 255, 40, 40, BLACK, 2); //off+
+	makeRectangle(20, 255, 40, 40, BLACK, 2); // auto+
 
-	drawChar(155, 85, '-', RED, WHITE, 2);
-	drawChar(115, 85, '-', RED, WHITE, 2);
-	drawChar(155, 275, '+', BLUE, WHITE, 2);
-	drawChar(115, 275, '+', BLUE, WHITE, 2);
+	drawChar(140, 100, '-', RED, WHITE, 2);
+	drawChar(85, 100, '-', RED, WHITE, 2);
+	drawChar(30, 100, '-', RED, WHITE, 2); 
+	drawChar(140, 270, '+', BLUE, WHITE, 2);
+	drawChar(85, 270, '+', BLUE, WHITE, 2);
+	drawChar(30, 270, '+', BLUE, WHITE, 2); 
 	//strings to be updated with touch dimensions //
 
     renderOffTime();
     renderOnTime();
+	renderAuto(); 
 
 	// makeRectangle(40, 40, 40, 160, BLACK, 3);
 	// drawString(50, 50, "CONFIRM", BLACK, WHITE, 3);
@@ -622,21 +633,21 @@ void ScheduleScreen::loop()
     }
 
 	//off+ //
-	if ((x>65 && x<100)	 && (y>226 && y<306)) {
+	if ((x>75 && x<105)	 && (y>226 && y<306)) {
         incr_time(device_idx, scheduleScreenCurrentDay, false);
 
         renderOnTime();
         renderOffTime();
     }
 	//on+ //
-	if ((x>100 && x<135)	 && (y>266 && y<306)) {
+	if ((x>130 && x<170)	 && (y>266 && y<306)) {
         incr_time(device_idx, scheduleScreenCurrentDay, true);
 
         renderOnTime();
         renderOffTime();
     }
 	//off- //
-	if ((x>65 && x<100)	 && (y>74 && y<114))
+	if ((x>75 && x<105)	 && (y>74 && y<114))
     {
         decr_time(device_idx, scheduleScreenCurrentDay, false);
 
@@ -644,14 +655,16 @@ void ScheduleScreen::loop()
         renderOffTime();
     }
 	//on-//
-	if ((x>100 && x<135)	 && (y>74 && y<114))
+	if ((x>130 && x<170)	 && (y>74 && y<114))
     {
         decr_time(device_idx, scheduleScreenCurrentDay, true);
 
         renderOnTime();
         renderOffTime();
     }
-
+	// auto+ // 
+	
+	// auto- // 
     // sleep(20);
 }
 void ScheduleScreen::incr_time(uint8_t device, uint8_t day, bool on_off_b)
