@@ -94,6 +94,8 @@ public:
     // Returns -1 if no valid entries or
     // 0-99 for the next address to program
     int8_t get_next_target_address();
+
+    void set_remote(uint8_t id, uint8_t status);
 #endif
 
 private:

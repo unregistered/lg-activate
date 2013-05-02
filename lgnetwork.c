@@ -244,72 +244,70 @@ void LGNetwork::loop()
                 hour += 12; // Convert to 24 hour time
 
             uint8_t minute = GetMinute();
+            uint8_t theTime = hour*4 + minute;
             uint8_t day = GetDay();
-
-            command_packet_t p;
 
             LGSerial::put("Time is ");
             LGSerial::print(hour);
             LGSerial::print(minute);
-            LGSerial::print(day);
+            LGSerial::print(theTime);
+
+            uint8_t motion_sensor_idx = 0xFF;
+            if(LGSerial::available()) {
+                // We got a byte
+                motion_sensor_idx = LGSerial::get();
+            }
 
             for(uint8_t i=0; i < sizeof(lgdb_device_table); i++) {
                 if(LGDB::read_device_table_entry(i) != 0) {
                     continue;
                 }
-                uint8_t devhour_on = LGDB::read_hour(i, day, true); // Read ontime
-                uint8_t devminute_on = LGDB::read_minute(i, day, true);
-                uint8_t devhour_off = LGDB::read_hour(i, day, false);
-                uint8_t devminute_off = LGDB::read_minute(i, day, false);
+                uint8_t device_on = 4*LGDB::read_hour(i, day, true) + LGDB::read_minute(i, day, true); // Read ontime
+                uint8_t device_off = 4*LGDB::read_hour(i, day, false) + LGDB::read_minute(i, day, false);
                 uint8_t autodevice = LGDB::read_sensor_table_entry(i, day);
 
                 LGSerial::put("Device ");
                 LGSerial::print(i);
-                LGSerial::put("On Hour ");
-                LGSerial::print(devhour_on);
-                LGSerial::put("On minute ");
-                LGSerial::print(devminute_on);
-                LGSerial::put("Off Hour ");
-                LGSerial::print(devhour_off);
-                LGSerial::put("Off minute ");
-                LGSerial::print(devminute_off);
-
-
-                p.packet.short_address = i;
+                LGSerial::put("On ");
+                LGSerial::print(device_on);
+                LGSerial::put("Off ");
+                LGSerial::print(device_off);
 
                 // Events: Turn Off, Turn On, Respond to Auto
-                if(devhour_off == hour && minute == devminute_off) {
+                if(device_off == theTime) {
                     // Turn off
-                    LGSerial::put("Turn off device ");
+                    LGSerial::put("OFF ");
                     LGSerial::print(i);
-                    p.packet.system_mode = SYSTEM_OFF;
 
-                    // Send
-                    LGSerial::slow_put_pgm( PSTR("CMD") );
-                    // Body
-                    for(uint8_t i=0; i < sizeof(command_packet_t); i++) {
-                        LGSerial::slow_put(p.bytes[i]);
-                    }
-
-                } else if(devhour_on == hour && minute == devminute_on) {
+                    set_remote(i, SYSTEM_OFF);
+                } else if(device_on == theTime) {
                     if(autodevice == 0xFF) {
                         // Turn on
-                        LGSerial::put("Turn on device ");
+                        LGSerial::put("ON ");
                         LGSerial::print(i);
-                        p.packet.system_mode = SYSTEM_ON;
+                        set_remote(i, SYSTEM_ON);
                     } else {
-                        LGSerial::put("Turn auto device ");
+                        LGSerial::put("AUTO ");
                         LGSerial::print(i);
-                        p.packet.system_mode = SYSTEM_AUTO_OFF;
+                        set_remote(i, SYSTEM_AUTO_OFF);
                     }
+                } else if(theTime >= device_on) {
+                    if(autodevice != 0xFF) {
+                        LGSerial::print("Auto");
+                        LGSerial::put("Entry ");
+                        LGSerial::print(LGDB::read_sensor_table_entry(autodevice, day));
+                        if(motion_sensor_idx == autodevice) {
+                            LGSerial::print("We got a sensor reading");
+                            // We got a byte from the sensor
+                            set_remote(i, SYSTEM_AUTO_ON);
+                            LGDB::write_sensor_table_entry(autodevice, day, theTime); // Remember the time
+                        } else if( (LGDB::read_sensor_table_entry(autodevice, day) + 4) < theTime ) {
+                            // It's been an hour
+                            LGSerial::print("It's been an hour");
+                            set_remote(i, SYSTEM_AUTO_OFF);
+                        }
 
-                    // Send
-                    LGSerial::slow_put_pgm( PSTR("CMD") );
-                    // Body
-                    for(uint8_t i=0; i < sizeof(command_packet_t); i++) {
-                        LGSerial::slow_put(p.bytes[i]);
                     }
-
                 }
             }
 
@@ -339,6 +337,21 @@ void LGNetwork::loop()
 
     }
 
+}
+
+void LGNetwork::set_remote(uint8_t id, uint8_t status)
+{
+    command_packet_t p;
+
+    p.packet.short_address = id;
+    p.packet.system_mode = status;
+
+    // Send
+    LGSerial::slow_put_pgm( PSTR("CMD") );
+    // Body
+    for(uint8_t i=0; i < sizeof(command_packet_t); i++) {
+        LGSerial::slow_put(p.bytes[i]);
+    }
 }
 
 

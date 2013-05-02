@@ -45,8 +45,10 @@ void Controller::setup()
 
     scheduleScreen.device_idx = 0;
     LGDB::write_device_table_entry(0, 0x00);
-    for(uint8_t i=0; i < 7; i++)
-	    LGDB::write_schedule_table_entry(0, i, 0x0041);
+    for(uint8_t i=0; i < 7; i++) {
+	    LGDB::write_schedule_table_entry(0, i, 0x0043);
+	    LGDB::write_sensor_table_entry(0, i, 2);
+	}
 
     LGDB::write_device_table_entry(1, 0x00);
     for(uint8_t i=0; i < 7; i++) {
@@ -64,7 +66,7 @@ void Controller::loop()
 {
 	manager.loop();
 
-	if(network.currentMode == LGNETWORK_OPERATE) {
+	if(network.currentMode == LGNETWORK_OPERATE || LGSerial::available()) {
 		if((millis() - last_looped) > 5000) {
 			network.loop();
 			last_looped = millis();
