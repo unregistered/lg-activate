@@ -92,7 +92,12 @@ void HomeScreen::render()
 	char * sched = "Schedule";
 	char * dev = "Devices";
 	char * stats = "Status";
-	char * day = "04/25/13";
+	char buf[]= "00/00/00";
+	twodigit(buf, GetMonth(),false); 
+	twodigit(buf+3, GetDay(), false); 
+	twodigit(buf+6, GetYear(), false); 
+	
+	
 
 	drawString(215,120 , home, BLACK, WHITE, 3);
 	drawString(55,35, set, BLACK, WHITE, 2);
@@ -100,7 +105,7 @@ void HomeScreen::render()
 	drawString(55, 180, sched, BLACK, WHITE, 2);
 	drawString(155,200, stats, BLACK, WHITE,  2);
 
-	drawString(224, 1 , day, GREY, WHITE, 2);
+	drawString(224, 1 , buf, BLACK, WHITE, 2);
 	makeRectangle(223,0, 15,100, RED, 2);
 	makeRectangle(224, 219, 15, 100, RED, 2);
     /*
@@ -109,7 +114,19 @@ void HomeScreen::render()
     const char* secdisp = "0";
     const char* mindisp = "0";
     const char t = "";*/
-    drawString(225, 220, "01:23 PM", GREY, WHITE, 2);
+	 
+	//twodigit(buf, GetHour()); 
+	char tim[] = "00:00 PM"; 
+	twodigit(tim, GetHour(), false); 
+	twodigit(tim+3, GetMinute(), false); 
+	if (GetAmPm() == 0)
+	{
+		tim[6] = 'A'; 
+	}
+	
+
+	
+    drawString(225, 220, tim, BLACK, WHITE, 2);
     int x,y;
 }
 void HomeScreen::loop()
@@ -117,21 +134,21 @@ void HomeScreen::loop()
     int x = getTouchX();
     int y = getTouchY();
 
-    if (x > 30 && x<100 && y>60 && y < 130)
-    {
-        manager.presentScreen(deviceScreen);
-    }
-    else if (y> 140 && y<220 && x>30 && x<100)
+    if (x > 10 && x<105 && y>10 && y < 155)
     {
         manager.presentScreen(settingsScreen);
     }
-    else if (x>125 && x<215 &&y>60 && y<130)
-    {
-        manager.presentScreen(statusScreen);
-    }
-    else if (x>125 && x<215 && y>140 && y<220)
+    else if (y> 160 && y<305 && x>10 && x<105)
     {
         manager.presentScreen(schedulePickDeviceScreen);
+    }
+    else if (x>110 && x<205 &&y>10 && y<155)
+    {
+        manager.presentScreen(deviceScreen);
+    }
+    else if (x>110 && x<205 && y>160 && y<305)
+    {
+        manager.presentScreen(statusScreen);
     }
 
     sleep(100);
@@ -253,12 +270,12 @@ void SettingsScreen::loop()
     int x = getTouchX();
     int y = getTouchY();
 
-    if ((y > 50 && y<158) && (x> 19 && x<100)){
+    if ((y > 30 && y<155) && (x> 60 && x<190)){
         // SET MODE //
         manager.presentScreen(settingsSetModeScreen);
     }
 
-	if ((y > 50 && y<158) && (x> 112 && x<200)){
+	if ((y > 170 && y<295) && (x> 60 && x< 190)){
         // SET TIME //
         manager.presentScreen(settingsSetTimeScreen);
     }
@@ -334,26 +351,31 @@ void SettingsSetTimeScreen::render()
 void SettingsSetTimeScreen::renderMonth()
 {
     // numToStr(GetMonth());
+	twodigit(buf, GetMonth());
     drawString(110, 15, buf, BLACK, WHITE, 2);
 }
 void SettingsSetTimeScreen::renderDay()
 {
     // numToStr(GetDay());
+	twodigit(buf, GetDay()); 
     drawString(110, 68, buf, BLACK, WHITE, 2);
 }
 void SettingsSetTimeScreen::renderYear()
 {
     // numToStr(GetYear());
+	twodigit(buf, GetYear()); 
     drawString(110, 122, buf, BLACK, WHITE, 2);
 }
 void SettingsSetTimeScreen::renderHour()
 {
     // numToStr(GetHour());
+	twodigit(buf, GetHour()); 
     drawString(110, 175, buf, BLACK, WHITE, 2);
 }
 void SettingsSetTimeScreen::renderMinute()
 {
     // numToStr(GetMinute());
+	twodigit(buf, GetMinute()); 
     drawString(110, 228, buf, BLACK, WHITE, 2);
 }
 void SettingsSetTimeScreen::renderAMPM()
