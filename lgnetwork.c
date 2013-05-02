@@ -249,12 +249,14 @@ void LGNetwork::loop()
 
             // }
             int8_t next_to_program = get_next_target_address();
+            LGSerial::put("Next: ");
+            LGSerial::print(next_to_program);
             if(next_to_program >= 0) {
                 uint16_t data = LGDB::read_device_table_entry(next_to_program);
 
                 command_packet_t p;
                 p.packet.short_address = next_to_program;
-                p.packet.system_mode = 0;
+                p.packet.system_mode = SYSTEM_ON;
 
                 // Header
                 LGSerial::slow_put_pgm( PSTR("CMD") );
@@ -502,12 +504,12 @@ int8_t LGNetwork::get_next_target_address()
         i != last_commanded_device_address; // Keep searching until we reach this address
         i = (i == 99) ? 0 : i+1// Increment but also wrap around
     ) {
-        if(LGDB::read_device_table_entry(i) != 0xffff) {
+        if(LGDB::read_device_table_entry(i) == 0) {
             return i;
         }
     }
 
-    if(LGDB::read_device_table_entry(last_commanded_device_address) == 0xffff) // We have no open entries
+    if(LGDB::read_device_table_entry(last_commanded_device_address) == 0xFF) // We have no open entries
         return -1;
     else // It's something
         return last_commanded_device_address;
