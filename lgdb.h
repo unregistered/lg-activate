@@ -10,12 +10,12 @@ extern uint8_t EEMEM lgdb_mode;
 #endif
 
 /* Address Tables for basestation */
-#define MAX_DEVICE_COUNT 31
+#define MAX_DEVICE_COUNT 23
 
 #ifdef USE_NETWORK_SERVER
 extern uint8_t EEMEM lgdb_device_table[MAX_DEVICE_COUNT];
 extern uint16_t EEMEM lgdb_schedule_table[MAX_DEVICE_COUNT*7];
-extern uint8_t EEMEM lgdb_adapter_table[MAX_DEVICE_COUNT];
+extern uint8_t EEMEM lgdb_sensor_table[MAX_DEVICE_COUNT*7];
 #endif
 
 class LGDB
@@ -46,9 +46,9 @@ public:
     static uint16_t read_schedule_table_entry(uint8_t device, uint8_t day_of_week);
     static void write_schedule_table_entry(uint8_t device, uint8_t day_of_week, uint16_t val);
 
-    // actuator id for auto
-    static uint8_t read_adapter_table_entry(uint8_t entry);
-    static void write_adapter_table_entry(uint8_t entry, uint8_t val);
+    // sensor id for auto
+    static uint8_t read_sensor_table_entry(uint8_t entry, uint8_t day);
+    static void write_sensor_table_entry(uint8_t entry, uint8_t day, uint8_t val);
 
     // 1 bit, (0 actuator, 1 sensor)
     static uint8_t read_device_table_entry(uint8_t entry);
@@ -56,8 +56,6 @@ public:
 
     static uint8_t read_hour(uint8_t device, uint8_t day, bool on_off_b);
     static uint8_t read_minute(uint8_t device, uint8_t day, bool on_off_b);
-    static void incr_time(uint8_t device, uint8_t day, bool on_off_b);
-    static void decr_time(uint8_t device, uint8_t day, bool on_off_b);
 #endif
 
 

@@ -542,6 +542,15 @@ void ScheduleScreen::renderOnTime()
     char buf[3];
 
     uint8_t hr = LGDB::read_hour(device_idx, scheduleScreenCurrentDay, true);
+
+    if(hr >= 12)
+        drawString(140, 220, "PM", BLACK, WHITE, 2);
+    else
+        drawString(140, 220, "AM", BLACK, WHITE, 2);
+
+    hr = hr % 12;
+    if(hr == 0)
+        hr = 12;
     twodigit(buf, hr);
     drawString(140, 136, buf, BLACK, WHITE, 2);
 
@@ -552,17 +561,21 @@ void ScheduleScreen::renderOnTime()
     twodigit(buf, min);
     drawString(140, 190, buf, BLACK, WHITE, 2);
 
-    if(hr >= 12)
-        drawString(140, 220, "PM", BLACK, WHITE, 2);
-    else
-        drawString(140, 220, "AM", BLACK, WHITE, 2);
-
 }
 void ScheduleScreen::renderOffTime()
 {
     char buf[3];
 
     uint8_t hr = LGDB::read_hour(device_idx, scheduleScreenCurrentDay, false);
+
+    if(hr >=12 )
+        drawString(85, 220, "PM", BLACK, WHITE, 2);
+    else
+        drawString(85, 220, "AM", BLACK, WHITE, 2);
+
+    hr = hr % 12;
+    if(hr == 0)
+        hr = 12;
     twodigit(buf, hr);
     drawString(85, 136, buf, BLACK, WHITE, 2);
 
@@ -572,16 +585,19 @@ void ScheduleScreen::renderOffTime()
     twodigit(buf, min);
     drawString(85, 190, buf, BLACK, WHITE, 2);
 
-    if(hr >=12 )
-        drawString(85, 220, "PM", BLACK, WHITE, 2);
-    else
-        drawString(85, 220, "AM", BLACK, WHITE, 2);
 
 }
 
 void ScheduleScreen::renderAuto()
 {
-	drawString(35, 136, "No Sensor", BLACK, WHITE, 2);  
+    uint8_t sensor_idx = LGDB::read_sensor_table_entry(device_idx, scheduleScreenCurrentDay);
+    if(sensor_idx == 0xFF) {
+        drawString(35, 136, "No Sensor", BLACK, WHITE, 2);
+    } else {
+        char str[] = "Sensor 00";
+        twodigit(str+7, sensor_idx);
+        drawString(35, 136, str, BLACK, WHITE, 2);
+    }
 }
 void ScheduleScreen::render()
 {
@@ -606,7 +622,7 @@ void ScheduleScreen::render()
 
 	drawString(140, 25, "ON", BLACK, WHITE, 3);
 	drawString(85, 15, "OFF", BLACK, WHITE, 3);
-	drawString(30, 10, "AUTO", BLACK, WHITE, 3); 
+	drawString(30, 10, "AUTO", BLACK, WHITE, 3);
 
 	makeRectangle(130,85, 40, 40, BLACK, 2); //on-
 	makeRectangle(75, 85, 40, 40, BLACK, 2); //off-
@@ -618,15 +634,15 @@ void ScheduleScreen::render()
 
 	drawChar(140, 100, '-', RED, WHITE, 2);
 	drawChar(85, 100, '-', RED, WHITE, 2);
-	drawChar(30, 100, '-', RED, WHITE, 2); 
+	drawChar(35, 100, 'x', RED, WHITE, 2);
 	drawChar(140, 270, '+', BLUE, WHITE, 2);
 	drawChar(85, 270, '+', BLUE, WHITE, 2);
-	drawChar(30, 270, '+', BLUE, WHITE, 2); 
+	drawChar(30, 270, '+', BLUE, WHITE, 2);
 	//strings to be updated with touch dimensions //
 
     renderOffTime();
     renderOnTime();
-	renderAuto(); 
+	renderAuto();
 
 	// makeRectangle(40, 40, 40, 160, BLACK, 3);
 	// drawString(50, 50, "CONFIRM", BLACK, WHITE, 3);
@@ -643,6 +659,7 @@ void ScheduleScreen::loop()
         renderDays();
         renderOnTime();
         renderOffTime();
+        renderAuto();
     }
 
 	//off+ //
@@ -675,15 +692,33 @@ void ScheduleScreen::loop()
         renderOnTime();
         renderOffTime();
     }
-	// auto- // 
+	// auto- //
 	if ((x>-20 && x<20)	 && (y>85 && y<125))
 	{
-		//LGSerial::print("Howdy, auto+"); 
+        // No sensor found?
+        LGDB::write_sensor_table_entry(device_idx, scheduleScreenCurrentDay, 0xFF);
+        renderAuto();
 	}
-	// auto+ // 
+	// auto+ //
 	if ((x>-20 && x<20)	 && (y>255 && y<295))
 	{
-		//LGSerial::print("Hello, auto-"); 
+        uint8_t currentValue = LGDB::read_sensor_table_entry(device_idx, scheduleScreenCurrentDay);
+        uint8_t startingIdx;
+        if(currentValue == 0xFF)
+            startingIdx = 0;
+        else
+            startingIdx = currentValue+1;
+
+        for(uint8_t i=startingIdx; i < sizeof(lgdb_sensor_table); i++) {
+            uint8_t data = LGDB::read_device_table_entry(i);
+            if(data == 1) {
+                // Found a sensor
+                LGDB::write_sensor_table_entry(device_idx, scheduleScreenCurrentDay, i);
+                renderAuto();
+                break;
+            }
+        }
+        // Otherwise, we found no applicable sensors
 	}
     // sleep(20);
 }

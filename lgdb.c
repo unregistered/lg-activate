@@ -4,7 +4,7 @@
 #ifdef USE_NETWORK_SERVER
 uint8_t EEMEM lgdb_device_table[MAX_DEVICE_COUNT];
 uint16_t EEMEM lgdb_schedule_table[MAX_DEVICE_COUNT*7];
-uint8_t EEMEM lgdb_adapter_table[MAX_DEVICE_COUNT];
+uint8_t EEMEM lgdb_sensor_table[MAX_DEVICE_COUNT*7];
 #endif
 
 #ifdef USE_NETWORK_CLIENT
@@ -67,13 +67,13 @@ void LGDB::write_device_table_entry(uint8_t entry, uint8_t val)
     eeprom_write_byte(lgdb_device_table + entry, val);
 }
 
-uint8_t LGDB::read_adapter_table_entry(uint8_t entry)
+uint8_t LGDB::read_sensor_table_entry(uint8_t entry, uint8_t day)
 {
-    return eeprom_read_byte(lgdb_adapter_table + entry);
+    return eeprom_read_byte(lgdb_sensor_table + (entry*7 + day));
 }
-void LGDB::write_adapter_table_entry(uint8_t entry, uint8_t val)
+void LGDB::write_sensor_table_entry(uint8_t entry, uint8_t day, uint8_t val)
 {
-    eeprom_write_byte(lgdb_adapter_table + entry, val);
+    eeprom_write_byte(lgdb_sensor_table + (entry*7 + day), val);
 }
 
 uint8_t LGDB::read_hour(uint8_t device, uint8_t day, bool on_off_b)
