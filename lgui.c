@@ -223,6 +223,21 @@ void DeviceScreen::render()
 }
 void DeviceScreen::loop()
 {
+	int x = getTouchX();
+    int y = getTouchY();
+	
+	if (x>80 && x<150)
+	{
+		if (y>30 && y<150)
+		{
+			manager.presentScreen(deviceAddScreen); 
+		}
+		else if (y>160 && y<280)
+		{
+			
+		}
+
+	}
 
 }
 
@@ -232,7 +247,7 @@ void DeviceRemoveScreen::render()
     uint16_t schcolor = color565(142,35,35);
     fillScreen(schcolor);
     makeRectangle(15,15, 200,280, BLACK, 5);
-    drawPgmString(210,50 , PSTR("ADD ADAPTERS"), BLACK, schcolor, 2);
+    drawPgmString(210,50 , PSTR("REMOVE ADAPTERS"), BLACK, schcolor, 2);
 }
 void DeviceRemoveScreen::loop()
 {
@@ -749,19 +764,19 @@ void SchedulePickDeviceScreen::render()
     uint8_t start_idx = 0;
 
     if(LGDB::read_device_table_entry(start_idx) != 0xFF) {
-        drawPgmString(160, 60, PSTR("-0-"), BLACK, devcolor, 3);
+        drawPgmString(163, 67, PSTR("-1-"), BLACK, devcolor, 3);
     }
 
     if(LGDB::read_device_table_entry(start_idx + 1) != 0xFF) {
-        drawPgmString(160, 205, PSTR("-1-") , BLACK, devcolor, 3);
+        drawPgmString(163, 212, PSTR("-2-") , BLACK, devcolor, 3);
     }
 
     if(LGDB::read_device_table_entry(start_idx + 2) != 0xFF) {
-        drawPgmString(60, 60, PSTR("-2-"), BLACK, devcolor, 3);
+        drawPgmString(63, 67, PSTR("-3-"), BLACK, devcolor, 3);
     }
 
     if(LGDB::read_device_table_entry(start_idx + 3) != 0xFF) {
-        drawPgmString(60, 205, PSTR("-3-") , BLACK, devcolor, 3);
+        drawPgmString(63, 212, PSTR("-4-") , BLACK, devcolor, 3);
     }
 
 }
