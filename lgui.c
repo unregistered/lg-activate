@@ -528,23 +528,20 @@ void ScheduleScreen::renderDays()
 }
 void ScheduleScreen::renderOnTime()
 {
-    uint16_t data = LGDB::read_schedule_table_entry(device_idx, scheduleScreenCurrentDay);
-    uint8_t ontime = (data & 0x7F00) >> 8;
-
     char buf[3];
-    LGSerial::print(ontime);
 
-    uint8_t hr = ((ontime % 44) / 4);
+    uint8_t hr = LGDB::read_hour(device_idx, scheduleScreenCurrentDay, true);
     twodigit(buf, hr);
     drawString(150, 136, buf, BLACK, WHITE, 2);
+
     drawChar(150, 170, ':', BLACK, WHITE, 2);
 
     // Minute
-    uint8_t min = (ontime & 0x03) * 15;
+    uint8_t min = LGDB::read_minute(device_idx, scheduleScreenCurrentDay, true);
     twodigit(buf, min);
     drawString(150, 190, buf, BLACK, WHITE, 2);
 
-    if(ontime >= 48)
+    if(hr >= 12)
         drawString(150, 220, "PM", BLACK, WHITE, 2);
     else
         drawString(150, 220, "AM", BLACK, WHITE, 2);
@@ -552,10 +549,22 @@ void ScheduleScreen::renderOnTime()
 }
 void ScheduleScreen::renderOffTime()
 {
-    drawString(110, 136, "10", BLACK, WHITE, 2);
+    char buf[3];
+
+    uint8_t hr = LGDB::read_hour(device_idx, scheduleScreenCurrentDay, false);
+    twodigit(buf, hr);
+    drawString(110, 136, buf, BLACK, WHITE, 2);
+
     drawChar(110, 170, ':', BLACK, WHITE, 2);
-    drawString(110, 190, "30", BLACK, WHITE, 2);
-    drawString(110, 220, "AM", BLACK, WHITE, 2);
+
+    uint8_t min = LGDB::read_minute(device_idx, scheduleScreenCurrentDay, false);
+    twodigit(buf, min);
+    drawString(110, 190, buf, BLACK, WHITE, 2);
+
+    if(hr >=12 )
+        drawString(110, 220, "PM", BLACK, WHITE, 2);
+    else
+        drawString(110, 220, "AM", BLACK, WHITE, 2);
 
 }
 void ScheduleScreen::render()
@@ -614,18 +623,14 @@ void ScheduleScreen::loop()
 
 	//off+ //
 	if ((x>65 && x<100)	 && (y>226 && y<306)) {
-        int8_t t = getOffTime();
-        if(++t == 96) t = 0;
-        setOffTime(t);
+        incr_time(device_idx, scheduleScreenCurrentDay, false);
 
         renderOnTime();
         renderOffTime();
     }
 	//on+ //
 	if ((x>100 && x<135)	 && (y>266 && y<306)) {
-        int8_t t = getOnTime();
-        if(++t == 96) t = 0;
-        setOnTime(t);
+        incr_time(device_idx, scheduleScreenCurrentDay, true);
 
         renderOnTime();
         renderOffTime();
@@ -633,9 +638,7 @@ void ScheduleScreen::loop()
 	//off- //
 	if ((x>65 && x<100)	 && (y>74 && y<114))
     {
-        int8_t t = getOffTime();
-        if(--t < 0) t = 95;
-        setOffTime(t);
+        decr_time(device_idx, scheduleScreenCurrentDay, false);
 
         renderOnTime();
         renderOffTime();
@@ -643,9 +646,7 @@ void ScheduleScreen::loop()
 	//on-//
 	if ((x>100 && x<135)	 && (y>74 && y<114))
     {
-        int8_t t = getOnTime();
-        if(--t < 0) t = 95;
-        setOnTime(t);
+        decr_time(device_idx, scheduleScreenCurrentDay, true);
 
         renderOnTime();
         renderOffTime();
@@ -653,32 +654,52 @@ void ScheduleScreen::loop()
 
     // sleep(20);
 }
-uint8_t ScheduleScreen::getOnTime()
+void ScheduleScreen::incr_time(uint8_t device, uint8_t day, bool on_off_b)
 {
-    uint16_t data = LGDB::read_schedule_table_entry(device_idx, scheduleScreenCurrentDay);
-    return (data & 0x7F00) >> 8;
-}
-uint8_t ScheduleScreen::getOffTime()
-{
-    uint16_t data = LGDB::read_schedule_table_entry(device_idx, scheduleScreenCurrentDay);
-    return (data & 0x007F);
-}
+    uint16_t data = LGDB::read_schedule_table_entry(device, day);
+    uint8_t hour = data;
+    if(on_off_b)
+        hour = data >> 8;
 
-void ScheduleScreen::setOnTime(uint8_t time)
-{
-    uint16_t data = LGDB::read_schedule_table_entry(device_idx, scheduleScreenCurrentDay);
-    data = data & 0xC0FF;
-    data = data | (time << 8);
-    LGDB::write_schedule_table_entry(device_idx, scheduleScreenCurrentDay, data);
-}
-void ScheduleScreen::setOffTime(uint8_t time)
-{
-    uint16_t data = LGDB::read_schedule_table_entry(device_idx, scheduleScreenCurrentDay);
-    data = data & 0xFFC0;
-    data = data | time;
-    LGDB::write_schedule_table_entry(device_idx, scheduleScreenCurrentDay, data);
-}
+    hour &= 0x7F;
+    LGSerial::print(hour);
+    if(++hour == 96)
+        hour = 0;
 
+    if(on_off_b){
+        data &= 0x80FF;
+        uint16_t mask = hour;
+        mask = mask << 8;
+        data |= mask;
+    } else {
+        data &= 0xFF80;
+        data |= hour;
+    }
+
+    LGDB::write_schedule_table_entry(device, day, data);
+}
+void ScheduleScreen::decr_time(uint8_t device, uint8_t day, bool on_off_b)
+{
+    uint16_t data = LGDB::read_schedule_table_entry(device, day);
+    int8_t hour = data;
+    if(on_off_b)
+        hour = data >> 8;
+
+    hour &= 0x7F;
+    LGSerial::print(hour);
+    if(--hour < 0)
+        hour = 95;
+
+    if(on_off_b){
+        data &= 0x80FF;
+        data |= (uint16_t)(hour << 8);
+    } else {
+        data &= 0xFF80;
+        data |= hour;
+    }
+
+    LGDB::write_schedule_table_entry(device, day, data);
+}
 SchedulePickDeviceScreen::SchedulePickDeviceScreen(){}
 void SchedulePickDeviceScreen::render()
 {
