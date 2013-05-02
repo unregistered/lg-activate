@@ -116,6 +116,7 @@ public:
     void renderDays();
     void renderOnTime();
     void renderOffTime();
+	void renderAuto(); 
     void loop();
 
     uint8_t device_idx;
