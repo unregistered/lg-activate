@@ -54,7 +54,7 @@ void display_vector(uint8_t vtor, void (*fp)(bool data)) {
 }
 
 void update_relay(uint8_t status){
-    if (status == SYSTEM_OFF) {  //relay is off
+    if (status == SYSTEM_OFF || status == SYSTEM_AUTO_OFF) {  //relay is off
         PORTD |= 1 << PD6;  //turns relay off
     }
     else {  //status == 1
