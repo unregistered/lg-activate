@@ -44,20 +44,13 @@ void Controller::setup()
     DDRB &= ~(1 << DDB2); // Home
 
     scheduleScreen.device_idx = 0;
-    LGDB::write_device_table_entry(0, 0x00);
+    LGDB::write_device_table_entry(11, 0x00);
     for(uint8_t i=0; i < 7; i++) {
-	    LGDB::write_schedule_table_entry(0, i, 0x0043);
-	    LGDB::write_sensor_table_entry(0, i, 2);
+	    LGDB::write_schedule_table_entry(11, i, 0x0048);
+	    LGDB::write_sensor_table_entry(11, i, 3);
 	}
 
-    LGDB::write_device_table_entry(1, 0x00);
-    for(uint8_t i=0; i < 7; i++) {
-	    LGDB::write_schedule_table_entry(1, i, 0x4100);
-	    LGDB::write_sensor_table_entry(1, i, 2);
-	}
-
-    LGDB::write_device_table_entry(2, 0x01);
-    LGDB::write_device_table_entry(3, 0x01);
+    LGDB::write_device_table_entry(3, 0x01); // sensor
 
 	manager.presentScreen(schedulePickDeviceScreen);
 }
