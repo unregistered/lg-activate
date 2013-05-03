@@ -244,7 +244,7 @@ void LGNetwork::loop()
                 hour += 12; // Convert to 24 hour time
 
             uint8_t minute = GetMinute();
-            uint8_t theTime = hour*4 + minute;
+            uint16_t theTime = hour*60 + minute;
             uint8_t day = GetDay();
 
             LGSerial::put("Time is ");
@@ -262,8 +262,8 @@ void LGNetwork::loop()
                 if(LGDB::read_device_table_entry(i) != 0) {
                     continue;
                 }
-                uint8_t device_on = 4*LGDB::read_hour(i, day, true) + LGDB::read_minute(i, day, true); // Read ontime
-                uint8_t device_off = 4*LGDB::read_hour(i, day, false) + LGDB::read_minute(i, day, false);
+                uint16_t device_on = 60*LGDB::read_hour(i, day, true) + LGDB::read_minute(i, day, true); // Read ontime
+                uint16_t device_off = 60*LGDB::read_hour(i, day, false) + LGDB::read_minute(i, day, false);
                 uint8_t autodevice = LGDB::read_sensor_table_entry(i, day);
 
                 LGSerial::put("Device ");
@@ -291,17 +291,17 @@ void LGNetwork::loop()
                         LGSerial::print(i);
                         set_remote(i, SYSTEM_AUTO_OFF);
                     }
-                } else if(theTime >= device_on) {
+                } else if(theTime >= device_on && theTime < device_off) {
                     if(autodevice != 0xFF) {
                         LGSerial::print("Auto");
                         LGSerial::put("Entry ");
-                        LGSerial::print(LGDB::read_sensor_table_entry(autodevice, day));
+                        LGSerial::print(LGDB::read_schedule_table_entry(autodevice, day));
                         if(motion_sensor_idx == autodevice) {
                             LGSerial::print("We got a sensor reading");
                             // We got a byte from the sensor
                             set_remote(i, SYSTEM_AUTO_ON);
-                            LGDB::write_sensor_table_entry(autodevice, day, theTime); // Remember the time
-                        } else if( (LGDB::read_sensor_table_entry(autodevice, day) + 4) < theTime ) {
+                            LGDB::write_schedule_table_entry(autodevice, day, theTime); // Remember the time
+                        } else if( (LGDB::read_schedule_table_entry(autodevice, day) + 60) < theTime ) {
                             // It's been an hour
                             LGSerial::print("It's been an hour");
                             set_remote(i, SYSTEM_AUTO_OFF);

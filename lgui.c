@@ -78,6 +78,22 @@ void ScreenManager::loop()
 }
 
 HomeScreen::HomeScreen(){}
+void HomeScreen::renderTime()
+{
+    uint8_t hour = GetHour();
+    uint8_t minute = GetMinute();
+    displayedTime = 4*hour + minute;
+
+    char tim[] = "00:00 PM";
+    twodigit(tim, hour, false);
+    twodigit(tim+3, minute, false);
+    if (GetAmPm() == 0)
+    {
+        tim[6] = 'A';
+    }
+
+    drawString(225, 220, tim, WHITE, BLACK, 2);
+}
 void HomeScreen::render()
 {
     uint16_t schcolor = color565(142,35,35); //red
@@ -117,28 +133,8 @@ void HomeScreen::render()
 	drawString(155,200, stats, WHITE, BLACK,  2);
 
 	drawString(224, 1 , buf, WHITE, BLACK, 2);
-	//makeRectangle(223,0, 15,100, RED, 2);
-	//makeRectangle(224, 219, 15, 100, RED, 2);
-    /*
-    unsigned int minutes = 0;
-    unsigned int secs = 0;
-    const char* secdisp = "0";
-    const char* mindisp = "0";
-    const char t = "";*/
 
-	//twodigit(buf, GetHour());
-	char tim[] = "00:00 PM";
-	twodigit(tim, GetHour(), false);
-	twodigit(tim+3, GetMinute(), false);
-	if (GetAmPm() == 0)
-	{
-		tim[6] = 'A';
-	}
-
-
-
-    drawString(225, 220, tim, WHITE, BLACK, 2);
-    int x,y;
+    renderTime();
 }
 void HomeScreen::loop()
 {
@@ -160,6 +156,11 @@ void HomeScreen::loop()
     else if (x>110 && x<205 && y>160 && y<305)
     {
         manager.presentScreen(statusScreen);
+    }
+
+    uint8_t theTime = 4*GetHour() + GetMinute();
+    if(theTime != displayedTime) {
+        renderTime();
     }
 
     sleep(100);
@@ -232,10 +233,10 @@ void DeviceScreen::loop()
 		{
 			manager.presentScreen(deviceAddScreen);
 		}
-		else if (y>160 && y<280)
-		{
+		// else if (y>160 && y<280)
+		// {
 
-		}
+		// }
 
 	}
 
@@ -282,13 +283,13 @@ void SettingsScreen::render()
     uint16_t setcolor = color565(35,142,35);
 	fillScreen(setcolor);
 	makeRectangle(5,5, 225,310, BLACK, 4);
-	drawPgmString(225,50 , PSTR("SETTINGS"), BLACK, setcolor, 2);
+	drawString(225,50 , "SETTINGS", BLACK, setcolor, 2);
 
 	makeRectangle(60, 30, 130, 125, BLACK, 4);
 	makeRectangle(60, 170, 130, 125, BLACK, 4);
 	makeRectangle(50, 20, 130, 125, BLACK, 4);
 	makeRectangle(50, 180, 130, 125, BLACK, 4);
-	drawPgmString(90, 50, PSTR("MODE"), BLACK , setcolor, 3);
+	drawString(90, 50, ("MODE"), BLACK , setcolor, 3);
     drawPgmString(90, 200, PSTR("TIME"), BLACK, setcolor, 3);
 	drawPgmString(130, 50, PSTR("SET"), BLACK, setcolor, 3);
 	drawPgmString(130, 200, PSTR("SET"), BLACK, setcolor, 3);
@@ -415,6 +416,7 @@ void SettingsSetTimeScreen::renderAMPM()
 }
 void SettingsSetTimeScreen::loop()
 {
+    return;
     int x = getTouchX();
     int y = getTouchY();
 

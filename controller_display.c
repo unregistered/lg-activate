@@ -32,7 +32,8 @@ void Controller::setup()
 
 	// For calibrating time
 	SetHour(4);
-	SetMinute(14);
+	SetMinute(0);
+	SetSecond(0);
 	SetAmPm(1);
 	SetYear(13);
 	SetMonth(5);
@@ -44,10 +45,16 @@ void Controller::setup()
     DDRB &= ~(1 << DDB2); // Home
 
     scheduleScreen.device_idx = 0;
-    LGDB::write_device_table_entry(11, 0x00);
+    LGDB::write_device_table_entry(0, 0x00);
     for(uint8_t i=0; i < 7; i++) {
-	    LGDB::write_schedule_table_entry(11, i, 0x0048);
-	    LGDB::write_sensor_table_entry(11, i, 3);
+	    LGDB::write_schedule_table_entry(0, i, 0x4143);
+	    // LGDB::write_sensor_table_entry(0, i, 3);
+	}
+
+    LGDB::write_device_table_entry(1, 0x00);
+    for(uint8_t i=0; i < 7; i++) {
+	    LGDB::write_schedule_table_entry(1, i, 0x4243);
+	    LGDB::write_sensor_table_entry(1, i, 3);
 	}
 
     LGDB::write_device_table_entry(3, 0x01); // sensor
@@ -60,7 +67,7 @@ void Controller::loop()
 	manager.loop();
 
 	if(network.currentMode == LGNETWORK_OPERATE || LGSerial::available()) {
-		if((millis() - last_looped) > 5000) {
+		if((millis() - last_looped) > 500) {
 			network.loop();
 			last_looped = millis();
 		}

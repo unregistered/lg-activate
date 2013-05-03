@@ -43,6 +43,7 @@ uint8_t GetSecond()
 
 uint8_t GetMinute()
 {
+	return GetSecond();
 	uint8_t min,temp;
 	//Read the Minute Register
 	DS1307Read(0x01,&temp);

@@ -35,7 +35,10 @@ class HomeScreen : public LGUIScreen
 public:
     HomeScreen();
     void render();
+    void renderTime();
     void loop();
+
+    uint8_t displayedTime;
 };
 
 class StatusScreen : public LGUIScreen
