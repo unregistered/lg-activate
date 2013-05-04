@@ -138,6 +138,11 @@ void HomeScreen::render()
 }
 void HomeScreen::loop()
 {
+    uint8_t theTime = 4*GetHour() + GetMinute();
+    if(theTime != displayedTime) {
+        renderTime();
+    }
+
     int x = getTouchX();
     int y = getTouchY();
 
@@ -156,11 +161,6 @@ void HomeScreen::loop()
     else if (x>110 && x<205 && y>160 && y<305)
     {
         manager.presentScreen(statusScreen);
-    }
-
-    uint8_t theTime = 4*GetHour() + GetMinute();
-    if(theTime != displayedTime) {
-        renderTime();
     }
 
     sleep(100);
@@ -262,6 +262,23 @@ void DeviceAddScreen::render()
     fillScreen(BLACK);
     makeRectangle(15,15, 200,280, BLACK, 5);
     drawPgmString(210,50 , PSTR("ADD ADAPTERS"), schcolor, BLACK, 2);
+    drawPgmString(180,50, PSTR("While this screen is open, devices will"), WHITE, BLACK, 1);
+    drawPgmString(170,50, PSTR("synchronize with the basestation. Press"), WHITE, BLACK, 1);
+    drawPgmString(160,50, PSTR("and hold HOME or BACK to exit."), WHITE, BLACK, 1);
+
+    drawCircle(100, 100, 30, WHITE);
+    drawCircle(100, 220, 30, WHITE);
+    drawHorizontalLine(100, 130, 60, WHITE, 1);
+    // 100, 190 is point of arrow
+    for(int8_t i=0; i < 8; i++) {
+        drawPixel(100-i, 190-i, WHITE);
+        drawPixel(100+i, 190-i, WHITE);
+    }
+
+    for(int8_t i=0; i < 8; i++) {
+        drawPixel(100-i, 130+i, WHITE);
+        drawPixel(100+i, 130+i, WHITE);
+    }
 }
 void DeviceAddScreen::afterRender()
 {
@@ -679,6 +696,10 @@ void ScheduleScreen::loop()
     int x = getTouchX();
     int y = getTouchY();
 
+    // LGSerial::put("X"); LGSerial::print(x);
+    // LGSerial::put("Y"); LGSerial::print(y);
+    // LGSerial::print("----");
+
     // touch screen dimensions //
 	if ((x<180 && x>140))
     {
@@ -750,7 +771,7 @@ void ScheduleScreen::loop()
         }
         // Otherwise, we found no applicable sensors
 	}
-    // sleep(20);
+    sleep(100);
 }
 void ScheduleScreen::incr_time(uint8_t device, uint8_t day, bool on_off_b, uint8_t increment)
 {

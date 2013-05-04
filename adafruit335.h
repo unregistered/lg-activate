@@ -11,6 +11,7 @@ void drawHorizontalLine(uint16_t /*x*/, uint16_t/*y*/, uint16_t /*length*/, uint
 void drawVerticalLine (uint16_t /*x*/, uint16_t /*y*/, uint16_t /*length*/, uint16_t /*color*/, uint16_t /*thickness*/);
 void drawDiagonalLine (uint16_t/*x1*/, uint16_t /*y1*/, uint16_t /*x2*/, uint16_t /*y2*/, uint16_t /*color*/);
 void drawPixel (uint16_t /*x1*/, uint16_t /*y1*/, uint16_t /*color*/);
+void drawCircle(uint16_t x0, uint16_t y0, uint16_t radius, uint16_t color);
 void fillScreen(uint16_t /*color*/);
 void fillRectangle(uint16_t /*x*/, uint16_t /*y*/, uint16_t /*h*/, uint16_t /*w*/, uint16_t /*color*/, uint16_t /*thick*/);
 void makeRectangle(uint16_t /*x*/, uint16_t /*y*/, uint16_t /*h*/, uint16_t /*w*/, uint16_t /*color*/, uint16_t /*thick*/);

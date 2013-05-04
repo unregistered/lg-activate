@@ -151,6 +151,7 @@ void regout(uint16_t a, uint16_t d)
 /*
  lcdout - Write a byte to the LCD
  */
+static uint8_t last_lcdout = 0x00;
 void lcdout(uint8_t x)
 {
 	//PORTD &= ~(PD7<<1);
@@ -158,16 +159,21 @@ void lcdout(uint8_t x)
 
 	//PORTB |= (PB1<<1);
 	///PORTB &= ~(PB1<<1);
-	for (uint8_t i = 0; i < 8; i++)
-	{
-		PORTB &= ~(PB1<<1); // Clk to low
 
-		PORTB |= x & LCD_Data_BitB0;    // put low two bit in
-		PORTB &= (x | ~LCD_Data_BitB0);
+    // if(last_lcdout != x) {
+        for (uint8_t i = 0; i < 8; i++)
+        {
+            PORTB &= ~(PB1<<1); // Clk to low
 
-		PORTB |= (PB1<<1); // Clk to high
-		x = x>>1;
-	}
+            PORTB |= x & LCD_Data_BitB0;    // put low two bit in
+            PORTB &= (x | ~LCD_Data_BitB0);
+
+            PORTB |= (PB1<<1); // Clk to high
+            x = x>>1;
+        }
+
+        // last_lcdout = x;
+    // }
 
     //PORTD |= x & LCD_Data_D;    // put high six bits in D
     //PORTD &= (x | ~LCD_Data_D);
@@ -470,5 +476,35 @@ void drawPgmString(uint16_t x, uint16_t y, PGM_P str, uint16_t color, uint16_t b
         drawChar(x, y + size*6*i, c, color, bg, size);
         i++;
     }
+}
+
+void drawCircle(uint16_t x0, uint16_t y0, uint16_t radius, uint16_t color)
+{
+  int16_t x = radius, y = 0;
+  int16_t xChange = 1 - radius*2;
+  int16_t yChange = 0;
+  int16_t radiusError = 0;
+
+  while(x >= y)
+  {
+    drawPixel(x + x0, y + y0, color);
+    drawPixel(y + x0, x + y0, color);
+    drawPixel(-x + x0, y + y0, color);
+    drawPixel(-y + x0, x + y0, color);
+    drawPixel(-x + x0, -y + y0, color);
+    drawPixel(-y + x0, -x + y0, color);
+    drawPixel(x + x0, -y + y0, color);
+    drawPixel(y + x0, -x + y0, color);
+
+    y++;
+    radiusError += yChange;
+    yChange += 2;
+    if(((radiusError << 1) + xChange) > 0)
+    {
+      x--;
+      radiusError += xChange;
+      xChange += 2;
+    }
+  }
 }
 

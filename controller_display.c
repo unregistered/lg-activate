@@ -34,7 +34,7 @@ void Controller::setup()
 	SetHour(4);
 	SetMinute(0);
 	SetSecond(0);
-	SetAmPm(1);
+	SetAmPm(0);
 	SetYear(13);
 	SetMonth(5);
 	SetDay(4);
@@ -44,22 +44,23 @@ void Controller::setup()
     DDRD &= ~(1 << DDD7); // Back
     DDRB &= ~(1 << DDB2); // Home
 
-    scheduleScreen.device_idx = 0;
+    // scheduleScreen.device_idx = 0;
     LGDB::write_device_table_entry(0, 0x00);
+    LGDB::write_device_table_entry(1, 0x01);
+    LGDB::write_device_table_entry(2, 0x00); // sensor
+
     for(uint8_t i=0; i < 7; i++) {
 	    LGDB::write_schedule_table_entry(0, i, 0x4143);
-	    // LGDB::write_sensor_table_entry(0, i, 3);
+	    LGDB::write_sensor_table_entry(0, i, 1);
 	}
 
-    LGDB::write_device_table_entry(1, 0x00);
+ //    LGDB::write_device_table_entry(1, 0x00);
     for(uint8_t i=0; i < 7; i++) {
-	    LGDB::write_schedule_table_entry(1, i, 0x4243);
-	    LGDB::write_sensor_table_entry(1, i, 3);
+	    LGDB::write_schedule_table_entry(2, i, 0x4243);
 	}
 
-    LGDB::write_device_table_entry(3, 0x01); // sensor
 
-	manager.presentScreen(schedulePickDeviceScreen);
+	manager.presentScreen(homeScreen);
 }
 
 void Controller::loop()
